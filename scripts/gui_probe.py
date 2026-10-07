@@ -33,6 +33,8 @@ class OfflineBroker(FakeBroker):
         return result
 
 gui.AlpacaPaper = OfflineBroker
+import stockbot.cli as cli
+cli.AlpacaPaper = OfflineBroker
 # No outbound network is allowed from this process, even if an adapter changes.
 def no_network(*args, **kwargs): raise RuntimeError('GUI verification blocks network')
 socket.socket.connect = no_network
@@ -68,7 +70,11 @@ def snapshot():
     target = OUT / 'state.json'
     tmp = OUT / 'state.tmp'
     tmp.write_text(json.dumps(state, ensure_ascii=False), encoding='utf-8')
-    os.replace(tmp, target)
+    try:
+        os.replace(tmp, target)
+    except PermissionError:
+        # Windows readers can temporarily deny replacement; retry on the next tick.
+        pass
     control = OUT / 'control.json'
     if control.exists():
         try: OfflineBroker.fail = json.loads(control.read_text())['fail']

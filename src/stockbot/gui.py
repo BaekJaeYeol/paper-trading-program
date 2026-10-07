@@ -64,7 +64,7 @@ class Dashboard:
         style.configure('Danger.TButton', background='#fce5e8', foreground='#b8223c')
         style.configure('Treeview', rowheight=34, background='white', fieldbackground='white')
         style.configure('Treeview.Heading', background='#e8edf6', padding=9)
-        outer = ttk.Frame(root, padding=24)
+        outer = ttk.Frame(root, padding=16)
         outer.pack(fill='both', expand=True)
         header = ttk.Frame(outer)
         header.pack(fill='x')
@@ -97,7 +97,7 @@ class Dashboard:
             self.actions.append(button)
         ttk.Button(toolbar, text='비상 중단', command=self.stop, style='Danger.TButton').pack(side='right')
         tabs = ttk.Notebook(outer)
-        tabs.pack(fill='both', expand=True)
+        # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),
                  ('미체결 주문', 'orders', ['종목', '방향', '수량', '체결 수량', '지정가', '상태']),
@@ -106,7 +106,7 @@ class Dashboard:
         for title, key, columns in specs:
             panel = ttk.Frame(tabs, padding=10)
             tabs.add(panel, text=title)
-            table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings')
+            table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
                 table.column(i, width=140, anchor='center')
@@ -116,13 +116,14 @@ class Dashboard:
             table.pack(fill='both', expand=True)
             self.tables[key] = table
         self.demo_summary = tk.StringVar(value='백테스트는 합성 데이터 예제입니다. 실제 계좌 성과와 다릅니다.')
-        ttk.Label(outer, textvariable=self.demo_summary, padding=(0, 10)).pack(anchor='w')
-        ttk.Label(outer, text='작업 기록', font=('맑은 고딕', 10, 'bold')).pack(anchor='w')
+        ttk.Label(outer, textvariable=self.demo_summary, padding=(0, 8)).pack(anchor='w', side='bottom')
+        # Log is below the notebook and above the footer.
         self.log = tk.Text(outer, height=5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
                            font=('맑은 고딕', 10), state='disabled')
-        self.log.pack(fill='x', pady=(7, 8))
+        self.log.pack(fill='x', pady=(7, 8), side='bottom')
         ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 Alpaca에서 확인하세요.',
-                  foreground='#738099').pack(anchor='w')
+                  foreground='#738099').pack(anchor='w', side='bottom')
+        tabs.pack(fill='both', expand=True)
         root.after(100, self.poll)
 
     def write(self, text):
