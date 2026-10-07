@@ -149,3 +149,7 @@ $env:TOSS_CLIENT_SECRET = '토스_client_secret'
 
 공식 명세: https://openapi.tossinvest.com/openapi-docs/latest/openapi.json
 개발자 안내: https://developers.tossinvest.com/docs
+
+## Windows GUI 조작 검증
+
+2026-10-07 Windows Server 2025에서 실제 마우스·키보드 GUI 조작 13개 및 단위 테스트 18개 통과. 작은 화면의 하단 가림을 수정했습니다. 실제 API는 오프라인 대체했으며 Windows 11 사용자 PC 직접 검증은 아닙니다. 자세한 범위와 캡처는 [검증 기록](docs/windows-gui-verification.md)을 확인하세요.
