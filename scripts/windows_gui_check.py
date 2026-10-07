@@ -58,7 +58,8 @@ def notice(title, yes=True):
     w.wait_not('visible',timeout=10)
 
 def entries(title):
-    s=wait(lambda s:any(w['title']==title for w in s.get('windows',[])))
+    count=8 if title=='전략 설정' else 2
+    s=wait(lambda s:sum(r['class']=='TEntry' for w in s.get('windows',[]) if w['title']==title for r in w['widgets'])==count)
     return [r for w in s['windows'] if w['title']==title for r in w['widgets'] if r['class']=='TEntry']
 
 def type_entry(entry,text):
