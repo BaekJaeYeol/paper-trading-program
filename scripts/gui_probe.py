@@ -64,7 +64,7 @@ def snapshot():
     inspect(root)
     for child in root.winfo_children():
         if isinstance(child, tk.Toplevel) and child.winfo_exists(): inspect(child)
-    state = {'windows': windows, 'status': app.status.get(), 'busy': app.busy,
+    state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
              'running': app.running, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,

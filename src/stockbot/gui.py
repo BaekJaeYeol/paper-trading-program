@@ -49,8 +49,10 @@ class Dashboard:
         self.timer = None
         self.closed = False
         root.title('모의매매 프로그램 · Paper Trading')
-        root.geometry('1180x820')
-        root.minsize(940, 700)
+        width = min(1180, max(940, root.winfo_screenwidth() - 32))
+        height = min(820, max(620, root.winfo_screenheight() - 100))
+        root.geometry(f'{width}x{height}+8+8')
+        root.minsize(940, 620)
         root.configure(bg=BG)
         root.protocol('WM_DELETE_WINDOW', self.close)
         style = ttk.Style(root)
