@@ -32,6 +32,9 @@ class GUIBehaviorTests(unittest.TestCase):
         class Status:
             def set(self,*args): pass
         d.status=Status()
+        class Selector:
+            def configure(self, **kwargs): pass
+        d.selector=Selector()
         def fail(): raise RuntimeError('super-secret-key')
         self.assertTrue(d.work('account',fail))
         result=d.events.get(timeout=2)
@@ -45,6 +48,10 @@ class GUIBehaviorTests(unittest.TestCase):
         class Status:
             def set(self,value): self.value=value
         d.root=Root();d.status=Status()
+        d.busy=False
+        class Selector:
+            def configure(self, **kwargs): pass
+        d.selector=Selector()
         with tempfile.TemporaryDirectory() as temp:
             d.config={'state_dir':str(Path(temp)/'state')}
             d.stop()
