@@ -13,6 +13,8 @@ import stockbot.gui as gui
 
 OUT = ROOT / 'gui-check'
 OUT.mkdir(exist_ok=True)
+import shutil
+shutil.copytree(ROOT / "examples", OUT / "examples", dirs_exist_ok=True)
 config = json.loads((ROOT / 'config.json').read_text())
 config['symbols'] = ['AAPL']
 config['state_dir'] = str(OUT / 'state')
