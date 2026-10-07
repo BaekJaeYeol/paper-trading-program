@@ -7,6 +7,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, messagebox, filedialog
 from .broker import AlpacaPaper
+from .kis import KISPaper
 from .cli import load_config, cycle, read_csv
 from .core import backtest
 
@@ -48,6 +49,8 @@ class Dashboard:
         self.running = False
         self.timer = None
         self.closed = False
+        self.market = tk.StringVar(value="미국 · Alpaca")
+        self.kis = None
         root.title('모의매매 프로그램 · Paper Trading')
         width = min(1180, max(940, root.winfo_screenwidth() - 32))
         height = min(820, max(620, root.winfo_screenheight() - 100))
@@ -71,17 +74,24 @@ class Dashboard:
         header = ttk.Frame(outer)
         header.pack(fill='x')
         ttk.Label(header, text='모의매매 프로그램', font=('맑은 고딕', 23, 'bold')).pack(side='left')
-        ttk.Label(header, text='ALPACA PAPER  ·  모의계좌 전용', foreground=BLUE).pack(side='right')
+        selector = ttk.Combobox(header, textvariable=self.market,
+                                values=('미국 · Alpaca', '한국 · KIS'), state='readonly', width=18)
+        selector.pack(side='right')
+        selector.bind('<<ComboboxSelected>>', self.change_market)
+        self.selector = selector
         self.status = tk.StringVar(value='API 연결 전 · 데모로 먼저 둘러보세요')
         ttk.Label(outer, textvariable=self.status, padding=(0, 12)).pack(anchor='w')
         cards = ttk.Frame(outer)
         cards.pack(fill='x', pady=(4, 16))
         self.values = {}
+        self.card_titles = {}
         for title, key in [('총 자산 (USD)', 'equity'), ('현금 (USD)', 'cash'),
                            ('매수 가능 금액 (USD)', 'buying_power'), ('전일 대비 손익 (USD)', 'daily_pnl')]:
             box = tk.Frame(cards, bg='white', padx=20, pady=17, highlightbackground='#e1e6ef', highlightthickness=1)
             box.pack(side='left', fill='both', expand=True, padx=(0, 8))
-            tk.Label(box, text=title, bg='white', fg='#718099', font=('맑은 고딕', 10)).pack(anchor='w')
+            label = tk.Label(box, text=title, bg='white', fg='#718099', font=('맑은 고딕', 10))
+            label.pack(anchor='w')
+            self.card_titles[key] = label
             value = tk.StringVar(value='—')
             tk.Label(box, textvariable=value, bg='white', fg=INK, font=('맑은 고딕', 22, 'bold')).pack(anchor='w', pady=(9, 0))
             self.values[key] = value
@@ -123,7 +133,7 @@ class Dashboard:
         self.log = tk.Text(outer, height=5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
                            font=('맑은 고딕', 10), state='disabled')
         self.log.pack(fill='x', pady=(7, 8), side='bottom')
-        ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 Alpaca에서 확인하세요.',
+        ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 해당 증권사에서 확인하세요.',
                   foreground='#738099').pack(anchor='w', side='bottom')
         tabs.pack(fill='both', expand=True)
         root.after(100, self.poll)
@@ -140,6 +150,7 @@ class Dashboard:
         self.busy = True
         for button in self.actions:
             button.state(['disabled'])
+        self.selector.configure(state='disabled')
         self.status.set('처리 중…')
         def worker():
             try:
@@ -165,16 +176,20 @@ class Dashboard:
                 self.busy = False
                 for button in self.actions:
                     button.state(['!disabled'])
+                self.selector.configure(state='disabled' if self.running else 'readonly')
                 if error:
                     self.pause()
                     self.status.set('작업 실패 · 자동 실행 정지')
-                    self.write('연결/설정/주문 상태를 확인하세요. 주문 요청 실패 시 재전송 전에 Alpaca에서 실제 주문을 대조하세요.')
+                    self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
                 elif kind == 'account':
+                    kr = self.market.get().startswith('한국')
                     for key, value in self.values.items():
-                        value.set(f"${data[key]:,.2f}")
+                        number = data[key]
+                        value.set('미조회' if number is None else (f"₩{number:,.0f}" if kr else f"${number:,.2f}"))
                     self.fill('positions', [[p[k] for k in ('symbol', 'qty', 'avg_entry_price', 'current_price', 'unrealized_pl')] for p in data['positions']])
                     self.fill('orders', [[o[k] for k in ('symbol', 'side', 'qty', 'filled_qty', 'limit_price', 'status')] for o in data['orders']])
-                    self.status.set('모의계좌 연결됨 · ' + ('미국 정규장 개장' if data['market_open'] else '미국 정규장 마감'))
+                    self.status.set('한국 모의계좌 연결됨 · 잔고 조회 전용 · 미체결 주문 미조회' if kr else
+                                    '모의계좌 연결됨 · ' + ('미국 정규장 개장' if data['market_open'] else '미국 정규장 마감'))
                     self.write('모의계좌 정보를 새로고침했습니다.')
                 elif kind in ('scan', 'trade'):
                     self.fill('plans', [[r['order']['symbol'], r['order']['qty'], r['order']['limit_price'],
@@ -202,6 +217,8 @@ class Dashboard:
     def credentials(self):
         if self.running or self.busy:
             return
+        if self.market.get().startswith('한국'):
+            return self.kis_credentials()
         window = tk.Toplevel(self.root)
         window.title('Alpaca 모의 API 연결')
         window.transient(self.root)
@@ -223,13 +240,66 @@ class Dashboard:
             self.refresh()
         ttk.Button(window, text='연결 확인', command=apply, style='Primary.TButton').pack(pady=18)
 
+    def change_market(self, event=None):
+        for value in self.values.values():
+            value.set('—')
+        for key in self.tables:
+            self.fill(key, [])
+        kr = self.market.get().startswith('한국')
+        titles = {'equity':'총 자산', 'cash':'예수금' if kr else '현금',
+                  'buying_power':'매수 가능 금액', 'daily_pnl':'전일 대비 손익'}
+        for key, label in self.card_titles.items():
+            label.configure(text=titles[key] + (' (KRW)' if kr else ' (USD)'))
+        self.demo_summary.set('한국: 인증·잔고 조회 전용. 주문·미체결·백테스트는 미지원.' if kr else
+                              '백테스트는 미국 합성 데이터 예제입니다. 실제 성과와 다릅니다.')
+        self.status.set('한국 KIS 모의투자 · API 연결을 눌러주세요' if kr else '미국 Alpaca 모의투자 · 계좌 새로고침을 눌러주세요')
+
+    def korean_read_only(self):
+        if self.market.get().startswith('한국'):
+            messagebox.showinfo('한국 모의투자', '이번 단계는 모의계좌 인증·잔고·보유종목 조회입니다.\n한국 주문과 전략 실행은 아직 지원하지 않습니다.')
+            return True
+        return False
+
+    def kis_credentials(self):
+        window = tk.Toplevel(self.root)
+        window.title('한국투자증권 모의투자 API 연결')
+        window.transient(self.root)
+        window.grab_set()
+        ttk.Label(window, text='KIS 모의투자용 정보를 입력하세요. Alpaca 키는 사용할 수 없습니다.\n키·계좌·토큰은 파일에 저장하지 않습니다.', padding=16).pack()
+        fields = []
+        for title in ('모의투자 App Key', '모의투자 App Secret', '모의계좌 앞 8자리', '계좌 뒤 2자리 (상품코드)'):
+            ttk.Label(window, text=title).pack(anchor='w', padx=16)
+            entry = ttk.Entry(window, show='●', width=48)
+            entry.pack(padx=16, pady=5)
+            fields.append(entry)
+        def apply():
+            try:
+                candidate = KISPaper(*(entry.get().strip() for entry in fields))
+            except ValueError as exc:
+                messagebox.showerror('입력 확인', str(exc), parent=window)
+                return
+            self.kis = candidate
+            window.destroy()
+            self.refresh()
+        ttk.Button(window, text='연결 확인', command=apply, style='Primary.TButton').pack(pady=16)
+
     def refresh(self):
-        self.work('account', lambda: account_view(AlpacaPaper()))
+        if self.market.get().startswith('한국'):
+            if self.kis is None:
+                messagebox.showinfo('한국 모의투자 연결', 'API 연결에서 KIS 모의투자 키와 계좌를 입력하세요.')
+                return
+            self.work('account', self.kis.snapshot)
+        else:
+            self.work('account', lambda: account_view(AlpacaPaper()))
 
     def scan(self):
+        if self.korean_read_only():
+            return
         self.work('scan', lambda: cycle(dict(self.config), False))
 
     def start(self):
+        if self.korean_read_only():
+            return
         if self.running or self.busy:
             return
         if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분마다 반복합니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
@@ -240,6 +310,7 @@ class Dashboard:
                 return
             stop.unlink()
         self.running = True
+        self.selector.configure(state='disabled')
         self.write('모의매매를 시작합니다. 실계좌 주문은 실행하지 않습니다.')
         self.trade()
 
@@ -250,6 +321,7 @@ class Dashboard:
 
     def pause(self):
         self.running = False
+        self.selector.configure(state='disabled' if self.busy else 'readonly')
         if self.timer is not None:
             self.root.after_cancel(self.timer)
             self.timer = None
@@ -263,6 +335,8 @@ class Dashboard:
         self.write('STOP 파일 생성. 이미 통신 중인 주문과 기존 주문은 Alpaca에서 확인하세요.')
 
     def demo(self):
+        if self.korean_read_only():
+            return
         selected = filedialog.askopenfilename(title='백테스트 CSV 선택 (취소하면 기본 합성 데이터)',
                                               initialdir=self.path.parent / 'examples', filetypes=[('CSV', '*.csv')])
         path = Path(selected) if selected else self.path.parent / 'examples/demo.csv'
@@ -274,6 +348,8 @@ class Dashboard:
         self.work('demo', run)
 
     def settings(self):
+        if self.korean_read_only():
+            return
         if self.running:
             messagebox.showinfo('설정 변경', '비상 중단 후 설정을 변경하세요.')
             return
