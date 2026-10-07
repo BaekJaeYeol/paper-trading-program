@@ -1,0 +1,27 @@
+name: Windows GUI verification
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'scripts/**', '.github/workflows/windows-gui.yml', 'pyproject.toml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gui:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e . pywinauto Pillow
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/windows_gui_check.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Windows-GUI-verification
+          path: gui-check/
