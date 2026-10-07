@@ -49,8 +49,10 @@ def notice(title, yes=True):
     w=modal(title)
     buttons=w.descendants(class_name='Button')
     # Standard MessageBox IDs: IDYES=6, IDNO=7, IDOK=1.
-    ids=(6,1) if yes else (7,2)
-    chosen=[b for b in buttons if b.control_id() in ids]
+    labels={'yes','ok','예','확인'} if yes else {'no','cancel','아니요','취소'}
+    chosen=[b for b in buttons if b.window_text().replace('&','').strip().lower() in labels]
+    if not chosen and len(buttons)==1 and yes:
+        chosen=buttons
     assert chosen,(title,[(b.control_id(),b.window_text()) for b in buttons])
     chosen[0].click_input()
     w.wait_not('visible',timeout=10)
