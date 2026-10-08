@@ -37,7 +37,7 @@ class App:
         ttk.Checkbutton(sync_tab,text='검증 완료 · 모의계좌 갱신 후 자동 저장',variable=self.sync_enabled,command=self.configure_sync).pack(anchor='w',pady=12)
         ttk.Button(sync_tab,text='현재 결과 저장 / 대기 건 재시도',command=self.sync_results).pack(anchor='w')
         ttk.Label(sync_tab,textvariable=self.sync_status,wraplength=900).pack(anchor='w',pady=16)
-        ttk.Label(sync_tab,text='전략 성과와 모의계좌 전체 거래 기록을 JSON으로 저장합니다. 원본 시세·인증 정보는 전송하지 않습니다.\nDrive 로그인과 동기화는 데스크톱 앱이 담당합니다. 업로드 완료 여부는 Drive에서 확인하세요.\n이 기능은 ChatGPT의 자동 분석을 시작하지 않습니다.',wraplength=900).pack(anchor='w')
+        ttk.Label(sync_tab,text='최신 결과는 JSON, 이전 결과는 월별 ZIP으로 자동 보관합니다. 전체 거래 기록을 포함합니다. 원본 시세·인증 정보는 전송하지 않습니다.\nDrive 로그인과 동기화는 데스크톱 앱이 담당합니다. 업로드 완료 여부는 Drive에서 확인하세요.\n이 기능은 ChatGPT의 자동 분석을 시작하지 않습니다.',wraplength=900).pack(anchor='w')
         ttk.Label(compare,text='개발·검증 구간의 모든 후보와 마지막 구간의 선정 후보를 표시합니다. 비용: 수수료 0.1% + 슬리피지 0.1% (편도)').pack(anchor='w',pady=6)
         self.table=self.make_table(compare,('구간','전략','수익률','최대 낙폭','Sharpe','회전량'),(140,300,100,100,90,90))
         control=ttk.Frame(paper);control.pack(fill='x')

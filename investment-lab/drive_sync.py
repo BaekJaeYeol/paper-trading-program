@@ -1,7 +1,8 @@
 """Export only selected results to a user-selected Drive desktop folder.
 A successful local write is never proof of cloud delivery.
 """
-import hashlib, json, os, uuid
+import datetime, hashlib, json, os, re, uuid, zipfile
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 REPORT_KEYS=('source','data_sha256','first_date','last_date','selected','fee','slippage','selection','holdout_start','status','live_ready','results')
@@ -20,6 +21,45 @@ def atomic_write(path,data):
         temp.write_bytes(data);os.replace(temp,path)
     finally:
         temp.unlink(missing_ok=True)
+
+def compact(folder):
+    """Keep latest per symbol/source and verified monthly archives of all snapshots."""
+    groups={}
+    for item in folder.glob('investment-lab-*.json'):
+        if not re.fullmatch(r'investment-lab-[0-9a-f]{64}\.json',item.name):continue
+        data=item.read_bytes()
+        if hashlib.sha256(data).hexdigest()!=item.stem.removeprefix('investment-lab-'):
+            raise ValueError('결과 파일 해시가 다릅니다. 원본을 유지합니다.')
+        value=json.loads(data)
+        month=datetime.datetime.fromtimestamp(item.stat().st_mtime,ZoneInfo('Asia/Seoul')).strftime('%Y-%m')
+        groups.setdefault(month,[]).append((item,data,value,item.stat().st_mtime))
+    for month,items in groups.items():
+        archive=folder/f'investment-lab-history-{month}.zip'
+        existing={}
+        if archive.exists():
+            with zipfile.ZipFile(archive) as z:
+                if z.testzip() is not None:raise ValueError('기존 월별 보관 파일을 확인하세요.')
+                existing={name:z.read(name) for name in z.namelist()}
+        updated=dict(existing)
+        for item,data,_,_ in items:
+            if item.name in updated and updated[item.name]!=data:raise ValueError('보관 파일 충돌: 원본 유지')
+            updated[item.name]=data
+        if updated!=existing:
+            temp=archive.with_name(archive.name+'.'+uuid.uuid4().hex+'.tmp')
+            try:
+                with zipfile.ZipFile(temp,'w',zipfile.ZIP_DEFLATED) as z:
+                    for name,data in updated.items():z.writestr(name,data)
+                with zipfile.ZipFile(temp) as z:
+                    if z.testzip() is not None or any(z.read(name)!=data for name,data in updated.items()):
+                        raise ValueError('압축 검증 실패: 원본 유지')
+                os.replace(temp,archive)
+            finally:temp.unlink(missing_ok=True)
+        for item,data,value,mtime in sorted(items,key=lambda x:x[3]):
+            stream=json.dumps([value.get('symbol'),value.get('research',{}).get('source'),bool(value.get('paper'))],ensure_ascii=False)
+            latest=folder/('investment-lab-latest-'+hashlib.sha256(stream.encode()).hexdigest()[:16]+'.json')
+            if not latest.exists() or mtime>=latest.stat().st_mtime:
+                atomic_write(latest,data);os.utime(latest,(mtime,mtime))
+            item.unlink()
 
 class DriveSync:
     def __init__(self,work):
@@ -49,8 +89,10 @@ class DriveSync:
             if not folder.is_dir():raise OSError('동기화 폴더를 사용할 수 없습니다')
             for item in pending:
                 data=item.read_bytes();dest=folder/item.name
-                if not dest.exists() or dest.read_bytes()!=data:atomic_write(dest,data)
+                if not dest.exists() or dest.read_bytes()!=data:
+                    atomic_write(dest,data);os.utime(dest,(item.stat().st_mtime,item.stat().st_mtime))
                 item.unlink()
-            return f'동기화 폴더 저장 완료 ({len(pending)}건) · 클라우드 업로드 미확인'
-        except OSError:
-            return f'폴더 저장 대기 ({len(list(outbox.glob("*.json")))}건) · Drive 연결 확인 후 재시도'
+            compact(folder)
+            return f'최신 결과 · 월별 보관 완료 ({len(pending)}건) · 클라우드 업로드 미확인'
+        except (OSError,ValueError,zipfile.BadZipFile):
+            return f'폴더 저장 대기 ({len(list(outbox.glob("*.json")))}건) · Drive 연결 또는 보관 파일 확인 후 재시도'
