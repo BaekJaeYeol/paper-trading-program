@@ -12,7 +12,7 @@ def payload(report=None, account=None, symbol=None):
     if report is not None: result['research']={k:report[k] for k in REPORT_KEYS if k in report}
     if account and account.get('active'):
         result['paper']={k:account[k] for k in ('cash','qty','last_date','equity','ledger')}
-        result['paper']['config']={k:account['config'][k] for k in ('strategy','source','fee','slippage','started_after')}
+        result['paper']['config']={k:account['config'][k] for k in ('strategy','source','fee','slippage','started_after','instant_entry_done','instant_day','instant_quote','instant_signal_date','instant_signal','instant_side') if k in account['config']}
     return result
 
 def atomic_write(path,data):

@@ -2,7 +2,7 @@ import csv, datetime, hashlib, json, os, queue, shutil, threading, tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
 from engine import load
-from data import download, symbol_name
+from data import download, symbol_name, current_quote
 from research import run
 from paper import Paper
 from drive_sync import DriveSync, payload
@@ -48,7 +48,7 @@ class App:
         ttk.Label(paper,textvariable=self.account,wraplength=1000).pack(anchor='w',pady=8)
         ttk.Label(paper,textvariable=self.refresh_info,wraplength=1000).pack(anchor='w',pady=4)
         ttk.Label(paper,textvariable=self.trade_info,wraplength=1000).pack(anchor='w',pady=4)
-        ttk.Label(paper,text='가상 $10,000 / 소수점 수량 / 일봉 다음 시가 체결 가정. 새 일봉만 처리하며 재시작해도 중복 처리하지 않습니다.').pack(anchor='w')
+        ttk.Label(paper,text='가상 $10,000 / 최초 시작은 조회 가격 모의체결, 이후 일봉 다음 시가 체결 가정. 새 일봉만 처리하며 재시작해도 중복 처리하지 않습니다.').pack(anchor='w')
         self.ledger=self.make_table(paper,('날짜','신호 비중','매매','수량','가격','수수료','평가금액'),(110,95,80,110,110,100,140))
         text=tk.Text(guide,wrap='word',font=('맑은 고딕',11),background='white');text.pack(fill='both',expand=True)
         text.insert('end','1. 종목을 입력하고 실제 데이터를 수집하거나 CSV를 가져옵니다.\n2. 전략 비교 실행을 누릅니다. 개발 50% / 검증 25% / 최종 보류 25%로 나눕니다.\n3. 검증 구간 Sharpe와 최소 회전량으로 후보를 정합니다. 최종 결과를 보고 다시 후보를 고르지 않습니다.\n4. 실제 다운로드 데이터에서는 후보를 고정해 일봉 모의 운영을 시작할 수 있습니다.\n5. 시작일 이후 새로 완료된 거래일만 가상 체결합니다. 첫날 거래가 없어도 정상입니다.\n6. 운영 중에는 5분마다 갱신합니다. PC와 앱이 켜져 있어야 합니다.\n\nCSV 열: date,open,high,low,close,volume. 최소 252행, 날짜 오름차순.\n실제 다운로드: Yahoo 데이터, 당일 봉 제외, 배당 미반영. 다운로드가 제한될 수 있습니다.\n출처 불명 CSV와 합성 데모로 실데이터 검증 통과를 표시하지 않습니다.\n각 종목은 별도 모의계좌이며 여러 계좌를 합산한 포트폴리오가 아닙니다.\n\n이 버전은 시세 기반 로컬 모의계좌입니다. 증권사 모의주문, 실시간 호가·부분 체결·공매도·실거래 기능은 없습니다.\n운영 중단은 갱신을 멈추며 보유분을 청산하지 않습니다. 중단 중 지난 일봉은 재개 때 순서대로 처리됩니다.\n과거 데이터가 수정되거나 주식 분할로 가격 기준이 바뀌면 계좌 처리를 멈춥니다.\n\n결과와 데이터는 workspace 폴더에 저장됩니다. 같은 최종 보류 구간을 반복해서 보며 전략을 수정하면 독립 검증이 아닙니다.\n실계좌 전환은 자동 승인하지 않습니다.')
@@ -109,13 +109,28 @@ class App:
     def start(self):
         if self.busy or self.running:return
         if self.source!='real_download' or not self.report:messagebox.showinfo('시작 조건','실제 데이터를 다운로드하고 전략 비교를 먼저 실행하세요.');return
-        try:
-            self.paper=Paper(WORK/'paper'/f'{self.symbol_used}.sqlite')
-            snap=self.paper.snapshot()
-            if not snap['active'] and hashlib.sha256(self.path.read_bytes()).hexdigest()!=self.report['data_sha256']:raise ValueError('데이터가 바뀌었습니다. 전략 비교를 다시 실행하세요.')
-            if not snap['active']:snap=self.paper.start(load(self.path),self.report['selected'],self.source)
-            self.last_success=None;self.refresh_info.set('운영 시작 · 첫 갱신 대기');self.running=True;self.show_account(snap);self.status.set('일봉 모의 운영 중 — 5분 간격 갱신');self.timer=self.root.after(100,self.auto)
-        except Exception as e:messagebox.showerror('모의계좌',str(e))
+        self.paper=Paper(WORK/'paper'/f'{self.symbol_used}.sqlite')
+        paper=self.paper;path=self.path;report=self.report;symbol=self.symbol_used
+        self.status.set('시작 시 가격 확인 중…')
+        def begin():
+            rows=load(path);snap=paper.snapshot()
+            if not snap['active']:
+                if hashlib.sha256(path.read_bytes()).hexdigest()!=report['data_sha256']:raise ValueError('데이터가 바뀌었습니다. 전략 비교를 다시 실행하세요.')
+                snap=paper.start(rows,report['selected'],self.source)
+            if not snap['config'].get('instant_entry_done'):
+                snap=paper.enter_now(rows,current_quote(symbol),symbol)
+            return snap
+        self.task(begin,self.started)
+    def started(self,snap):
+        self.last_success=None;self.refresh_info.set('시작 시 신호 확인 완료 · 첫 일봉 갱신 대기')
+        self.running=True;self.show_account(snap)
+        config=snap['config'];quote=config.get('instant_quote')
+        if quote:
+            session={'pre':'프리마켓','regular':'정규장','post':'애프터마켓'}[quote['session']]
+            stamp=datetime.datetime.fromtimestamp(quote['timestamp'],ZoneInfo('Asia/Seoul')).strftime('%m-%d %H:%M KST')
+            self.refresh_info.set(f'최초 시작 시 신호 {config["instant_signal"]:.0%} | {session} 조회 가격 ${quote["price"]:.2f} ({stamp}) | 실제 주문 없음 · 지연 가능')
+        self.status.set('일봉 모의 운영 중 — 시작 시 1회 신호 적용 완료 · 이후 5분 간격 일봉 갱신')
+        self.timer=self.root.after(100,self.auto)
     def update(self):
         if self.busy or not self.running or not self.paper:return
         symbol=self.symbol_used;path=self.path;paper=self.paper

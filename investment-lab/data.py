@@ -43,3 +43,30 @@ def download(symbol, destination, years=5):
               'adjustment':'provider OHLC, split convention; dividend excluded','real_market_data':True}
     destination.with_suffix('.metadata.json').write_text(json.dumps(metadata,indent=2),encoding='utf-8')
     return destination
+
+def current_quote(symbol):
+    """Latest available minute close, including pre/post; never calls it realtime."""
+    symbol=symbol_name(symbol)
+    req=Request(f'https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=1d&interval=1m&includePrePost=true',headers={'User-Agent':'Mozilla/5.0 InvestmentLab/0.1'})
+    try:
+        with urlopen(req,timeout=25) as response: raw=json.load(response)
+    except (HTTPError,URLError,TimeoutError) as e:raise RuntimeError('현재 가격 조회 실패. 즉시 모의체결하지 않았습니다.') from e
+    items=raw.get('chart',{}).get('result')
+    if not items:raise ValueError('현재 가격이 없습니다')
+    item=items[0];times=item.get('timestamp',[]);prices=item['indicators']['quote'][0].get('close',[])
+    points=[(t,p) for t,p in zip(times,prices) if p is not None]
+    if not points:raise ValueError('현재 가격이 없습니다')
+    t,p=points[-1];periods=item.get('meta',{}).get('currentTradingPeriod',{})
+    session=next((name for name in ('pre','regular','post') if periods.get(name,{}).get('start',0)<=t<periods.get(name,{}).get('end',0)),None)
+    quote={'symbol':symbol,'price':p,'timestamp':t,'session':session,'source':'Yahoo latest minute close','currency':item.get('meta',{}).get('currency')}
+    validate_quote(quote,symbol)
+    return quote
+
+def validate_quote(quote,symbol,now=None):
+    import math,time
+    now=time.time() if now is None else now
+    if quote.get('symbol')!=symbol or quote.get('currency')!='USD':raise ValueError('종목 또는 통화가 맞지 않습니다')
+    if not math.isfinite(quote['price']) or quote['price']<=0:raise ValueError('유효한 현재 가격이 없습니다')
+    if not 0<=now-quote['timestamp']<=1200 or quote.get('session') not in ('pre','regular','post'):
+        raise ValueError('가격이 20분 이상 오래됐거나 거래 세션을 확인할 수 없습니다. 즉시 모의체결하지 않습니다.')
+    return quote
