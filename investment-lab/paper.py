@@ -1,5 +1,6 @@
 """Local next-open forward simulation, never sends broker orders."""
 import json, sqlite3, math
+from contextlib import contextmanager
 from pathlib import Path
 from research import candidates
 
@@ -8,7 +9,14 @@ class Paper:
         self.path=Path(path);self.path.parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as db:
             db.executescript('CREATE TABLE IF NOT EXISTS account(id INTEGER PRIMARY KEY CHECK(id=1),config TEXT,cash REAL,qty REAL,last_date TEXT,mark REAL); CREATE TABLE IF NOT EXISTS ledger(day TEXT PRIMARY KEY,signal REAL,side TEXT,qty REAL,price REAL,cost REAL,equity REAL);')
-    def connect(self): return sqlite3.connect(self.path,timeout=10)
+    @contextmanager
+    def connect(self):
+        db=sqlite3.connect(self.path,timeout=10)
+        try:
+            with db:
+                yield db
+        finally:
+            db.close()
     def start(self,rows,strategy,source,fee=.001,slippage=.001,cash=10000):
         if strategy not in candidates(rows): raise ValueError('Unknown strategy')
         if source!='real_download': raise ValueError('모의 운영은 실제 다운로드 데이터에서만 시작할 수 있습니다')

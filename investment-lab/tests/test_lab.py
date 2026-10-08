@@ -37,4 +37,19 @@ class Tests(unittest.TestCase):
     def test_symbol(self):
         self.assertEqual(symbol_name('spy'),'SPY')
         with self.assertRaises(ValueError):symbol_name('../secret')
+@unittest.skipUnless(sys.platform=='win32','Windows GUI launch check')
+class GuiSmoke(unittest.TestCase):
+    def test_launch_and_demo_report(self):
+        import tkinter as tk
+        from app import App
+        root=tk.Tk()
+        try:
+            app=App(root);app.demo()
+            with tempfile.TemporaryDirectory() as d:
+                report=run(app.path,d,'synthetic');app.show_report(report)
+            root.update_idletasks()
+            self.assertEqual(len(app.table.get_children()),len(report['results']))
+            self.assertIn('합성 데모',app.status.get())
+        finally:
+            root.destroy()
 if __name__=='__main__':unittest.main()
