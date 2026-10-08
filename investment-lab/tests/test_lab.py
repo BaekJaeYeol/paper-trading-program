@@ -52,4 +52,21 @@ class GuiSmoke(unittest.TestCase):
             self.assertIn('합성 데모',app.status.get())
         finally:
             root.destroy()
+    def test_refresh_status_and_trade_display(self):
+        import tkinter as tk
+        from app import App
+        root=tk.Tk()
+        try:
+            app=App(root);app.symbol_used='SPY';app.running=True
+            snap={'active':True,'config':{'strategy':'trend'},'cash':10000,'qty':0,'equity':10000,'last_date':'2026-10-07','ledger':[],'latest_trade':None}
+            app.refreshed((snap,0));root.update_idletasks()
+            self.assertIn('새 데이터 없음',app.refresh_info.get())
+            self.assertIn('KST',app.refresh_info.get());self.assertIn('SPY',app.account.get())
+            self.assertIn('기록 없음',app.trade_info.get())
+            trade=('2026-10-08',1,'buy',2,100,0.2,10000)
+            snap.update(qty=2,latest_trade=trade,ledger=[trade],last_date='2026-10-08')
+            app.refreshed((snap,1));self.assertIn('새 일봉 1개',app.refresh_info.get())
+            self.assertIn('모의 매수',app.trade_info.get());self.assertIn('SPY 2.0000주',app.trade_info.get())
+            app.stop();app.refreshed((snap,0));self.assertIn('중단',app.status.get())
+        finally:root.destroy()
 if __name__=='__main__':unittest.main()

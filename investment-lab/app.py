@@ -6,6 +6,7 @@ from data import download, symbol_name
 from research import run
 from paper import Paper
 from drive_sync import DriveSync, payload
+from zoneinfo import ZoneInfo
 
 ROOT=Path(__file__).resolve().parent
 WORK=ROOT/'workspace';WORK.mkdir(exist_ok=True)
@@ -16,6 +17,7 @@ class App:
         self.root=root;root.title('투자랩 — 과거 검증 · 일봉 모의투자');root.geometry('1120x760');root.minsize(900,650)
         self.timer=None;self.events=queue.Queue();self.busy=False;self.running=False;self.path=None;self.source=None;self.report=None;self.paper=None;self.symbol_used=None
         self.sync=DriveSync(WORK);self.sync_status=tk.StringVar(value='자동 저장 꺼짐');self.sync_enabled=tk.BooleanVar(value=self.sync.settings['enabled']);self.sync_folder=tk.StringVar(value=self.sync.settings['folder'])
+        self.refresh_info=tk.StringVar(value='아직 갱신하지 않았습니다');self.trade_info=tk.StringVar(value='모의 매수·매도 기록 없음');self.last_success=None;self.refreshing=False
         self.symbol=tk.StringVar(value='SPY');self.status=tk.StringVar(value='검증 대기 — 실제 데이터 또는 CSV를 선택하세요');self.account=tk.StringVar(value='모의계좌 미시작')
         style=ttk.Style();style.theme_use('clam');style.configure('TFrame',background='#f5f7fb');style.configure('TLabel',background='#f5f7fb',font=('맑은 고딕',10));style.configure('Title.TLabel',font=('맑은 고딕',22,'bold'));style.configure('Treeview',rowheight=27)
         main=ttk.Frame(root,padding=24);main.pack(fill='both',expand=True)
@@ -43,7 +45,9 @@ class App:
         control=ttk.Frame(paper);control.pack(fill='x')
         for text,fn in [('선정 후보로 시작 / 재개',self.start),('지금 갱신',self.update),('운영 중단',self.stop)]:
             b=ttk.Button(control,text=text,command=fn);b.pack(side='left',padx=4)
-        ttk.Label(paper,textvariable=self.account).pack(anchor='w',pady=12)
+        ttk.Label(paper,textvariable=self.account,wraplength=1000).pack(anchor='w',pady=8)
+        ttk.Label(paper,textvariable=self.refresh_info,wraplength=1000).pack(anchor='w',pady=4)
+        ttk.Label(paper,textvariable=self.trade_info,wraplength=1000).pack(anchor='w',pady=4)
         ttk.Label(paper,text='가상 $10,000 / 소수점 수량 / 일봉 다음 시가 체결 가정. 새 일봉만 처리하며 재시작해도 중복 처리하지 않습니다.').pack(anchor='w')
         self.ledger=self.make_table(paper,('날짜','신호 비중','매매','수량','가격','수수료','평가금액'),(110,95,80,110,110,100,140))
         text=tk.Text(guide,wrap='word',font=('맑은 고딕',11),background='white');text.pack(fill='both',expand=True)
@@ -66,7 +70,10 @@ class App:
         try:
             kind,result,done=self.events.get_nowait();self.busy=False
             for b in self.buttons:b.config(state='normal')
-            if kind=='error':self.stop();self.status.set('작업 중단: '+result);messagebox.showerror('작업 확인',result)
+            if kind=='error':
+                if self.refreshing:
+                    self.refreshing=False;self.refresh_info.set('갱신 실패 '+self.now_text()+' | 최근 성공: '+(self.last_success or '없음')+' | '+result)
+                self.stop();self.status.set('작업 중단: '+result);messagebox.showerror('작업 확인',result)
             else:done(result)
         except queue.Empty:pass
         self.root.after(100,self.poll)
@@ -107,20 +114,39 @@ class App:
             snap=self.paper.snapshot()
             if not snap['active'] and hashlib.sha256(self.path.read_bytes()).hexdigest()!=self.report['data_sha256']:raise ValueError('데이터가 바뀌었습니다. 전략 비교를 다시 실행하세요.')
             if not snap['active']:snap=self.paper.start(load(self.path),self.report['selected'],self.source)
-            self.running=True;self.show_account(snap);self.status.set('일봉 모의 운영 중 — 5분 간격 갱신');self.timer=self.root.after(100,self.auto)
+            self.last_success=None;self.refresh_info.set('운영 시작 · 첫 갱신 대기');self.running=True;self.show_account(snap);self.status.set('일봉 모의 운영 중 — 5분 간격 갱신');self.timer=self.root.after(100,self.auto)
         except Exception as e:messagebox.showerror('모의계좌',str(e))
     def update(self):
         if self.busy or not self.running or not self.paper:return
         symbol=self.symbol_used;path=self.path;paper=self.paper
-        self.task(lambda:paper.advance(load(download(symbol,path))),self.show_account)
+        self.refreshing=True;self.refresh_info.set('데이터 확인 중… | 최근 성공: '+(self.last_success or '없음'))
+        def refresh():
+            before=paper.snapshot()['last_date']
+            rows=load(download(symbol,path))
+            snap=paper.advance(rows)
+            return snap,sum(r[0]>before for r in rows)
+        self.task(refresh,self.refreshed)
+    def now_text(self):
+        return datetime.datetime.now(ZoneInfo('Asia/Seoul')).strftime('%Y-%m-%d %H:%M:%S KST')
+    def refreshed(self,result):
+        self.refreshing=False;s,count=result;self.last_success=self.now_text()
+        detail=f'새 일봉 {count}개 처리' if count else '새 데이터 없음 · 완료된 새 일봉 대기'
+        self.refresh_info.set(f'최근 갱신 성공: {self.last_success} | {detail} | 최신 처리일: {s["last_date"]}')
+        self.show_account(s)
+        if self.running:self.status.set('일봉 모의 운영 중 — 5분 간격 갱신')
     def auto(self):
         if not self.running:return
         self.update();self.timer=self.root.after(300000,self.auto)
     def show_account(self,s):
-        self.account.set(f"고정 전략: {s['config']['strategy']} | 현금 ${s['cash']:,.2f} | 수량 {s['qty']:.4f} | 평가 ${s['equity']:,.2f} | 마지막 처리 {s['last_date']}")
+        self.account.set(f"종목: {self.symbol_used} | 고정 전략: {s['config']['strategy']} | 현금 ${s['cash']:,.2f} | 보유: {self.symbol_used} {s['qty']:.4f}주 | 평가 ${s['equity']:,.2f} | 마지막 처리 {s['last_date']}")
+        trade=s.get('latest_trade')
+        if trade:
+            day,signal,side,qty,price,cost,equity=trade
+            self.trade_info.set(f'최근 모의 {"매수" if side=="buy" else "매도"}: {day} | {self.symbol_used} {qty:.4f}주 | 체결 가정 ${price:.2f} | 수수료 ${cost:.2f}')
+        else:self.trade_info.set(f'모의 매수·매도 기록 없음 | {self.symbol_used} 보유 {s["qty"]:.4f}주 | 시작 이후 새 일봉과 전략 신호에 따라 처리')
         self.ledger.delete(*self.ledger.get_children())
         for day,signal,side,qty,price,cost,equity in s['ledger']:
-            self.ledger.insert('','end',values=(day,f'{signal:.0%}',side,f'{qty:.4f}',f'{price:.2f}',f'{cost:.2f}',f'{equity:.2f}'))
+            self.ledger.insert('','end',values=(day,f'{signal:.0%}',{'buy':'모의 매수','sell':'모의 매도','hold':'유지'}[side],f'{qty:.4f}',f'{price:.2f}',f'{cost:.2f}',f'{equity:.2f}'))
         self.sync_results()
     def choose_sync_folder(self):
         if self.busy:return
