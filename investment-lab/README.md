@@ -31,7 +31,7 @@ Windows Python 3.11+용 데스크톱 연구 프로그램입니다. 실제 과거
 
 ## 검증 상태
 
-2026-10-08: 핵심 테스트 7개 통과, 전체 Python 구문 검증 완료, 공개 과거 표본으로 실행 완료. Yahoo 신규 다운로드는 이 실행 환경에서 HTTP 429로 검증하지 못했습니다. Windows GUI 직접 마우스/키보드 검증과 장기간 모의 운영은 아직 미완료입니다. 현재 그래픽 디스플레이가 없어 GUI를 실제 실행 검증하지 못했습니다.
+2026-10-08: 로컬 핵심 테스트 7개 통과. Windows Server 2025 / Python 3.12 CI에서 GUI 초기 실행·합성 결과 표 표시를 포함한 8개 테스트 모두 통과. SQLite 연결 종료 문제를 수정했습니다. 전체 Python 구문 검사와 공개 과거 표본 실행 완료. Yahoo 신규 다운로드는 이 실행 환경에서 HTTP 429로 검증하지 못했습니다. Windows GUI 직접 마우스/키보드 조작과 장기간 모의 운영은 아직 미완료입니다. CI 실행: https://github.com/BaekJaeYeol/paper-trading-program/actions/runs/37714372758
 
 ```powershell
 py -3 -m unittest discover -s tests -v
