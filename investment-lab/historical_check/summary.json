@@ -1,0 +1,555 @@
+{
+  "source": "historical_github_sample",
+  "data_sha256": "59ef3af3fbf61c670a61277ffc8dcf0cb0ebf4e270a093c57b61fcbe701f34d0",
+  "first_date": "2004-08-19",
+  "last_date": "2013-03-01",
+  "selected": "trend",
+  "fee": 0.001,
+  "slippage": 0.001,
+  "selection": "validation Sharpe with turnover >=4; no holdout selection",
+  "holdout_start": "2011-02-02",
+  "status": "과거 공개 표본 검증",
+  "live_ready": false,
+  "results": [
+    {
+      "fold": "development",
+      "strategy": "cash",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "buy_hold",
+      "return": 0.8438630991410319,
+      "max_drawdown": 0.652947599724991,
+      "sharpe_rf0": 0.5751047460573715,
+      "turnover": 2.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend",
+      "return": 0.6313462493441926,
+      "max_drawdown": 0.3854759727385554,
+      "sharpe_rf0": 0.6083049615449796,
+      "turnover": 20.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum",
+      "return": 0.8002919975688616,
+      "max_drawdown": 0.3275249274500911,
+      "sharpe_rf0": 0.7008894676495694,
+      "turnover": 56.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "breakout",
+      "return": 0.30456314078023294,
+      "max_drawdown": 0.11524817952746202,
+      "sharpe_rf0": 0.6001093318508114,
+      "turnover": 152.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "reversion",
+      "return": -0.09602202375147584,
+      "max_drawdown": 0.29986790118691686,
+      "sharpe_rf0": -0.002924523919382427,
+      "turnover": 110.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "volume_filter",
+      "return": 0.09904974796128996,
+      "max_drawdown": 0.022777862088589673,
+      "sharpe_rf0": 0.6525966201624454,
+      "turnover": 10.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend AND momentum",
+      "return": 0.3740824491027104,
+      "max_drawdown": 0.3647343524739036,
+      "sharpe_rf0": 0.447425804756377,
+      "turnover": 36.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend + momentum",
+      "return": 0.7301545121551154,
+      "max_drawdown": 0.33488872292000704,
+      "sharpe_rf0": 0.6759254003283269,
+      "turnover": 37.46171553864762,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend AND breakout",
+      "return": 0.3304918858431145,
+      "max_drawdown": 0.1247504153740282,
+      "sharpe_rf0": 0.7168159664608355,
+      "turnover": 104.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend + breakout",
+      "return": 0.5012239955868978,
+      "max_drawdown": 0.24228320981363238,
+      "sharpe_rf0": 0.7158969696179696,
+      "turnover": 87.48922195089314,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend AND reversion",
+      "return": -0.05062113536054025,
+      "max_drawdown": 0.20747001904636042,
+      "sharpe_rf0": -0.07276946720331375,
+      "turnover": 56.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend + reversion",
+      "return": 0.277242646947355,
+      "max_drawdown": 0.2559936282291265,
+      "sharpe_rf0": 0.41958404950492684,
+      "turnover": 64.57071297391921,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend AND volume_filter",
+      "return": 0.04191038449404383,
+      "max_drawdown": 0.022777862088589673,
+      "sharpe_rf0": 0.3387818267544598,
+      "turnover": 8.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "trend + volume_filter",
+      "return": 0.3794611873108853,
+      "max_drawdown": 0.18734828431736783,
+      "sharpe_rf0": 0.6837924549399034,
+      "turnover": 17.225797530418063,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum AND breakout",
+      "return": 0.515697390016272,
+      "max_drawdown": 0.11524817952746202,
+      "sharpe_rf0": 0.946581105815705,
+      "turnover": 116.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum + breakout",
+      "return": 0.5755412425197863,
+      "max_drawdown": 0.209798226900474,
+      "sharpe_rf0": 0.7738672691958922,
+      "turnover": 104.3359827522023,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum AND reversion",
+      "return": -0.037269144621501216,
+      "max_drawdown": 0.18306073354027075,
+      "sharpe_rf0": -0.06435895728011828,
+      "turnover": 60.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum + reversion",
+      "return": 0.36256232393932697,
+      "max_drawdown": 0.22489165775690367,
+      "sharpe_rf0": 0.5124051423692615,
+      "turnover": 76.83284140120871,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum AND volume_filter",
+      "return": 0.04191038449404383,
+      "max_drawdown": 0.022777862088589673,
+      "sharpe_rf0": 0.3387818267544598,
+      "turnover": 8.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "momentum + volume_filter",
+      "return": 0.449965494173471,
+      "max_drawdown": 0.15160229192363284,
+      "sharpe_rf0": 0.7725443990015161,
+      "turnover": 35.22167932329123,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "breakout AND reversion",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "breakout + reversion",
+      "return": 0.1206720729328341,
+      "max_drawdown": 0.17572633454916475,
+      "sharpe_rf0": 0.28239677038567984,
+      "turnover": 132.421827261596,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "breakout AND volume_filter",
+      "return": -0.0016751013155976713,
+      "max_drawdown": 0.022777862088589673,
+      "sharpe_rf0": -0.018520935588506246,
+      "turnover": 2.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "breakout + volume_filter",
+      "return": 0.2076722349639255,
+      "max_drawdown": 0.05942885186609492,
+      "sharpe_rf0": 0.7527259571641489,
+      "turnover": 81.24325525983298,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "reversion AND volume_filter",
+      "return": 0.09906598508194353,
+      "max_drawdown": 0.022629935454037353,
+      "sharpe_rf0": 0.7241035780402135,
+      "turnover": 6.0,
+      "days": 1043
+    },
+    {
+      "fold": "development",
+      "strategy": "reversion + volume_filter",
+      "return": 0.019902471320672355,
+      "max_drawdown": 0.14491014707361827,
+      "sharpe_rf0": 0.098084328118569,
+      "turnover": 61.17196218516109,
+      "days": 1043
+    },
+    {
+      "fold": "validation",
+      "strategy": "cash",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "buy_hold",
+      "return": 0.8536741111111135,
+      "max_drawdown": 0.3042361388113277,
+      "sharpe_rf0": 1.184351875263526,
+      "turnover": 2.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend",
+      "return": 0.4795029177524812,
+      "max_drawdown": 0.3302010057271201,
+      "sharpe_rf0": 0.9183802359512706,
+      "turnover": 12.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum",
+      "return": 0.2727243617071491,
+      "max_drawdown": 0.31973369201181834,
+      "sharpe_rf0": 0.6272068608510469,
+      "turnover": 26.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "breakout",
+      "return": -0.01218192377307048,
+      "max_drawdown": 0.17188778325487641,
+      "sharpe_rf0": 0.02462806602179945,
+      "turnover": 98.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "reversion",
+      "return": -0.15832126472237573,
+      "max_drawdown": 0.26876694577155835,
+      "sharpe_rf0": -0.48131331306117375,
+      "turnover": 40.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "volume_filter",
+      "return": -0.020163490985068866,
+      "max_drawdown": 0.03925985784321906,
+      "sharpe_rf0": -0.40202560824421857,
+      "turnover": 8.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend AND momentum",
+      "return": 0.1349883662271114,
+      "max_drawdown": 0.32030047194834277,
+      "sharpe_rf0": 0.38967406910134067,
+      "turnover": 28.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend + momentum",
+      "return": 0.3758642364295093,
+      "max_drawdown": 0.3246854464123359,
+      "sharpe_rf0": 0.7971732625463853,
+      "turnover": 19.15280286380232,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend AND breakout",
+      "return": -0.018471843120917653,
+      "max_drawdown": 0.17418314648360989,
+      "sharpe_rf0": -0.004707782310709452,
+      "turnover": 86.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend + breakout",
+      "return": 0.22223355268271816,
+      "max_drawdown": 0.21752760081000433,
+      "sharpe_rf0": 0.6665448784130769,
+      "turnover": 54.605776486086434,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend AND reversion",
+      "return": -0.20559698994255116,
+      "max_drawdown": 0.2886023122297223,
+      "sharpe_rf0": -0.8459184148551266,
+      "turnover": 24.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend + reversion",
+      "return": 0.1274224877147383,
+      "max_drawdown": 0.2621746190494565,
+      "sharpe_rf0": 0.43548272547699984,
+      "turnover": 27.0185878053962,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend AND volume_filter",
+      "return": -0.020163490985068866,
+      "max_drawdown": 0.03925985784321906,
+      "sharpe_rf0": -0.40202560824421857,
+      "turnover": 8.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "trend + volume_filter",
+      "return": 0.2170022623080754,
+      "max_drawdown": 0.18718674282501968,
+      "sharpe_rf0": 0.8547114272225967,
+      "turnover": 11.075489860334171,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum AND breakout",
+      "return": -0.0005639025520491892,
+      "max_drawdown": 0.16618353567681532,
+      "sharpe_rf0": 0.06429428565152855,
+      "turnover": 88.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum + breakout",
+      "return": 0.13463120008811114,
+      "max_drawdown": 0.21169845823126765,
+      "sharpe_rf0": 0.4535605256233971,
+      "turnover": 60.36758073149442,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum AND reversion",
+      "return": -0.25028319494661655,
+      "max_drawdown": 0.32305979830637976,
+      "sharpe_rf0": -1.2557668492783038,
+      "turnover": 26.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum + reversion",
+      "return": 0.05442879233084352,
+      "max_drawdown": 0.25348896319643077,
+      "sharpe_rf0": 0.24266750512779883,
+      "turnover": 30.010551660947915,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum AND volume_filter",
+      "return": -0.022958795103512175,
+      "max_drawdown": 0.03925985784321906,
+      "sharpe_rf0": -0.4795497471128009,
+      "turnover": 4.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "momentum + volume_filter",
+      "return": 0.13273475246568123,
+      "max_drawdown": 0.1794648943054502,
+      "sharpe_rf0": 0.5832374217966921,
+      "turnover": 15.90843226519776,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "breakout AND reversion",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "breakout + reversion",
+      "return": -0.07939649476147592,
+      "max_drawdown": 0.17455132568913456,
+      "sharpe_rf0": -0.3428104901260297,
+      "turnover": 68.46720699052513,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "breakout AND volume_filter",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "breakout + volume_filter",
+      "return": -0.009794514033540258,
+      "max_drawdown": 0.09370950825200985,
+      "sharpe_rf0": -0.03366545646564835,
+      "turnover": 52.1166823805755,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "reversion AND volume_filter",
+      "return": 0.0058415247015943805,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0.7509976036411748,
+      "turnover": 2.0,
+      "days": 522
+    },
+    {
+      "fold": "validation",
+      "strategy": "reversion + volume_filter",
+      "return": -0.08682970251691957,
+      "max_drawdown": 0.1479129952650089,
+      "sharpe_rf0": -0.5462888201890661,
+      "turnover": 23.361456854862833,
+      "days": 522
+    },
+    {
+      "fold": "holdout",
+      "strategy": "cash",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 522
+    },
+    {
+      "fold": "holdout_double_cost",
+      "strategy": "cash",
+      "return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe_rf0": 0,
+      "turnover": 0.0,
+      "days": 522
+    },
+    {
+      "fold": "holdout",
+      "strategy": "buy_hold",
+      "return": 0.31418734003273596,
+      "max_drawdown": 0.24631792788217344,
+      "sharpe_rf0": 0.6330591552304798,
+      "turnover": 2.0,
+      "days": 522
+    },
+    {
+      "fold": "holdout_double_cost",
+      "strategy": "buy_hold",
+      "return": 0.30892533394435095,
+      "max_drawdown": 0.24631792788217366,
+      "sharpe_rf0": 0.625686940814506,
+      "turnover": 2.0,
+      "days": 522
+    },
+    {
+      "fold": "holdout",
+      "strategy": "trend",
+      "return": -0.06763883050774844,
+      "max_drawdown": 0.2618361110993691,
+      "sharpe_rf0": -0.08776636447940724,
+      "turnover": 12.0,
+      "days": 522
+    },
+    {
+      "fold": "holdout_double_cost",
+      "strategy": "trend",
+      "return": -0.08981485413503243,
+      "max_drawdown": 0.2647917192986695,
+      "sharpe_rf0": -0.1500372375682102,
+      "turnover": 12.0,
+      "days": 522
+    }
+  ]
+}
