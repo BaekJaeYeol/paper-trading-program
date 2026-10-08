@@ -54,10 +54,10 @@ class Paper:
                 db.execute('INSERT INTO ledger VALUES(?,?,?,?,?,?,?)',(last,target,side,abs(delta),price,cost,cash+qty*mark))
             db.execute('UPDATE account SET cash=?,qty=?,last_date=?,mark=? WHERE id=1',(cash,qty,last,mark))
         return self.snapshot()
-    def snapshot(self):
+    def snapshot(self, full=False):
         with self.connect() as db:
             row=db.execute('SELECT config,cash,qty,last_date,mark FROM account').fetchone()
-            records=db.execute('SELECT * FROM ledger ORDER BY day DESC LIMIT 100').fetchall()
+            records=db.execute('SELECT * FROM ledger ORDER BY day DESC'+('' if full else ' LIMIT 100')).fetchall()
         if not row: return {'active':False,'ledger':[]}
         config,cash,qty,last,mark=row
         return {'active':True,'config':json.loads(config),'cash':cash,'qty':qty,'last_date':last,'equity':cash+qty*mark,'ledger':records}

@@ -5,6 +5,7 @@ from engine import load
 from data import download, symbol_name
 from research import run
 from paper import Paper
+from drive_sync import DriveSync, payload
 
 ROOT=Path(__file__).resolve().parent
 WORK=ROOT/'workspace';WORK.mkdir(exist_ok=True)
@@ -14,6 +15,7 @@ class App:
     def __init__(self,root):
         self.root=root;root.title('투자랩 — 과거 검증 · 일봉 모의투자');root.geometry('1120x760');root.minsize(900,650)
         self.timer=None;self.events=queue.Queue();self.busy=False;self.running=False;self.path=None;self.source=None;self.report=None;self.paper=None;self.symbol_used=None
+        self.sync=DriveSync(WORK);self.sync_status=tk.StringVar(value='자동 저장 꺼짐');self.sync_enabled=tk.BooleanVar(value=self.sync.settings['enabled']);self.sync_folder=tk.StringVar(value=self.sync.settings['folder'])
         self.symbol=tk.StringVar(value='SPY');self.status=tk.StringVar(value='검증 대기 — 실제 데이터 또는 CSV를 선택하세요');self.account=tk.StringVar(value='모의계좌 미시작')
         style=ttk.Style();style.theme_use('clam');style.configure('TFrame',background='#f5f7fb');style.configure('TLabel',background='#f5f7fb',font=('맑은 고딕',10));style.configure('Title.TLabel',font=('맑은 고딕',22,'bold'));style.configure('Treeview',rowheight=27)
         main=ttk.Frame(root,padding=24);main.pack(fill='both',expand=True)
@@ -28,6 +30,14 @@ class App:
         tabs=ttk.Notebook(main);tabs.pack(fill='both',expand=True)
         compare=ttk.Frame(tabs,padding=12);paper=ttk.Frame(tabs,padding=12);guide=ttk.Frame(tabs,padding=12)
         tabs.add(compare,text='전략 비교');tabs.add(paper,text='모의계좌 · 거래 기록');tabs.add(guide,text='사용 안내')
+        sync_tab=ttk.Frame(tabs,padding=16);tabs.add(sync_tab,text='Google Drive 자동 저장')
+        ttk.Label(sync_tab,text='Google Drive 데스크톱 앱의 내 드라이브에 결과 폴더를 만든 뒤 선택하세요.',wraplength=900).pack(anchor='w',pady=8)
+        ttk.Label(sync_tab,textvariable=self.sync_folder,wraplength=900).pack(anchor='w',pady=8)
+        ttk.Button(sync_tab,text='동기화 폴더 선택',command=self.choose_sync_folder).pack(anchor='w')
+        ttk.Checkbutton(sync_tab,text='검증 완료 · 모의계좌 갱신 후 자동 저장',variable=self.sync_enabled,command=self.configure_sync).pack(anchor='w',pady=12)
+        ttk.Button(sync_tab,text='현재 결과 저장 / 대기 건 재시도',command=self.sync_results).pack(anchor='w')
+        ttk.Label(sync_tab,textvariable=self.sync_status,wraplength=900).pack(anchor='w',pady=16)
+        ttk.Label(sync_tab,text='전략 성과와 모의계좌 전체 거래 기록을 JSON으로 저장합니다. 원본 시세·인증 정보는 전송하지 않습니다.\nDrive 로그인과 동기화는 데스크톱 앱이 담당합니다. 업로드 완료 여부는 Drive에서 확인하세요.\n이 기능은 ChatGPT의 자동 분석을 시작하지 않습니다.',wraplength=900).pack(anchor='w')
         ttk.Label(compare,text='개발·검증 구간의 모든 후보와 마지막 구간의 선정 후보를 표시합니다. 비용: 수수료 0.1% + 슬리피지 0.1% (편도)').pack(anchor='w',pady=6)
         self.table=self.make_table(compare,('구간','전략','수익률','최대 낙폭','Sharpe','회전량'),(140,300,100,100,90,90))
         control=ttk.Frame(paper);control.pack(fill='x')
@@ -61,7 +71,7 @@ class App:
         except queue.Empty:pass
         self.root.after(100,self.poll)
     def set_data(self,path,source,symbol=None):
-        self.path=Path(path);self.source=source;self.symbol_used=symbol;self.report=None
+        self.path=Path(path);self.source=source;self.symbol_used=symbol;self.report=None;self.paper=None
         rows=load(path);self.status.set(f'{source} | {len(rows):,}일 | {rows[0][0]} ~ {rows[-1][0]} | 전략 비교를 실행하세요')
     def collect(self):
         if self.running:messagebox.showinfo('운영 중','중단한 뒤 새 데이터를 선택하세요.');return
@@ -88,6 +98,7 @@ class App:
         for x in r['results']:
             self.table.insert('', 'end',values=(x['fold'],x['strategy'],f"{x['return']:.2%}",f"{x['max_drawdown']:.2%}",f"{x['sharpe_rf0']:.2f}",f"{x['turnover']:.1f}"))
         self.status.set(f"{r['status']} | 선정 후보: {r['selected']} | 실거래 적합 판정은 미완료")
+        self.sync_results()
     def start(self):
         if self.busy or self.running:return
         if self.source!='real_download' or not self.report:messagebox.showinfo('시작 조건','실제 데이터를 다운로드하고 전략 비교를 먼저 실행하세요.');return
@@ -110,6 +121,32 @@ class App:
         self.ledger.delete(*self.ledger.get_children())
         for day,signal,side,qty,price,cost,equity in s['ledger']:
             self.ledger.insert('','end',values=(day,f'{signal:.0%}',side,f'{qty:.4f}',f'{price:.2f}',f'{cost:.2f}',f'{equity:.2f}'))
+        self.sync_results()
+    def choose_sync_folder(self):
+        if self.busy:return
+        folder=filedialog.askdirectory(title='Google Drive 내 드라이브 결과 폴더 선택')
+        if folder:self.sync_folder.set(folder);self.configure_sync()
+    def configure_sync(self):
+        if self.busy:
+            self.sync_enabled.set(self.sync.settings['enabled']);return
+        try:
+            self.sync.configure(self.sync_folder.get(),self.sync_enabled.get());self.sync_results()
+        except Exception as e:
+            self.sync_enabled.set(self.sync.settings['enabled']);messagebox.showerror('Drive 설정',str(e))
+    def sync_results(self):
+        if self.busy:return
+        if not self.sync.settings['enabled']:
+            self.sync_status.set('자동 저장 꺼짐');return
+        report=self.report;paper=self.paper;symbol=self.symbol_used
+        self.sync_status.set('동기화 폴더 저장 중…')
+        def export():
+            try:
+                account=paper.snapshot(full=True) if paper else None
+                value=payload(report,account,symbol) if report or account else None
+                return self.sync.export(value)
+            except Exception:
+                return '자동 저장 오류 · 모의 운영은 계속됩니다. 폴더와 디스크 공간을 확인하세요.'
+        self.task(export,self.sync_status.set)
     def stop(self):
         self.running=False
         if self.timer:
