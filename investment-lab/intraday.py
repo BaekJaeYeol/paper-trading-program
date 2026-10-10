@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 from data import symbol_name
 from engine import evaluate
 from paper import Paper
+from comparison import report as comparison_report
 from reliability import session_bounds, freshness, update_v2, dashboard
 
 NY=ZoneInfo('America/New_York')
@@ -112,6 +113,8 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
     old_status=json.loads((state/'status.json').read_text()) if (state/'status.json').exists() else {'symbols':{}}
     now=time.time() if now is None else now
     status=dict(checked_utc=dt.datetime.fromtimestamp(now,dt.timezone.utc).isoformat(),interval='15m',real_orders=False,symbols={})
+    blocked=(state/'emergency-stop.json').exists()
+    status['emergency_stop']=blocked
     for symbol in symbols:
         try:
             rows=downloader(symbol);ss=intraday_candidates(rows)
@@ -156,7 +159,10 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                     (stage/'digest.txt').write_text(digest)
                 (stage/'bars.json').write_text(json.dumps(rows),encoding='utf-8')
                 (stage/'accounts.json').write_text(json.dumps(accounts,ensure_ascii=False,indent=2),encoding='utf-8')
-                update_v2(stage,rows,ss,now)
+                if not (stage/'comparison.json').exists() or (stage/'comparison-digest.txt').read_text()!=digest:
+                    (stage/'comparison.json').write_text(json.dumps(comparison_report(rows,ss),ensure_ascii=False,indent=2),encoding='utf-8')
+                    (stage/'comparison-digest.txt').write_text(digest)
+                update_v2(stage,rows,ss,now,blocked)
                 publish_directory(stage,previous)
                 status['symbols'][symbol]=dict(status='ok',last_completed_bar_start_utc=rows[-1][0],
                                                accounts=len(accounts),new_bars=new_bars,new_trades=trades,
@@ -169,6 +175,9 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
     return status
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--state',required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--state',required=True);parser.add_argument('--halt',action='store_true');args=parser.parse_args()
+    if args.halt:
+        Path(args.state).mkdir(parents=True,exist_ok=True)
+        (Path(args.state)/'emergency-stop.json').write_text(json.dumps({'halted':True,'reason':'user request','utc':dt.datetime.now(dt.timezone.utc).isoformat()}))
     result=tick(args.state)
     if any(r['status']=='error' for r in result['symbols'].values()):raise SystemExit(1)
