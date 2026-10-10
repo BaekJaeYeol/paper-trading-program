@@ -1,6 +1,6 @@
 # 모의투자 운영 현황
 
-최근 확인: 2026-10-10T06:43:09.251885+00:00 (UTC)
+최근 확인: 2026-10-10T07:10:41.419106+00:00 (UTC)
 다음 예약: 2026-10-12T00:07:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
@@ -8,10 +8,10 @@ v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적�
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | new accounts waiting for next completed bar | 2026-10-10T06:43:09.251885+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
-| QQQ | new accounts waiting for next completed bar | 2026-10-10T06:43:09.251885+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
-| IWM | new accounts waiting for next completed bar | 2026-10-10T06:43:09.251885+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
-| DIA | new accounts waiting for next completed bar | 2026-10-10T06:43:09.251885+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
+| SPY | new accounts waiting for next completed bar | 2026-10-10T07:10:41.419106+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
+| QQQ | new accounts waiting for next completed bar | 2026-10-10T07:10:41.419106+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
+| IWM | new accounts waiting for next completed bar | 2026-10-10T07:10:41.419106+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
+| DIA | new accounts waiting for next completed bar | 2026-10-10T07:10:41.419106+00:00 | 2026-10-09T19:45:00+00:00 | 0 |
 
 [공정 비교·복구 검증 설명](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/comparison-orders.md)
 
