@@ -5,7 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from intraday import decode_bars,intraday_candidates,tick,NY
+from intraday import decode_bars,intraday_candidates,tick as actual_tick,NY
+
+def tick(*args):
+    return actual_tick(*args,now=dt.datetime(2026,10,9,19,59,tzinfo=dt.timezone.utc).timestamp())
 
 def rows(count=130):
     result=[]

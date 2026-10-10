@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 from data import symbol_name
 from engine import evaluate
 from paper import Paper
+from reliability import session_bounds, freshness, update_v2, dashboard
 
 NY=ZoneInfo('America/New_York')
 INTERVAL=900
@@ -31,7 +32,8 @@ def decode_bars(raw, symbol, now=None):
         local=dt.datetime.fromtimestamp(t,NY)
         minute=local.hour*60+local.minute
         # Only complete regular-session bars; omit incomplete/current or partial close bars.
-        if local.weekday()>4 or not 570<=minute<=945 or (minute-570)%15 or local.second or t+INTERVAL>now:continue
+        bounds=session_bounds(local.date())
+        if not bounds or t<bounds[0] or t+INTERVAL>bounds[1] or (t-bounds[0])%INTERVAL or t+INTERVAL>now:continue
         vals=[quote[k][i] for k in ('open','high','low','close','volume')]
         if any(v is None for v in vals):continue
         o,h,l,c,v=map(float,vals)
@@ -105,12 +107,17 @@ def publish_directory(stage, destination):
     if backup.exists():shutil.rmtree(backup)
 
 
-def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars):
+def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now=None):
     state=Path(state);state.mkdir(parents=True,exist_ok=True)
-    status=dict(checked_utc=dt.datetime.now(dt.timezone.utc).isoformat(),interval='15m',real_orders=False,symbols={})
+    old_status=json.loads((state/'status.json').read_text()) if (state/'status.json').exists() else {'symbols':{}}
+    now=time.time() if now is None else now
+    status=dict(checked_utc=dt.datetime.fromtimestamp(now,dt.timezone.utc).isoformat(),interval='15m',real_orders=False,symbols={})
     for symbol in symbols:
         try:
             rows=downloader(symbol);ss=intraday_candidates(rows)
+            now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
+            health=freshness(rows,now)
+            if health['stale']:raise ValueError('데이터 지연: 계좌 갱신 중단, 이전 기록 유지')
             with tempfile.TemporaryDirectory() as temp:
                 stage=Path(temp)/symbol;previous=state/symbol
                 if previous.exists():shutil.copytree(previous,stage)
@@ -149,12 +156,15 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars):
                     (stage/'digest.txt').write_text(digest)
                 (stage/'bars.json').write_text(json.dumps(rows),encoding='utf-8')
                 (stage/'accounts.json').write_text(json.dumps(accounts,ensure_ascii=False,indent=2),encoding='utf-8')
+                update_v2(stage,rows,ss,now)
                 publish_directory(stage,previous)
                 status['symbols'][symbol]=dict(status='ok',last_completed_bar_start_utc=rows[-1][0],
                                                accounts=len(accounts),new_bars=new_bars,new_trades=trades,
-                                               detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else 'no new completed bar')
-        except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc))
+                                               last_success_utc=status['checked_utc'],health=health,
+                                               detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else '새 데이터 없음 / '+health['market'])
+        except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc),last_success_utc=old_status['symbols'].get(symbol,{}).get('last_success_utc'))
     (state/'status.json').write_text(json.dumps(status,ensure_ascii=False,indent=2),encoding='utf-8')
+    dashboard(state,status)
     print(json.dumps(status,ensure_ascii=False))
     return status
 
