@@ -120,3 +120,6 @@ def dashboard(state,status):
             lines+=['','동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.',f'[낙폭 분해·비용 영향·전체 구간]({symbol}/comparison.json)']
         lines+=['',f'[v1 전체 기록]({symbol}/accounts.json) · [v2 전체 기록]({symbol}/accounts-v2.json)']
     (Path(state)/'README.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+    from dashboard_ui import render_dashboard
+    render_dashboard(state, status, next_schedule(dt.datetime.fromisoformat(status['checked_utc']).timestamp()))
