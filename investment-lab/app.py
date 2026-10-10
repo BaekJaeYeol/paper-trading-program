@@ -16,7 +16,7 @@ LABELS={'trend':'추세','momentum':'모멘텀','breakout':'돌파','reversion':
 class App:
     def __init__(self,root):
         self.root=root;root.title('투자랩 — 과거 검증 · 일봉 모의투자');root.geometry('1120x760');root.minsize(900,650)
-        self.timer=None;self.events=queue.Queue();self.busy=False;self.running=False;self.path=None;self.source=None;self.report=None;self.paper=None;self.symbol_used=None
+        self.fleet_running=False;self.fleet_generation=0;self.fleet_timer=None;self.timer=None;self.events=queue.Queue();self.busy=False;self.running=False;self.path=None;self.source=None;self.report=None;self.paper=None;self.symbol_used=None
         self.sync=DriveSync(WORK);self.sync_status=tk.StringVar(value='자동 저장 꺼짐');self.sync_enabled=tk.BooleanVar(value=self.sync.settings['enabled']);self.sync_folder=tk.StringVar(value=self.sync.settings['folder'])
         self.refresh_info=tk.StringVar(value='아직 갱신하지 않았습니다');self.trade_info=tk.StringVar(value='모의 매수·매도 기록 없음');self.last_success=None;self.refreshing=False
         self.symbol=tk.StringVar(value='SPY');self.status=tk.StringVar(value='검증 대기 — 실제 데이터 또는 CSV를 선택하세요');self.account=tk.StringVar(value='모의계좌 미시작')
@@ -75,8 +75,7 @@ class App:
             for symbol in symbols:
                 try:inputs[symbol]=download(symbol,WORK/'batch_data'/f'{symbol}.csv')
                 except Exception as exc:errors[symbol]=str(exc)
-            report=batch_validate(inputs,WORK/'batch_reports'/datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'),'real_download')
-            report['errors'].update(errors)
+            report=batch_validate(inputs,WORK/'batch_reports'/datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'),'real_download',errors=errors)
             return report
         self.task(work,self.show_batch)
     def csv_walk(self):
@@ -94,26 +93,32 @@ class App:
         if self.source!='real_download' or not self.symbol_used:
             messagebox.showinfo('조건','현재 종목의 실제 데이터를 먼저 수집하세요');return
         symbol=self.symbol_used
-        self.fleet_symbol=symbol
+        if self.fleet_timer:
+            self.root.after_cancel(self.fleet_timer);self.fleet_timer=None
+        self.fleet_symbol=symbol;self.fleet_running=True;self.fleet_generation+=1
+        generation=self.fleet_generation
         def work():
             rows=load(download(symbol,WORK/'fleet_data'/f'{symbol}.csv'))
             return Fleet(WORK/'fleet').update(symbol,rows)
-        self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots))
-    def show_fleet(self,symbol,snapshots):
+        self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots,generation))
+    def show_fleet(self,symbol,snapshots,generation):
+        if not self.fleet_running or generation!=self.fleet_generation:return
         self.lab_table.delete(*self.lab_table.get_children())
         for name,snap in snapshots.items():
-            self.lab_table.insert('','end',values=(symbol,name,snap['last_date'],f"${snap['equity']:,.2f}",'—',sum(r[2]!='hold' for r in snap['ledger'])))
+            self.lab_table.insert('','end',values=(symbol,name,snap['last_date'],f"${snap['equity']:,.2f}",'—','—'))
         self.lab_info.set('전략별 계좌 저장 완료 · 각각 별도 $10,000 · 다음 새 일봉부터 거래 · 실행 중 5분마다 자동 갱신')
         if not hasattr(self,'fleet_timer') or self.fleet_timer is None:
             self.fleet_timer=self.root.after(300000,self.fleet_auto)
     def fleet_auto(self):
         self.fleet_timer=None
+        if not self.fleet_running:return
+        generation=self.fleet_generation
         if not self.busy:
             symbol=self.fleet_symbol
             def work():
                 rows=load(download(symbol,WORK/'fleet_data'/f'{symbol}.csv'))
                 return Fleet(WORK/'fleet').update(symbol,rows)
-            self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots))
+            self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots,generation))
         else:self.fleet_timer=self.root.after(300000,self.fleet_auto)
     def make_table(self,parent,cols,widths):
         box=ttk.Frame(parent);box.pack(fill='both',expand=True,pady=8)
@@ -251,6 +256,8 @@ class App:
                 return '자동 저장 오류 · 모의 운영은 계속됩니다. 폴더와 디스크 공간을 확인하세요.'
         self.task(export,self.sync_status.set)
     def stop(self):
+        self.fleet_running=False;self.fleet_generation+=1
+        self.lab_info.set('병렬 계좌 운영 중단 · 진행 중인 갱신은 완료될 수 있으며 이후 자동 갱신은 멈춥니다')
         self.running=False
         if self.timer:
             self.root.after_cancel(self.timer);self.timer=None

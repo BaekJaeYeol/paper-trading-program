@@ -33,9 +33,9 @@ def walk_forward(rows, cost=.002, train=252, test=63):
     return results
 
 
-def batch_validate(inputs, outdir, source):
+def batch_validate(inputs, outdir, source, errors=None):
     records = []
-    errors = {}
+    errors = dict(errors or {})
     for symbol, path in inputs.items():
         try:
             rows = load(path)

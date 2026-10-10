@@ -32,3 +32,22 @@ class ValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             report=batch_validate({'demo':ROOT/'demo_synthetic.csv','bad':Path(d)/'missing'},d,'synthetic')
             self.assertTrue(report['results']);self.assertIn('bad',report['errors']);self.assertFalse(report['live_ready'])
+
+class LifecycleTests(unittest.TestCase):
+    def test_stop_blocks_delayed_callback(self):
+        from app import App
+        from unittest.mock import Mock
+        app=App.__new__(App)
+        app.root=Mock();app.lab_info=Mock();app.status=Mock()
+        app.running=True;app.timer=None;app.fleet_timer='pending'
+        app.fleet_running=True;app.fleet_generation=1
+        app.stop()
+        app.show_fleet('SPY',{},1)
+        app.fleet_auto()
+        app.root.after.assert_not_called()
+        app.root.after_cancel.assert_called_once_with('pending')
+    def test_download_error_saved(self):
+        import json
+        with tempfile.TemporaryDirectory() as d:
+            batch_validate({},d,'real_download',errors={'SPY':'download failed'})
+            self.assertEqual(json.loads((Path(d)/'validation.json').read_text())['errors']['SPY'],'download failed')
