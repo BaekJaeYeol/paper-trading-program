@@ -1,0 +1,11 @@
+# 15-minute regular-session paper research
+
+Runs at minutes 7,22,37,52 of each hour. GitHub schedule is best effort and can be delayed; it is not a live order engine. No broker orders. SPY/QQQ/IWM/DIA, 27 separate virtual $10,000 accounts each. Existing daily accounts remain unchanged; intraday accounts start separately with cash after the latest completed bar.
+
+UC: scheduled run → restore separate state → collect last 60 days of 15-minute bars → verify USD/symbol/NY timezone/OHLCV and ordered timestamps → exclude current/incomplete/pre/post-market bars → validate account anchor → compute prior completed bar target → simulate at next regular bar open → save accounts and status. Duplicates do not create trades; data revisions or intraday missing bars stop that symbol and preserve its previous state. Closed markets yield no new bars.
+
+Signals use bar counts: trend 8/26 moving averages; momentum 26; breakout preceding 8; reversion 12-bar mean minus one standard deviation; volume at least twice previous 26-bar average with 26-bar return at most 1%. Pairs use AND or equal sleeves. Fixed rules are experimental, not validated investment recommendations. Research evaluates fixed candidates over nonoverlapping 130-bar windows after 287 bars, with normal and double transaction costs. No winner selected using evaluation outcomes; Sharpe omitted to avoid daily annualization on intraday bars.
+
+One-way fee 0.1% plus slippage 0.1%. Fractional long-only exposure, no leverage. Signal bar and simulated fill bar times, quantity, price, fee, target and strategy reason are recorded. Late execution can record historical simulated fills; these are not orders actually sent at those timestamps. Positions may remain overnight; there is no forced end-of-day liquidation. Early closure final partial bars are omitted.
+
+Results and virtual balances are public on paper-hourly-state/intraday-state because the repository is public. No keys or real account data. PC app does not automatically display these server accounts. Turn off the Intraday 15-minute paper research workflow to stop it. Daily workflow stays active for comparison. Both workflows share one concurrency group to serialize state-branch pushes. The server checks even on holidays/weekends, but trades only against completed regular bars.

@@ -5,7 +5,8 @@ from pathlib import Path
 from research import candidates
 
 class Paper:
-    def __init__(self,path):
+    def __init__(self,path,candidate_fn=candidates):
+        self.candidate_fn=candidate_fn
         self.path=Path(path);self.path.parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as db:
             db.executescript('CREATE TABLE IF NOT EXISTS account(id INTEGER PRIMARY KEY CHECK(id=1),config TEXT,cash REAL,qty REAL,last_date TEXT,mark REAL); CREATE TABLE IF NOT EXISTS ledger(day TEXT PRIMARY KEY,signal REAL,side TEXT,qty REAL,price REAL,cost REAL,equity REAL);')
@@ -18,7 +19,7 @@ class Paper:
         finally:
             db.close()
     def start(self,rows,strategy,source,fee=.001,slippage=.001,cash=10000):
-        if strategy not in candidates(rows): raise ValueError('Unknown strategy')
+        if strategy not in self.candidate_fn(rows): raise ValueError('Unknown strategy')
         if source!='real_download': raise ValueError('모의 운영은 실제 다운로드 데이터에서만 시작할 수 있습니다')
         config={'strategy':strategy,'source':source,'fee':fee,'slippage':slippage,'started_after':rows[-1][0], 'reference':rows[-1][4]}
         with self.connect() as db:
@@ -42,7 +43,7 @@ class Paper:
             config,cash,qty,last,mark=raw;config=json.loads(config)
             if config.get('instant_entry_done'):return self.snapshot()
             if last!=rows[-1][0] or abs(rows[-1][4]/mark-1)>1e-6:raise ValueError('계좌 기준 일봉이 다릅니다. 먼저 기존 계좌 갱신이 필요합니다.')
-            target=candidates(rows)[config['strategy']][-1];price=quote['price'];equity=cash+qty*price
+            target=self.candidate_fn(rows)[config['strategy']][-1];price=quote['price'];equity=cash+qty*price
             delta=equity*target/price-qty;cost=0.;side='hold'
             if delta>1e-8:
                 price*=1+config['slippage'];delta=min(delta,cash/(price*(1+config['fee'])))
@@ -57,7 +58,7 @@ class Paper:
         return self.snapshot()
     def advance(self,rows,stopped=False):
         if stopped: return self.snapshot()
-        ss=candidates(rows)
+        ss=self.candidate_fn(rows)
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             account=db.execute('SELECT config,cash,qty,last_date,mark FROM account').fetchone()
