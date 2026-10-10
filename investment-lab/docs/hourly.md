@@ -1,0 +1,1 @@
+Hourly minute 17 checks for SPY QQQ IWM DIA. Separate new virtual accounts, local GUI records not migrated. Public results and state on paper-hourly-state branch. Same daily bar never trades twice. Workflow concurrency serializes updates. Disable Hourly paper research to stop. Schedule can be delayed. No real orders.
