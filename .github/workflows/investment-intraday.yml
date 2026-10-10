@@ -1,7 +1,7 @@
 name: Intraday 15-minute paper research
 on:
   schedule:
-    - cron: '7,22,37,52 * * * *'
+    - cron: '7,22,37,52 * * * 1-5'
   workflow_dispatch:
   push:
     paths:
