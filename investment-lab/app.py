@@ -4,6 +4,7 @@ from pathlib import Path
 from engine import load
 from data import download, symbol_name, current_quote
 from research import run
+from validation import batch_validate, Fleet
 from paper import Paper
 from drive_sync import DriveSync, payload
 from zoneinfo import ZoneInfo
@@ -32,6 +33,15 @@ class App:
         tabs=ttk.Notebook(main);tabs.pack(fill='both',expand=True)
         compare=ttk.Frame(tabs,padding=12);paper=ttk.Frame(tabs,padding=12);guide=ttk.Frame(tabs,padding=12)
         tabs.add(compare,text='전략 비교');tabs.add(paper,text='모의계좌 · 거래 기록');tabs.add(guide,text='사용 안내')
+        lab=ttk.Frame(tabs,padding=12);tabs.add(lab,text='확장 검증 · 병렬 계좌')
+        self.lab_symbols=tk.StringVar(value='SPY,QQQ,IWM,DIA')
+        ttk.Label(lab,text='쉼표로 종목 입력 | 이전 252일로 선정 → 다음 63일 평가 반복 | 종목별 별도 실험').pack(anchor='w')
+        ttk.Entry(lab,textvariable=self.lab_symbols,width=65).pack(anchor='w',pady=8)
+        for title,action in [('여러 종목 실제 데이터 반복 검증',self.batch_compare),('현재 CSV 반복 검증',self.csv_walk),('현재 종목 전략별 계좌 시작 / 갱신',self.fleet_update)]:
+            button=ttk.Button(lab,text=title,command=action);button.pack(anchor='w',pady=3);self.buttons.append(button)
+        self.lab_info=tk.StringVar(value='검증 대기 · 병렬 계좌는 각 $10,000이며 다음 새 일봉부터 거래합니다.')
+        ttk.Label(lab,textvariable=self.lab_info,wraplength=1000).pack(anchor='w',pady=8)
+        self.lab_table=self.make_table(lab,('종목','전략','평가 기간','수익률 / 평가액','최대 낙폭','회전량'),(80,250,240,130,100,80))
         sync_tab=ttk.Frame(tabs,padding=16);tabs.add(sync_tab,text='Google Drive 자동 저장')
         ttk.Label(sync_tab,text='Google Drive 데스크톱 앱의 내 드라이브에 결과 폴더를 만든 뒤 선택하세요.',wraplength=900).pack(anchor='w',pady=8)
         ttk.Label(sync_tab,textvariable=self.sync_folder,wraplength=900).pack(anchor='w',pady=8)
@@ -53,6 +63,58 @@ class App:
         text=tk.Text(guide,wrap='word',font=('맑은 고딕',11),background='white');text.pack(fill='both',expand=True)
         text.insert('end','1. 종목을 입력하고 실제 데이터를 수집하거나 CSV를 가져옵니다.\n2. 전략 비교 실행을 누릅니다. 개발 50% / 검증 25% / 최종 보류 25%로 나눕니다.\n3. 검증 구간 Sharpe와 최소 회전량으로 후보를 정합니다. 최종 결과를 보고 다시 후보를 고르지 않습니다.\n4. 실제 다운로드 데이터에서는 후보를 고정해 일봉 모의 운영을 시작할 수 있습니다.\n5. 시작일 이후 새로 완료된 거래일만 가상 체결합니다. 첫날 거래가 없어도 정상입니다.\n6. 운영 중에는 5분마다 갱신합니다. PC와 앱이 켜져 있어야 합니다.\n\nCSV 열: date,open,high,low,close,volume. 최소 252행, 날짜 오름차순.\n실제 다운로드: Yahoo 데이터, 당일 봉 제외, 배당 미반영. 다운로드가 제한될 수 있습니다.\n출처 불명 CSV와 합성 데모로 실데이터 검증 통과를 표시하지 않습니다.\n각 종목은 별도 모의계좌이며 여러 계좌를 합산한 포트폴리오가 아닙니다.\n\n이 버전은 시세 기반 로컬 모의계좌입니다. 증권사 모의주문, 실시간 호가·부분 체결·공매도·실거래 기능은 없습니다.\n운영 중단은 갱신을 멈추며 보유분을 청산하지 않습니다. 중단 중 지난 일봉은 재개 때 순서대로 처리됩니다.\n과거 데이터가 수정되거나 주식 분할로 가격 기준이 바뀌면 계좌 처리를 멈춥니다.\n\n결과와 데이터는 workspace 폴더에 저장됩니다. 같은 최종 보류 구간을 반복해서 보며 전략을 수정하면 독립 검증이 아닙니다.\n실계좌 전환은 자동 승인하지 않습니다.')
         text.config(state='disabled');root.protocol('WM_DELETE_WINDOW',self.close);root.after(100,self.poll)
+    def batch_compare(self):
+        if self.busy:return
+        try:
+            symbols=list(dict.fromkeys(symbol_name(s) for s in self.lab_symbols.get().split(',')))
+            if len(symbols)>12:raise ValueError('한 번에 최대 12종목입니다')
+        except ValueError as exc:messagebox.showerror('종목',str(exc));return
+        self.lab_info.set('여러 종목 데이터 수집 및 반복 검증 중…')
+        def work():
+            inputs={};errors={}
+            for symbol in symbols:
+                try:inputs[symbol]=download(symbol,WORK/'batch_data'/f'{symbol}.csv')
+                except Exception as exc:errors[symbol]=str(exc)
+            report=batch_validate(inputs,WORK/'batch_reports'/datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'),'real_download')
+            report['errors'].update(errors)
+            return report
+        self.task(work,self.show_batch)
+    def csv_walk(self):
+        if self.busy or not self.path:return
+        path=self.path;source=self.source;symbol=self.symbol_used or 'CSV'
+        self.task(lambda:batch_validate({symbol:path},WORK/'batch_reports'/datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'),source),self.show_batch)
+    def show_batch(self,report):
+        self.lab_table.delete(*self.lab_table.get_children())
+        for row in report['results']:
+            name=row['strategy']+(' [사전 선정]' if row['selected'] else '')
+            self.lab_table.insert('','end',values=(row['symbol'],name,row['test_start']+' ~ '+row['test_end'],f"{row['return']:.2%}",f"{row['max_drawdown']:.2%}",f"{row['turnover']:.1f}"))
+        self.lab_info.set(f"{report['source']} | 평가 {len(report['results'])}건 | 실패: {report['errors'] or '없음'} | 반복 탐색 결과이며 최종 독립 검증 아님")
+    def fleet_update(self):
+        if self.busy:return
+        if self.source!='real_download' or not self.symbol_used:
+            messagebox.showinfo('조건','현재 종목의 실제 데이터를 먼저 수집하세요');return
+        symbol=self.symbol_used
+        self.fleet_symbol=symbol
+        def work():
+            rows=load(download(symbol,WORK/'fleet_data'/f'{symbol}.csv'))
+            return Fleet(WORK/'fleet').update(symbol,rows)
+        self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots))
+    def show_fleet(self,symbol,snapshots):
+        self.lab_table.delete(*self.lab_table.get_children())
+        for name,snap in snapshots.items():
+            self.lab_table.insert('','end',values=(symbol,name,snap['last_date'],f"${snap['equity']:,.2f}",'—',sum(r[2]!='hold' for r in snap['ledger'])))
+        self.lab_info.set('전략별 계좌 저장 완료 · 각각 별도 $10,000 · 다음 새 일봉부터 거래 · 실행 중 5분마다 자동 갱신')
+        if not hasattr(self,'fleet_timer') or self.fleet_timer is None:
+            self.fleet_timer=self.root.after(300000,self.fleet_auto)
+    def fleet_auto(self):
+        self.fleet_timer=None
+        if not self.busy:
+            symbol=self.fleet_symbol
+            def work():
+                rows=load(download(symbol,WORK/'fleet_data'/f'{symbol}.csv'))
+                return Fleet(WORK/'fleet').update(symbol,rows)
+            self.task(work,lambda snapshots:self.show_fleet(symbol,snapshots))
+        else:self.fleet_timer=self.root.after(300000,self.fleet_auto)
     def make_table(self,parent,cols,widths):
         box=ttk.Frame(parent);box.pack(fill='both',expand=True,pady=8)
         table=ttk.Treeview(box,columns=cols,show='headings');scroll=ttk.Scrollbar(box,orient='vertical',command=table.yview);table.configure(yscrollcommand=scroll.set)
@@ -192,6 +254,8 @@ class App:
         self.running=False
         if self.timer:
             self.root.after_cancel(self.timer);self.timer=None
+        if getattr(self,'fleet_timer',None):
+            self.root.after_cancel(self.fleet_timer);self.fleet_timer=None
         self.status.set('모의 운영 중단 — 보유분은 유지합니다')
     def close(self):self.running=False;self.root.destroy()
 
