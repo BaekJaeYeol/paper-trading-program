@@ -69,7 +69,7 @@ def advance_v2(account,rows,signals,now,blocked=False):
         account.update(cash=max(0.,cash),qty=max(0.,qty),mark=c,equity=cash+qty*c,last_date=stamp)
         risk['peak']=max(risk['peak'],account['equity'])
         if account['equity']<=risk['day_equity']*(1-risk['daily_limit']) or account['equity']<=risk['peak']*(1-risk['drawdown_limit']):risk.update(halted=True,reason='손실 한도')
-        account['events'].append(dict(bar=stamp,signal_bar=prior[0],side=side,status=status,requested=requested,
+        account['events'].append(dict(equity=account['equity'],bar=stamp,signal_bar=prior[0],side=side,status=status,requested=requested,
             quantity=quantity,remaining=remaining,remainder_expired=remaining>1e-8,price=price,fee=fee,target=target,
             risk_halted=risk['halted'],risk_reason=risk['reason'],reason=f'직전 완료 봉 목표 비중 {target:.0%}; 다음 봉 시가 가정',
             recorded_utc=dt.datetime.fromtimestamp(now,UTC).isoformat(),
