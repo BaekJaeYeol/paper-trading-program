@@ -175,9 +175,13 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
     return status
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--state',required=True);parser.add_argument('--halt',action='store_true');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--state',required=True);parser.add_argument('--halt',action='store_true');parser.add_argument('--symbols',nargs='+',default=['SPY','QQQ','IWM','DIA']);args=parser.parse_args()
+    try:
+        symbols=list(dict.fromkeys(symbol_name(s) for s in args.symbols))
+        if not 1<=len(symbols)<=20:raise ValueError('종목은 1~20개까지 지정하세요')
+    except ValueError as exc:parser.error(str(exc))
     if args.halt:
         Path(args.state).mkdir(parents=True,exist_ok=True)
         (Path(args.state)/'emergency-stop.json').write_text(json.dumps({'halted':True,'reason':'user request','utc':dt.datetime.now(dt.timezone.utc).isoformat()}))
-    result=tick(args.state)
+    result=tick(args.state,symbols=symbols)
     if any(r['status']=='error' for r in result['symbols'].values()):raise SystemExit(1)
