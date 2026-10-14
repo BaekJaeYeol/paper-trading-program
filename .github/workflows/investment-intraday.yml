@@ -44,7 +44,7 @@ jobs:
         run: python -m unittest discover -s investment-lab/tests -p test_comparison_orders.py -v
       - name: Verify saved account integrity and operational recovery history
         run: python -m unittest discover -s investment-lab/tests -p test_operational_audit.py -v
-      - name: Verify small revisions preserve ledgers and large revisions halt
+      - name: Verify frozen bars and active account revision protection
         run: python -m unittest discover -s investment-lab/tests -p test_bar_reconciliation.py -v
       - name: Collect and update virtual accounts
         run: python investment-lab/intraday.py --state saved-state/intraday-state --symbols SPY QQQ IWM DIA MSFT JPM XOM JNJ CAT WMT
