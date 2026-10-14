@@ -15,6 +15,7 @@ from data import symbol_name
 from engine import evaluate
 from paper import Paper
 from comparison import report as comparison_report
+from bar_reconciliation import reconcile_bars
 from operational_audit import record_run
 from reliability import session_bounds, freshness, update_v2, dashboard
 
@@ -119,7 +120,11 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
     status['emergency_stop']=blocked
     for symbol in symbols:
         try:
-            rows=downloader(symbol);ss=intraday_candidates(rows)
+            rows=downloader(symbol)
+            previous_bars=state/symbol/'bars.json'
+            saved=json.loads(previous_bars.read_text()) if previous_bars.exists() else []
+            rows,revisions=reconcile_bars(saved,rows)
+            ss=intraday_candidates(rows)
             now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
             health=freshness(rows,now)
             if health['stale']:raise ValueError('데이터 지연: 계좌 갱신 중단, 이전 기록 유지')
@@ -127,6 +132,7 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                 stage=Path(temp)/symbol;previous=state/symbol
                 if previous.exists():shutil.copytree(previous,stage)
                 else:stage.mkdir()
+                (stage/'data-revisions.json').write_text(json.dumps(revisions,ensure_ascii=False,indent=2),encoding='utf-8')
                 accounts={};new_bars=0;trades=0
                 for name in ss:
                     key=hashlib.sha256(name.encode()).hexdigest()[:16]
@@ -167,7 +173,7 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                 update_v2(stage,rows,ss,now,blocked)
                 publish_directory(stage,previous)
                 status['symbols'][symbol]=dict(status='ok',last_completed_bar_start_utc=rows[-1][0],
-                                               accounts=len(accounts),new_bars=new_bars,new_trades=trades,
+                                               accounts=len(accounts),new_bars=new_bars,new_trades=trades,provider_revisions=len(revisions),
                                                last_success_utc=status['checked_utc'],health=health,
                                                detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else '새 데이터 없음 / '+health['market'])
         except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc),last_success_utc=old_status['symbols'].get(symbol,{}).get('last_success_utc'))
