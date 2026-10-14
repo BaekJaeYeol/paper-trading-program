@@ -14,3 +14,10 @@ class RevisionTests(unittest.TestCase):
  def test_missing_anchor_is_not_fabricated(self):
   rows,events=reconcile_bars([('a',100,100,100,100,100)],[('b',100,100,100,100,100)])
   self.assertEqual([r[0] for r in rows],['b'])
+
+ def test_old_research_revision_does_not_rewrite_history(self):
+  old=[('a',100,100,100,100,100),('b',100,100,100,100,100)]
+  new=[('a',99,99,99,99,100),('b',100,100,100,100,100)]
+  rows,events=reconcile_bars(old,new,protected_since='b')
+  self.assertEqual(rows,old);self.assertEqual(len(events),1)
+  with self.assertRaises(ValueError):reconcile_bars(old,new,protected_since='a')
