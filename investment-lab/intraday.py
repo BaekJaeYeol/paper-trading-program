@@ -15,6 +15,7 @@ from data import symbol_name
 from engine import evaluate
 from paper import Paper
 from comparison import report as comparison_report
+from operational_audit import record_run
 from reliability import session_bounds, freshness, update_v2, dashboard
 
 NY=ZoneInfo('America/New_York')
@@ -109,6 +110,7 @@ def publish_directory(stage, destination):
 
 
 def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now=None):
+    started=time.monotonic()
     state=Path(state);state.mkdir(parents=True,exist_ok=True)
     old_status=json.loads((state/'status.json').read_text()) if (state/'status.json').exists() else {'symbols':{}}
     now=time.time() if now is None else now
@@ -169,6 +171,7 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                                                last_success_utc=status['checked_utc'],health=health,
                                                detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else '새 데이터 없음 / '+health['market'])
         except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc),last_success_utc=old_status['symbols'].get(symbol,{}).get('last_success_utc'))
+    record_run(state,status,old_status,time.monotonic()-started)
     (state/'status.json').write_text(json.dumps(status,ensure_ascii=False,indent=2),encoding='utf-8')
     dashboard(state,status)
     print(json.dumps(status,ensure_ascii=False))
