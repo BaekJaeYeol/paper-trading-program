@@ -1,23 +1,23 @@
 # 모의투자 운영 현황
 
-최근 확인: 2026-10-13T21:52:03.698252+00:00 (UTC)
-다음 예약: 2026-10-13T22:07:00+00:00 (UTC, 실행 지연 가능)
+최근 확인: 2026-10-14T00:39:30.283449+00:00 (UTC)
+다음 예약: 2026-10-14T00:52:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
 v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
-| QQQ | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
-| IWM | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
-| DIA | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| SPY | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| QQQ | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| IWM | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| DIA | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
 | MSFT | v2 기준 봉 누락 또는 가격 수정: 계좌 보존 | 2026-10-11T05:36:42.507130+00:00 | - | 0 |
-| JPM | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
-| XOM | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
-| JNJ | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| JPM | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| XOM | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| JNJ | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
 | CAT | v2 기준 봉 누락 또는 가격 수정: 계좌 보존 | 2026-10-13T17:09:11.221480+00:00 | - | 0 |
-| WMT | new accounts waiting for next completed bar | 2026-10-13T21:52:03.698252+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
+| WMT | new accounts waiting for next completed bar | 2026-10-14T00:39:30.283449+00:00 | 2026-10-13T19:45:00+00:00 | 0 |
 
 [공정 비교·복구 검증 설명](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/comparison-orders.md)
 
