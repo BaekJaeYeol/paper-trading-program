@@ -1,6 +1,7 @@
 """Calendar checks, isolated v2 paper fills and a readable operational report."""
 import datetime as dt
 import json
+from operational_audit import validate_account
 from pathlib import Path
 import exchange_calendars as xcals
 
@@ -40,6 +41,7 @@ def advance_v2(account,rows,signals,now,blocked=False):
     if account is None:
         return dict(cash=10000.,qty=0.,equity=10000.,initial=10000.,last_date=rows[-1][0],mark=rows[-1][4],
                     model='v2-prior-volume-IOC',events=[],fee=.001,slippage=.001,half_spread=.0001,participation=.01)
+    validate_account(account)
     account=json.loads(json.dumps(account))
     anchor=next((i for i,r in enumerate(rows) if r[0]==account['last_date']),None)
     if anchor is None or abs(rows[anchor][4]-account['mark'])>1e-6:
@@ -75,6 +77,7 @@ def advance_v2(account,rows,signals,now,blocked=False):
             recorded_utc=dt.datetime.fromtimestamp(now,UTC).isoformat(),
             booking_delay_seconds=max(0.,now-tb.timestamp()),retrospective=True,
             capacity_source='직전 봉 거래량의 1%; 실제 호가·체결 보장 없음'))
+    validate_account(account)
     return account
 
 def update_v2(stage,rows,signals,now,blocked=False):
@@ -97,6 +100,9 @@ def dashboard(state,status):
     for symbol,s in status['symbols'].items():
         lines.append(f"| {symbol} | {s.get('message',s.get('detail',''))} | {s.get('last_success_utc','-')} | {s.get('last_completed_bar_start_utc','-')} | {s.get('new_bars',0)} |")
     if status.get('emergency_stop'):lines+=['','**사용자 비상 중단 활성: v2 신규 매매 차단. 보유분 자동 청산 없음.**']
+    lines+=['',f"이번 실행 소요: {status.get('duration_seconds','-')}초", '[최근 200회 운영·복구 이력](operations-history.json)', '', '| 종목 | 연속 오류 | 복구 |', '|---|---:|---|']
+    for symbol,info in status['symbols'].items():
+        lines.append(f"| {symbol} | {info.get('consecutive_errors',0)} | {'복구됨' if info.get('recovered') else '-'} |")
     lines+=['','[공정 비교·복구 검증 설명](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/comparison-orders.md)',
             '', 'v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. 중단은 지속되며 자동 청산하지 않습니다. v1은 원래 비교용 계좌로 유지합니다.']
     for symbol in status['symbols']:
