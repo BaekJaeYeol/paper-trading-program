@@ -123,7 +123,10 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
             rows=downloader(symbol)
             previous_bars=state/symbol/'bars.json'
             saved=json.loads(previous_bars.read_text()) if previous_bars.exists() else []
-            rows,revisions=reconcile_bars(saved,rows)
+            account_file=state/symbol/'accounts-v2.json'
+            existing=json.loads(account_file.read_text()) if account_file.exists() else {}
+            protected_since=min((a['last_date'] for a in existing.values()),default=None)
+            rows,revisions=reconcile_bars(saved,rows,protected_since=protected_since)
             ss=intraday_candidates(rows)
             now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
             health=freshness(rows,now)
