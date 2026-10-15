@@ -35,4 +35,29 @@ class SessionTests(unittest.TestCase):
   def fail():raise RuntimeError('disk/push failure')
   with self.assertRaises(RuntimeError):
    run_session(lambda:{'symbols':{}},fail,lambda:None,lambda _:(0,1),once=True)
+
+class GitCheckpointTests(unittest.TestCase):
+ def test_concurrent_hourly_checkpoint_is_preserved(self):
+  import tempfile,subprocess
+  from session_worker import git,publish
+  with tempfile.TemporaryDirectory() as d:
+   root=Path(d);bare=root/'remote.git'
+   subprocess.run(['git','init','--bare',str(bare)],check=True,capture_output=True)
+   a=root/'intraday';b=root/'hourly'
+   subprocess.run(['git','clone',str(bare),str(a)],check=True,capture_output=True)
+   for repo in (a,):
+    git(repo,'config','user.name','test');git(repo,'config','user.email','test@example.invalid')
+   git(a,'checkout','-b','paper-hourly-state')
+   (a/'initial').write_text('initial')
+   git(a,'add','.');git(a,'commit','-m','initial');git(a,'push','-u','origin','paper-hourly-state')
+   subprocess.run(['git','clone','--branch','paper-hourly-state',str(bare),str(b)],check=True,capture_output=True)
+   git(b,'config','user.name','test');git(b,'config','user.email','test@example.invalid')
+   (a/'intraday-state').mkdir();(a/'intraday-state'/'status.json').write_text('intraday')
+   (b/'hourly-state').mkdir();(b/'hourly-state'/'status.json').write_text('hourly')
+   git(b,'add','.');git(b,'commit','-m','hourly');git(b,'push','origin','paper-hourly-state')
+   publish(a)
+   self.assertEqual((a/'hourly-state'/'status.json').read_text(),'hourly')
+   self.assertEqual((a/'intraday-state'/'status.json').read_text(),'intraday')
+   self.assertEqual(git(a,'status','--porcelain'),'')
 if __name__=='__main__':unittest.main()
+
