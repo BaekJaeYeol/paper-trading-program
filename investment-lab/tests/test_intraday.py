@@ -69,3 +69,19 @@ class IntradayTests(unittest.TestCase):
             result=tick(d,['SPY'],lambda symbol:revised)
             self.assertEqual(result['symbols']['SPY']['status'],'error')
             self.assertEqual(path.read_bytes(),first)
+
+    def test_cross_session_gap_preserves_accounts(self):
+        rs=rows()
+        with tempfile.TemporaryDirectory() as d:
+            initial=rs[:103]
+            now=dt.datetime.fromisoformat(initial[-1][0]).timestamp()+901
+            result=actual_tick(d,['SPY'],lambda symbol:initial,now=now)
+            self.assertEqual(result['symbols']['SPY']['status'],'ok')
+            paths=[Path(d)/'SPY'/name for name in ('accounts.json','accounts-v2.json','bars.json')]
+            before=[path.read_bytes() for path in paths]
+            # Omit Thursday's final bar, then provide Friday's opening bar.
+            missing=rs[:103]+rs[104:105]
+            now=dt.datetime.fromisoformat(missing[-1][0]).timestamp()+901
+            result=actual_tick(d,['SPY'],lambda symbol:missing,now=now)
+            self.assertEqual(result['symbols']['SPY']['status'],'error')
+            self.assertEqual([path.read_bytes() for path in paths],before)
