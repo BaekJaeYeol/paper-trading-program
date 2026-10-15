@@ -1,25 +1,25 @@
 # 모의투자 운영 현황
 
-최근 확인: 2026-10-15T19:37:00.574843+00:00 (UTC)
-다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-15T19:52:00+00:00 (UTC, 실행 지연 가능)
+최근 확인: 2026-10-15T19:52:00.556552+00:00 (UTC)
+다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-15T20:07:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
 v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| QQQ | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| IWM | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| DIA | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| MSFT | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| JPM | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| XOM | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| JNJ | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| CAT | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
-| WMT | updated | 2026-10-15T19:37:00.574843+00:00 | 2026-10-15T19:15:00+00:00 | 1 |
+| SPY | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| QQQ | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| IWM | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| DIA | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| MSFT | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| JPM | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| XOM | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| JNJ | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| CAT | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
+| WMT | updated | 2026-10-15T19:52:00.556552+00:00 | 2026-10-15T19:30:00+00:00 | 1 |
 
-이번 실행 소요: 67.91초
+이번 실행 소요: 67.96초
 [최근 200회 운영·복구 이력](operations-history.json)
 
 | 종목 | 연속 오류 | 복구 |
@@ -44,57 +44,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10002.83 | 2.83 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10001.76 | 1.76 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9959.92 | -40.08 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9934.72 | -65.28 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10004.71 | 4.71 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 10003.64 | 3.64 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 9961.79 | -38.21 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 9914.99 | -85.01 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 9949.83 | -50.17 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 9959.92 | -40.08 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9980.81 | -19.19 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9934.72 | -65.28 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9968.18 | -31.82 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 9961.79 | -38.21 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 9982.69 | -17.31 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9914.99 | -85.01 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9959.22 | -40.78 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10000.83 | 0.83 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10001.76 | 1.76 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 9949.83 | -50.17 | sell /  / trend_8_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + volume_26 | 9975.73 | -24.27 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9934.72 | -65.28 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9947.30 | -52.70 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 9976.66 | -23.34 | buy /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9914.99 | -85.01 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9938.35 | -61.65 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9979.88 | -20.12 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9980.81 | -19.19 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9974.74 | -25.26 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9975.68 | -24.32 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9967.27 | -32.73 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9957.36 | -42.64 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9942.22 | -57.78 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9932.34 | -67.66 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9974.87 | -25.13 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 9893.18 | -106.82 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9848.97 | -151.03 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9819.41 | -180.59 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9618.67 | -381.33 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9895.04 | -104.96 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9850.82 | -149.18 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 9821.25 | -178.75 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9598.61 | -401.39 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9535.84 | -464.16 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9441.45 | -558.55 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9826.10 | -173.90 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9834.19 | -165.81 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9845.75 | -154.25 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9733.02 | -266.98 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9827.94 | -172.06 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9836.04 | -163.96 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9825.21 | -174.79 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9723.78 | -276.22 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9896.11 | -103.89 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9690.82 | -309.18 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9691.73 | -308.27 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9845.91 | -154.09 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9663.09 | -336.91 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9803.98 | -196.02 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9718.44 | -281.56 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9663.99 | -336.01 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9783.53 | -216.47 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9709.21 | -290.79 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9963.21 | -36.79 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9696.62 | -303.38 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9697.53 | -302.47 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9917.25 | -82.75 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9689.16 | -310.84 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9690.07 | -309.93 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9617.06 | -382.94 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9607.02 | -392.98 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9933.18 | -66.82 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9569.41 | -430.59 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9559.42 | -440.58 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 9743.33 | -256.67 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 + volume_26 | 9568.30 | -431.70 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -102,33 +102,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | 0.11% | 0.00% | 0.00% |
-| buy_hold | 0.54% | 0.11% | 0.11% | 0.11% | 100.00% |
-| trend_8_26 | 1.79% | -1.58% | 0.11% | 0.06% | 49.61% |
-| momentum_26 | -0.17% | -4.68% | 0.11% | 0.06% | 49.35% |
-| breakout_8 | -0.46% | -15.85% | 0.11% | 0.02% | 21.93% |
-| reversion_12 | -1.86% | -12.74% | 0.11% | 0.03% | 27.68% |
-| volume_26 | -0.60% | -8.99% | 0.11% | 0.01% | 8.09% |
-| trend_8_26 AND momentum_26 | 1.17% | -2.59% | 0.11% | 0.05% | 43.08% |
-| trend_8_26 + momentum_26 | 0.81% | -2.93% | 0.11% | 0.06% | 49.48% |
-| trend_8_26 AND breakout_8 | 0.22% | -10.52% | 0.11% | 0.01% | 13.05% |
-| trend_8_26 + breakout_8 | 0.66% | -9.00% | 0.11% | 0.04% | 35.78% |
-| trend_8_26 AND reversion_12 | 0.10% | -4.01% | 0.11% | 0.01% | 6.01% |
-| trend_8_26 + reversion_12 | -0.05% | -7.14% | 0.11% | 0.04% | 38.65% |
-| trend_8_26 AND volume_26 | -0.23% | -3.93% | 0.11% | 0.00% | 3.39% |
-| trend_8_26 + volume_26 | 0.59% | -5.36% | 0.11% | 0.03% | 28.86% |
-| momentum_26 AND breakout_8 | 0.52% | -10.25% | 0.11% | 0.02% | 14.10% |
-| momentum_26 + breakout_8 | -0.31% | -10.44% | 0.11% | 0.04% | 35.65% |
-| momentum_26 AND reversion_12 | -0.88% | -5.75% | 0.11% | 0.01% | 6.79% |
-| momentum_26 + reversion_12 | -1.01% | -8.23% | 0.11% | 0.04% | 38.52% |
-| momentum_26 AND volume_26 | -0.18% | -2.67% | 0.11% | 0.00% | 1.83% |
-| momentum_26 + volume_26 | -0.38% | -5.68% | 0.11% | 0.03% | 28.72% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | 0.11% | 0.00% | 0.00% |
-| breakout_8 + reversion_12 | -1.16% | -13.78% | 0.11% | 0.03% | 24.81% |
-| breakout_8 AND volume_26 | 0.09% | -1.17% | 0.11% | 0.00% | 1.04% |
-| breakout_8 + volume_26 | -0.53% | -11.58% | 0.11% | 0.02% | 15.02% |
-| reversion_12 AND volume_26 | -0.67% | -4.76% | 0.11% | 0.00% | 3.92% |
-| reversion_12 + volume_26 | -1.23% | -10.52% | 0.11% | 0.02% | 17.89% |
+| cash | 0.00% | 0.00% | 0.03% | 0.00% | 0.00% |
+| buy_hold | 0.45% | 0.03% | 0.03% | 0.03% | 100.00% |
+| trend_8_26 | 1.70% | -1.66% | 0.03% | 0.01% | 49.61% |
+| momentum_26 | -0.25% | -4.76% | 0.03% | 0.01% | 49.35% |
+| breakout_8 | -0.46% | -15.85% | 0.03% | 0.01% | 21.93% |
+| reversion_12 | -1.86% | -12.74% | 0.03% | 0.01% | 27.68% |
+| volume_26 | -0.60% | -8.99% | 0.03% | 0.00% | 8.09% |
+| trend_8_26 AND momentum_26 | 1.08% | -2.67% | 0.03% | 0.01% | 43.08% |
+| trend_8_26 + momentum_26 | 0.72% | -3.02% | 0.03% | 0.01% | 49.48% |
+| trend_8_26 AND breakout_8 | 0.22% | -10.52% | 0.03% | 0.00% | 13.05% |
+| trend_8_26 + breakout_8 | 0.62% | -9.03% | 0.03% | 0.01% | 35.78% |
+| trend_8_26 AND reversion_12 | 0.10% | -4.01% | 0.03% | 0.00% | 6.01% |
+| trend_8_26 + reversion_12 | -0.09% | -7.18% | 0.03% | 0.01% | 38.65% |
+| trend_8_26 AND volume_26 | -0.23% | -3.93% | 0.03% | 0.00% | 3.39% |
+| trend_8_26 + volume_26 | 0.55% | -5.40% | 0.03% | 0.01% | 28.86% |
+| momentum_26 AND breakout_8 | 0.53% | -10.25% | 0.03% | 0.00% | 14.10% |
+| momentum_26 + breakout_8 | -0.35% | -10.48% | 0.03% | 0.01% | 35.65% |
+| momentum_26 AND reversion_12 | -0.88% | -5.75% | 0.03% | 0.00% | 6.79% |
+| momentum_26 + reversion_12 | -1.05% | -8.27% | 0.03% | 0.01% | 38.52% |
+| momentum_26 AND volume_26 | -0.18% | -2.67% | 0.03% | 0.00% | 1.83% |
+| momentum_26 + volume_26 | -0.42% | -5.72% | 0.03% | 0.01% | 28.72% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | 0.03% | 0.00% | 0.00% |
+| breakout_8 + reversion_12 | -1.16% | -13.78% | 0.03% | 0.01% | 24.81% |
+| breakout_8 AND volume_26 | 0.09% | -1.17% | 0.03% | 0.00% | 1.04% |
+| breakout_8 + volume_26 | -0.53% | -11.58% | 0.03% | 0.00% | 15.02% |
+| reversion_12 AND volume_26 | -0.67% | -4.76% | 0.03% | 0.00% | 3.92% |
+| reversion_12 + volume_26 | -1.23% | -10.52% | 0.03% | 0.01% | 17.89% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](SPY/comparison.json)
@@ -140,57 +140,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10026.45 | 26.45 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10036.56 | 36.56 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9982.77 | -17.23 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9938.95 | -61.05 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10035.47 | 35.47 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 10045.59 | 45.59 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 9962.68 | -37.32 | sell /  / momentum_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 | 9947.89 | -52.11 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 9962.28 | -37.72 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 9982.77 | -17.23 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10009.63 | 9.63 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9982.77 | -17.23 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9987.62 | -12.38 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 9962.68 | -37.32 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 10004.06 | 4.06 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9991.75 | -8.25 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9996.61 | -3.39 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10018.23 | 18.23 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10022.73 | 22.73 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9999.31 | -0.69 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9982.77 | -17.23 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9960.82 | -39.18 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10003.81 | 3.81 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9962.68 | -37.32 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9955.28 | -44.72 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9991.37 | -8.63 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9981.30 | -18.70 | sell /  / momentum_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9972.50 | -27.50 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9962.45 | -37.55 | sell /  / momentum_26 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9969.40 | -30.60 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9973.87 | -26.13 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9950.57 | -49.43 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9955.03 | -44.97 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9981.11 | -18.89 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 9690.43 | -309.57 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9816.57 | -183.43 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9918.72 | -81.28 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9723.31 | -276.69 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9699.15 | -300.85 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9825.40 | -174.60 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 9897.77 | -102.23 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9732.06 | -267.94 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9515.83 | -484.17 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9565.80 | -434.20 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9918.72 | -81.28 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9867.54 | -132.46 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9950.53 | -49.47 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9769.78 | -230.22 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9897.77 | -102.23 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9861.56 | -138.44 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9959.48 | -40.52 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9778.57 | -221.43 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9861.14 | -138.86 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9664.72 | -335.28 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9669.07 | -330.93 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9840.10 | -159.90 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9609.41 | -390.59 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9981.78 | -18.22 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9820.45 | -179.55 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9613.73 | -386.27 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9960.69 | -39.31 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9814.49 | -185.51 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | momentum_26 + reversion_12 | 9735.30 | -264.70 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9725.00 | -275.00 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9936.83 | -63.17 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9659.29 | -340.71 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9649.08 | -350.92 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9679.48 | -320.52 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9683.82 | -316.18 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9947.98 | -52.02 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9603.95 | -396.05 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9608.26 | -391.74 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 9547.64 | -452.36 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 + volume_26 | 9481.14 | -518.86 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -198,33 +198,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | -2.25% | -0.00% | 0.00% |
-| buy_hold | -1.84% | -2.25% | -2.25% | -2.25% | 100.00% |
-| trend_8_26 | 0.74% | -2.99% | -2.25% | -1.07% | 47.52% |
-| momentum_26 | -1.00% | -5.47% | -2.25% | -0.94% | 41.78% |
-| breakout_8 | -1.27% | -16.89% | -2.25% | -0.39% | 17.49% |
-| reversion_12 | -0.86% | -12.96% | -2.25% | -0.59% | 26.37% |
-| volume_26 | -1.07% | -13.51% | -2.25% | -0.32% | 14.10% |
-| trend_8_26 AND momentum_26 | -0.03% | -3.74% | -2.25% | -0.84% | 37.34% |
-| trend_8_26 + momentum_26 | -0.13% | -4.04% | -2.25% | -1.00% | 44.65% |
-| trend_8_26 AND breakout_8 | -0.12% | -9.69% | -2.25% | -0.23% | 10.44% |
-| trend_8_26 + breakout_8 | -0.26% | -9.83% | -2.25% | -0.73% | 32.51% |
-| trend_8_26 AND reversion_12 | 0.42% | -5.31% | -2.25% | -0.13% | 6.01% |
-| trend_8_26 + reversion_12 | -0.05% | -7.54% | -2.25% | -0.83% | 36.95% |
-| trend_8_26 AND volume_26 | -0.71% | -5.59% | -2.25% | -0.09% | 4.18% |
-| trend_8_26 + volume_26 | -0.16% | -8.22% | -2.25% | -0.69% | 30.81% |
-| momentum_26 AND breakout_8 | -0.27% | -9.45% | -2.25% | -0.24% | 10.70% |
-| momentum_26 + breakout_8 | -1.13% | -11.17% | -2.25% | -0.67% | 29.64% |
-| momentum_26 AND reversion_12 | -0.02% | -5.73% | -2.25% | -0.11% | 4.70% |
-| momentum_26 + reversion_12 | -0.92% | -8.73% | -2.25% | -0.77% | 34.08% |
-| momentum_26 AND volume_26 | -0.30% | -4.40% | -2.25% | -0.08% | 3.39% |
-| momentum_26 + volume_26 | -1.03% | -9.40% | -2.25% | -0.63% | 27.94% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | -2.25% | -0.00% | 0.00% |
-| breakout_8 + reversion_12 | -1.05% | -14.06% | -2.25% | -0.49% | 21.94% |
-| breakout_8 AND volume_26 | 0.04% | -2.04% | -2.25% | -0.03% | 1.31% |
-| breakout_8 + volume_26 | -1.17% | -13.97% | -2.25% | -0.35% | 15.80% |
-| reversion_12 AND volume_26 | -1.25% | -8.44% | -2.25% | -0.19% | 8.62% |
-| reversion_12 + volume_26 | -0.96% | -12.88% | -2.25% | -0.45% | 20.24% |
+| cash | 0.00% | 0.00% | -2.34% | -0.00% | 0.00% |
+| buy_hold | -1.93% | -2.34% | -2.34% | -2.34% | 100.00% |
+| trend_8_26 | 0.65% | -3.08% | -2.34% | -1.11% | 47.52% |
+| momentum_26 | -1.18% | -5.64% | -2.34% | -0.97% | 41.51% |
+| breakout_8 | -1.18% | -16.81% | -2.34% | -0.42% | 17.75% |
+| reversion_12 | -0.86% | -12.96% | -2.34% | -0.62% | 26.37% |
+| volume_26 | -1.07% | -13.51% | -2.34% | -0.33% | 14.10% |
+| trend_8_26 AND momentum_26 | -0.22% | -3.92% | -2.34% | -0.87% | 37.08% |
+| trend_8_26 + momentum_26 | -0.26% | -4.17% | -2.34% | -1.04% | 44.52% |
+| trend_8_26 AND breakout_8 | -0.03% | -9.61% | -2.34% | -0.25% | 10.70% |
+| trend_8_26 + breakout_8 | -0.26% | -9.83% | -2.34% | -0.76% | 32.64% |
+| trend_8_26 AND reversion_12 | 0.42% | -5.31% | -2.34% | -0.14% | 6.01% |
+| trend_8_26 + reversion_12 | -0.10% | -7.58% | -2.34% | -0.86% | 36.95% |
+| trend_8_26 AND volume_26 | -0.71% | -5.59% | -2.34% | -0.10% | 4.18% |
+| trend_8_26 + volume_26 | -0.21% | -8.26% | -2.34% | -0.72% | 30.81% |
+| momentum_26 AND breakout_8 | -0.27% | -9.45% | -2.34% | -0.25% | 10.70% |
+| momentum_26 + breakout_8 | -1.17% | -11.22% | -2.34% | -0.69% | 29.64% |
+| momentum_26 AND reversion_12 | -0.02% | -5.73% | -2.34% | -0.11% | 4.70% |
+| momentum_26 + reversion_12 | -1.01% | -8.81% | -2.34% | -0.79% | 33.95% |
+| momentum_26 AND volume_26 | -0.30% | -4.40% | -2.34% | -0.08% | 3.39% |
+| momentum_26 + volume_26 | -1.12% | -9.48% | -2.34% | -0.65% | 27.81% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | -2.34% | -0.00% | 0.00% |
+| breakout_8 + reversion_12 | -1.01% | -14.02% | -2.34% | -0.52% | 22.07% |
+| breakout_8 AND volume_26 | 0.04% | -2.04% | -2.34% | -0.03% | 1.31% |
+| breakout_8 + volume_26 | -1.12% | -13.93% | -2.34% | -0.37% | 15.94% |
+| reversion_12 AND volume_26 | -1.25% | -8.44% | -2.34% | -0.20% | 8.62% |
+| reversion_12 + volume_26 | -0.96% | -12.88% | -2.34% | -0.47% | 20.24% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](QQQ/comparison.json)
@@ -236,57 +236,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10002.99 | 2.99 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10002.99 | 2.99 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 10002.99 | 2.99 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9937.45 | -62.55 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10023.94 | 23.94 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 10023.94 | 23.94 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 10023.94 | 23.94 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 9958.26 | -41.74 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 10002.99 | 2.99 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10002.99 | 2.99 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9937.45 | -62.55 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9970.15 | -29.85 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10023.94 | 23.94 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 10023.94 | 23.94 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9958.26 | -41.74 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9991.03 | -8.97 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10001.44 | 1.44 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10011.91 | 11.91 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 10001.44 | 1.44 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9937.45 | -62.55 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9970.15 | -29.85 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10011.91 | 11.91 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9958.26 | -41.74 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9991.03 | -8.97 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 10001.44 | 1.44 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10011.91 | 11.91 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 10001.44 | 1.44 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10011.91 | 11.91 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9968.65 | -31.35 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9979.08 | -20.92 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9968.65 | -31.35 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9979.08 | -20.92 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 9837.49 | -162.51 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9814.96 | -185.04 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9815.97 | -184.03 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9602.97 | -397.03 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9858.09 | -141.91 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9835.52 | -164.48 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 9836.53 | -163.47 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9623.08 | -376.92 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9538.67 | -461.33 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9513.36 | -486.64 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9967.31 | -32.69 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9836.24 | -163.76 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9897.53 | -102.47 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9728.92 | -271.08 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9988.18 | -11.82 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9856.83 | -143.17 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9918.26 | -81.74 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9749.29 | -250.71 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9881.82 | -118.18 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9675.67 | -324.33 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9685.80 | -314.20 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9862.83 | -137.17 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9683.29 | -316.71 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9789.86 | -210.14 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9708.89 | -291.11 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9693.42 | -306.58 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9810.37 | -189.63 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9729.22 | -270.78 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9960.59 | -39.41 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9696.29 | -303.71 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9706.44 | -293.56 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9897.79 | -102.21 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9663.26 | -336.74 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9673.38 | -326.62 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9610.68 | -389.32 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9620.73 | -379.27 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9746.03 | -253.97 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9578.12 | -421.88 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9588.14 | -411.86 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 9740.75 | -259.25 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 + volume_26 | 9545.82 | -454.18 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -294,33 +294,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | -2.68% | -0.00% | 0.00% |
-| buy_hold | -2.27% | -2.68% | -2.68% | -2.68% | 100.00% |
-| trend_8_26 | -1.70% | -5.75% | -2.68% | -1.22% | 45.17% |
-| momentum_26 | -2.29% | -7.87% | -2.68% | -1.10% | 40.73% |
-| breakout_8 | -0.84% | -14.03% | -2.68% | -0.51% | 18.80% |
-| reversion_12 | -2.13% | -14.80% | -2.68% | -0.79% | 29.24% |
-| volume_26 | -2.31% | -9.05% | -2.68% | -0.23% | 8.36% |
-| trend_8_26 AND momentum_26 | -1.95% | -6.37% | -2.68% | -0.95% | 35.25% |
-| trend_8_26 + momentum_26 | -1.99% | -6.42% | -2.68% | -1.16% | 42.95% |
-| trend_8_26 AND breakout_8 | -0.71% | -8.32% | -2.68% | -0.28% | 10.44% |
-| trend_8_26 + breakout_8 | -1.26% | -9.79% | -2.68% | -0.86% | 31.99% |
-| trend_8_26 AND reversion_12 | -0.10% | -5.01% | -2.68% | -0.15% | 5.48% |
-| trend_8_26 + reversion_12 | -1.91% | -10.20% | -2.68% | -1.01% | 37.21% |
-| trend_8_26 AND volume_26 | -1.03% | -4.30% | -2.68% | -0.09% | 3.39% |
-| trend_8_26 + volume_26 | -2.00% | -7.22% | -2.68% | -0.72% | 26.77% |
-| momentum_26 AND breakout_8 | -0.10% | -7.76% | -2.68% | -0.28% | 10.18% |
-| momentum_26 + breakout_8 | -1.56% | -11.00% | -2.68% | -0.81% | 29.77% |
-| momentum_26 AND reversion_12 | -0.03% | -3.74% | -2.68% | -0.08% | 2.87% |
-| momentum_26 + reversion_12 | -2.20% | -10.28% | -2.68% | -0.95% | 34.99% |
-| momentum_26 AND volume_26 | -1.32% | -3.77% | -2.68% | -0.05% | 1.83% |
-| momentum_26 + volume_26 | -2.30% | -8.08% | -2.68% | -0.66% | 24.55% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | -2.68% | -0.00% | 0.00% |
-| breakout_8 + reversion_12 | -1.48% | -13.70% | -2.68% | -0.65% | 24.03% |
-| breakout_8 AND volume_26 | -1.30% | -3.76% | -2.68% | -0.06% | 2.09% |
-| breakout_8 + volume_26 | -1.57% | -11.39% | -2.68% | -0.37% | 13.58% |
-| reversion_12 AND volume_26 | -0.38% | -4.47% | -2.68% | -0.12% | 4.44% |
-| reversion_12 + volume_26 | -2.22% | -11.42% | -2.68% | -0.51% | 18.80% |
+| cash | 0.00% | 0.00% | -2.53% | -0.00% | 0.00% |
+| buy_hold | -2.12% | -2.53% | -2.53% | -2.53% | 100.00% |
+| trend_8_26 | -1.55% | -5.60% | -2.53% | -1.15% | 45.17% |
+| momentum_26 | -2.13% | -7.72% | -2.53% | -1.04% | 40.73% |
+| breakout_8 | -0.63% | -13.85% | -2.53% | -0.49% | 19.06% |
+| reversion_12 | -2.18% | -14.48% | -2.53% | -0.74% | 28.98% |
+| volume_26 | -2.31% | -9.05% | -2.53% | -0.21% | 8.36% |
+| trend_8_26 AND momentum_26 | -1.79% | -6.22% | -2.53% | -0.90% | 35.25% |
+| trend_8_26 + momentum_26 | -1.83% | -6.27% | -2.53% | -1.09% | 42.95% |
+| trend_8_26 AND breakout_8 | -0.50% | -8.13% | -2.53% | -0.27% | 10.70% |
+| trend_8_26 + breakout_8 | -1.08% | -9.63% | -2.53% | -0.82% | 32.12% |
+| trend_8_26 AND reversion_12 | -0.15% | -4.66% | -2.53% | -0.13% | 5.22% |
+| trend_8_26 + reversion_12 | -1.85% | -9.96% | -2.53% | -0.94% | 37.08% |
+| trend_8_26 AND volume_26 | -1.03% | -4.30% | -2.53% | -0.09% | 3.39% |
+| trend_8_26 + volume_26 | -1.92% | -7.14% | -2.53% | -0.68% | 26.77% |
+| momentum_26 AND breakout_8 | 0.11% | -7.57% | -2.53% | -0.27% | 10.44% |
+| momentum_26 + breakout_8 | -1.38% | -10.84% | -2.53% | -0.76% | 29.90% |
+| momentum_26 AND reversion_12 | -0.08% | -3.38% | -2.53% | -0.07% | 2.61% |
+| momentum_26 + reversion_12 | -2.15% | -10.05% | -2.53% | -0.89% | 34.86% |
+| momentum_26 AND volume_26 | -1.32% | -3.77% | -2.53% | -0.05% | 1.83% |
+| momentum_26 + volume_26 | -2.22% | -8.00% | -2.53% | -0.63% | 24.55% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | -2.53% | -0.00% | 0.00% |
+| breakout_8 + reversion_12 | -1.40% | -13.45% | -2.53% | -0.61% | 24.03% |
+| breakout_8 AND volume_26 | -1.30% | -3.76% | -2.53% | -0.05% | 2.09% |
+| breakout_8 + volume_26 | -1.47% | -11.30% | -2.53% | -0.35% | 13.71% |
+| reversion_12 AND volume_26 | -0.38% | -4.47% | -2.53% | -0.11% | 4.44% |
+| reversion_12 + volume_26 | -2.24% | -11.25% | -2.53% | -0.48% | 18.67% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](IWM/comparison.json)
@@ -332,57 +332,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9993.44 | -6.56 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9993.44 | -6.56 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9993.44 | -6.56 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9936.38 | -63.62 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 9995.80 | -4.20 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 9995.80 | -4.20 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 9995.80 | -4.20 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 9916.42 | -83.58 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9993.44 | -6.56 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9993.44 | -6.56 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9936.38 | -63.62 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9964.85 | -35.15 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 9995.80 | -4.20 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 9995.80 | -4.20 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9916.42 | -83.58 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9956.02 | -43.98 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9996.66 | -3.34 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 9997.84 | -2.16 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9996.66 | -3.34 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9936.38 | -63.62 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9964.85 | -35.15 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 9997.84 | -2.16 | buy /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9916.42 | -83.58 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9956.02 | -43.98 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9996.66 | -3.34 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9997.84 | -2.16 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9996.66 | -3.34 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9997.84 | -2.16 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9968.10 | -31.90 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9958.08 | -41.92 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9968.10 | -31.90 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9958.08 | -41.92 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 10076.81 | 76.81 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9889.02 | -110.98 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9997.74 | -2.26 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9562.40 | -437.60 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 10079.19 | 79.19 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9891.35 | -108.65 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 10000.10 | 0.10 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9542.23 | -457.77 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9698.03 | -301.97 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9718.21 | -281.79 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9993.11 | -6.89 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9943.30 | -56.70 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9724.20 | -275.80 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9724.37 | -275.63 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9995.46 | -4.54 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9945.65 | -54.35 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9703.70 | -296.30 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9715.26 | -284.74 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9810.77 | -189.23 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9792.81 | -207.19 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9793.96 | -206.04 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9858.88 | -141.12 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9823.80 | -176.20 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9713.13 | -286.87 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9777.74 | -222.26 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9824.96 | -175.04 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9692.65 | -307.35 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9768.59 | -231.41 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9955.97 | -44.03 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9846.57 | -153.43 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9847.73 | -152.27 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9791.42 | -208.58 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9898.55 | -101.45 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9899.72 | -100.28 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9629.57 | -370.43 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9619.41 | -380.59 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9796.56 | -203.44 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9639.86 | -360.14 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9629.69 | -370.31 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | reversion_12 + volume_26 | 9707.85 | -292.15 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -390,33 +390,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | 1.01% | 0.00% | 0.00% |
-| buy_hold | 1.43% | 1.01% | 1.01% | 1.01% | 100.00% |
-| trend_8_26 | 1.75% | -2.85% | 1.01% | 0.57% | 56.40% |
-| momentum_26 | 0.41% | -3.72% | 1.01% | 0.53% | 52.74% |
-| breakout_8 | 0.06% | -16.82% | 1.01% | 0.24% | 23.50% |
-| reversion_12 | -1.36% | -9.30% | 1.01% | 0.25% | 24.54% |
-| volume_26 | -0.99% | -11.24% | 1.01% | 0.11% | 10.97% |
-| trend_8_26 AND momentum_26 | 1.88% | -2.31% | 1.01% | 0.47% | 47.00% |
-| trend_8_26 + momentum_26 | 1.08% | -3.28% | 1.01% | 0.55% | 54.57% |
-| trend_8_26 AND breakout_8 | 0.62% | -11.29% | 1.01% | 0.16% | 15.40% |
-| trend_8_26 + breakout_8 | 0.90% | -9.92% | 1.01% | 0.40% | 39.95% |
-| trend_8_26 AND reversion_12 | 0.37% | -4.56% | 1.01% | 0.06% | 6.27% |
-| trend_8_26 + reversion_12 | 0.19% | -5.74% | 1.01% | 0.41% | 40.47% |
-| trend_8_26 AND volume_26 | 0.56% | -4.78% | 1.01% | 0.05% | 5.22% |
-| trend_8_26 + volume_26 | 0.37% | -6.95% | 1.01% | 0.34% | 33.69% |
-| momentum_26 AND breakout_8 | -0.17% | -11.62% | 1.01% | 0.16% | 15.67% |
-| momentum_26 + breakout_8 | 0.24% | -10.32% | 1.01% | 0.38% | 38.13% |
-| momentum_26 AND reversion_12 | -0.18% | -3.88% | 1.01% | 0.06% | 5.74% |
-| momentum_26 + reversion_12 | -0.47% | -5.77% | 1.01% | 0.39% | 38.65% |
-| momentum_26 AND volume_26 | -0.40% | -5.70% | 1.01% | 0.05% | 4.70% |
-| momentum_26 + volume_26 | -0.29% | -6.78% | 1.01% | 0.32% | 31.86% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | 1.01% | 0.00% | 0.00% |
-| breakout_8 + reversion_12 | -0.65% | -12.79% | 1.01% | 0.24% | 24.03% |
-| breakout_8 AND volume_26 | -0.87% | -4.55% | 1.01% | 0.03% | 3.13% |
-| breakout_8 + volume_26 | -0.47% | -13.18% | 1.01% | 0.17% | 17.24% |
-| reversion_12 AND volume_26 | -0.20% | -5.11% | 1.01% | 0.04% | 3.92% |
-| reversion_12 + volume_26 | -1.17% | -10.28% | 1.01% | 0.18% | 17.76% |
+| cash | 0.00% | 0.00% | 1.02% | 0.00% | 0.00% |
+| buy_hold | 1.45% | 1.02% | 1.02% | 1.02% | 100.00% |
+| trend_8_26 | 1.76% | -2.83% | 1.02% | 0.58% | 56.40% |
+| momentum_26 | 0.42% | -3.71% | 1.02% | 0.54% | 52.74% |
+| breakout_8 | 0.06% | -16.82% | 1.02% | 0.24% | 23.50% |
+| reversion_12 | -1.36% | -9.30% | 1.02% | 0.25% | 24.54% |
+| volume_26 | -0.99% | -11.24% | 1.02% | 0.11% | 10.97% |
+| trend_8_26 AND momentum_26 | 1.90% | -2.29% | 1.02% | 0.48% | 47.00% |
+| trend_8_26 + momentum_26 | 1.09% | -3.27% | 1.02% | 0.56% | 54.57% |
+| trend_8_26 AND breakout_8 | 0.62% | -11.29% | 1.02% | 0.16% | 15.40% |
+| trend_8_26 + breakout_8 | 0.91% | -9.91% | 1.02% | 0.41% | 39.95% |
+| trend_8_26 AND reversion_12 | 0.37% | -4.56% | 1.02% | 0.06% | 6.27% |
+| trend_8_26 + reversion_12 | 0.19% | -5.74% | 1.02% | 0.41% | 40.47% |
+| trend_8_26 AND volume_26 | 0.56% | -4.78% | 1.02% | 0.05% | 5.22% |
+| trend_8_26 + volume_26 | 0.38% | -6.94% | 1.02% | 0.34% | 33.69% |
+| momentum_26 AND breakout_8 | -0.17% | -11.62% | 1.02% | 0.16% | 15.67% |
+| momentum_26 + breakout_8 | 0.24% | -10.32% | 1.02% | 0.39% | 38.13% |
+| momentum_26 AND reversion_12 | -0.18% | -3.88% | 1.02% | 0.06% | 5.74% |
+| momentum_26 + reversion_12 | -0.47% | -5.77% | 1.02% | 0.40% | 38.65% |
+| momentum_26 AND volume_26 | -0.40% | -5.70% | 1.02% | 0.05% | 4.70% |
+| momentum_26 + volume_26 | -0.28% | -6.77% | 1.02% | 0.33% | 31.86% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | 1.02% | 0.00% | 0.00% |
+| breakout_8 + reversion_12 | -0.65% | -12.79% | 1.02% | 0.25% | 24.03% |
+| breakout_8 AND volume_26 | -0.87% | -4.55% | 1.02% | 0.03% | 3.13% |
+| breakout_8 + volume_26 | -0.47% | -13.18% | 1.02% | 0.18% | 17.24% |
+| reversion_12 AND volume_26 | -0.20% | -5.11% | 1.02% | 0.04% | 3.92% |
+| reversion_12 + volume_26 | -1.17% | -10.28% | 1.02% | 0.18% | 17.76% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](DIA/comparison.json)
@@ -428,57 +428,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10045.88 | 45.88 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10045.88 | 45.88 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 10047.93 | 47.93 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9927.68 | -72.32 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | buy_hold | 10038.07 | 38.07 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 10038.07 | 38.07 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 10040.13 | 40.13 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 9900.34 | -99.66 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 9952.64 | -47.36 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 10047.93 | 47.93 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10046.90 | 46.90 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9927.68 | -72.32 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9986.58 | -13.42 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10040.13 | 40.13 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 10039.10 | 39.10 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9900.34 | -99.66 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9968.97 | -31.03 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10022.84 | 22.84 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10018.94 | 18.94 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 9952.64 | -47.36 | sell /  / trend_8_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + volume_26 | 9999.14 | -0.86 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9927.68 | -72.32 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9987.62 | -12.38 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 9995.25 | -4.75 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9900.34 | -99.66 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9970.00 | -30.00 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 10023.88 | 23.88 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10019.98 | 19.98 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 9952.64 | -47.36 | sell /  / momentum_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + volume_26 | 10000.16 | 0.16 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9996.28 | -3.72 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9963.74 | -36.26 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9949.99 | -50.01 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9960.00 | -40.00 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9946.26 | -53.74 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9976.25 | -23.75 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 10030.59 | 30.59 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9912.85 | -87.15 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 10024.67 | 24.67 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9848.37 | -151.63 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 10022.80 | 22.80 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9905.15 | -94.85 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 10016.88 | 16.88 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9820.27 | -179.73 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9618.62 | -381.38 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9688.55 | -311.45 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9873.32 | -126.68 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9968.86 | -31.14 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9687.38 | -312.62 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9901.49 | -98.51 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9865.65 | -134.35 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9961.12 | -38.88 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9659.74 | -340.26 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9883.53 | -116.47 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9900.10 | -99.90 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9764.27 | -235.73 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9760.48 | -239.52 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9948.66 | -51.34 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9820.43 | -179.57 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9843.25 | -156.75 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9936.15 | -63.85 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9816.62 | -183.38 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9815.17 | -184.83 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9918.13 | -81.87 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9826.88 | -173.12 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9819.31 | -180.69 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9815.50 | -184.50 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9871.26 | -128.74 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9875.80 | -124.20 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9871.96 | -128.04 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9753.10 | -246.90 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9739.16 | -260.84 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9938.59 | -61.41 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9788.74 | -211.26 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9774.74 | -225.26 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 9762.04 | -237.96 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 + volume_26 | 9653.37 | -346.63 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -486,33 +486,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | 4.76% | 0.00% | 0.00% |
-| buy_hold | 5.20% | 4.76% | 4.76% | 4.76% | 100.00% |
-| trend_8_26 | 0.11% | -3.61% | 4.76% | 2.82% | 59.79% |
-| momentum_26 | 1.25% | -4.53% | 4.76% | 2.84% | 60.05% |
-| breakout_8 | 5.16% | -9.60% | 4.76% | 0.97% | 20.63% |
-| reversion_12 | -4.05% | -12.52% | 4.76% | 1.09% | 23.24% |
-| volume_26 | 2.43% | -5.82% | 4.76% | 0.38% | 8.09% |
-| trend_8_26 AND momentum_26 | -0.16% | -5.86% | 4.76% | 2.55% | 54.05% |
-| trend_8_26 + momentum_26 | 0.68% | -4.06% | 4.76% | 2.83% | 59.92% |
-| trend_8_26 AND breakout_8 | 0.74% | -9.68% | 4.76% | 0.63% | 13.58% |
-| trend_8_26 + breakout_8 | 2.62% | -6.25% | 4.76% | 1.89% | 40.21% |
-| trend_8_26 AND reversion_12 | -3.39% | -8.52% | 4.76% | 0.33% | 7.05% |
-| trend_8_26 + reversion_12 | -1.98% | -7.79% | 4.76% | 1.95% | 41.52% |
-| trend_8_26 AND volume_26 | 3.46% | 0.46% | 4.76% | 0.12% | 2.61% |
-| trend_8_26 + volume_26 | 1.28% | -3.92% | 4.76% | 1.59% | 33.95% |
-| momentum_26 AND breakout_8 | 2.68% | -8.33% | 4.76% | 0.65% | 13.84% |
-| momentum_26 + breakout_8 | 3.20% | -6.50% | 4.76% | 1.90% | 40.35% |
-| momentum_26 AND reversion_12 | -2.74% | -8.67% | 4.76% | 0.38% | 8.09% |
-| momentum_26 + reversion_12 | -1.41% | -8.23% | 4.76% | 1.96% | 41.65% |
-| momentum_26 AND volume_26 | 1.80% | -2.38% | 4.76% | 0.16% | 3.39% |
-| momentum_26 + volume_26 | 1.86% | -3.97% | 4.76% | 1.60% | 34.08% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | 4.76% | 0.00% | 0.00% |
-| breakout_8 + reversion_12 | 0.48% | -10.50% | 4.76% | 1.03% | 21.94% |
-| breakout_8 AND volume_26 | 2.07% | -0.47% | 4.76% | 0.09% | 1.83% |
-| breakout_8 + volume_26 | 3.80% | -6.75% | 4.76% | 0.67% | 14.37% |
-| reversion_12 AND volume_26 | -2.27% | -5.89% | 4.76% | 0.16% | 3.39% |
-| reversion_12 + volume_26 | -0.84% | -9.03% | 4.76% | 0.73% | 15.67% |
+| cash | 0.00% | 0.00% | 4.32% | 0.00% | 0.00% |
+| buy_hold | 4.76% | 4.32% | 4.32% | 4.32% | 100.00% |
+| trend_8_26 | -0.32% | -4.02% | 4.32% | 2.56% | 59.79% |
+| momentum_26 | 0.82% | -4.94% | 4.32% | 2.57% | 60.05% |
+| breakout_8 | 5.08% | -10.04% | 4.32% | 0.89% | 20.89% |
+| reversion_12 | -4.05% | -12.52% | 4.32% | 0.99% | 23.24% |
+| volume_26 | 2.43% | -5.82% | 4.32% | 0.34% | 8.09% |
+| trend_8_26 AND momentum_26 | -0.58% | -6.26% | 4.32% | 2.31% | 54.05% |
+| trend_8_26 + momentum_26 | 0.26% | -4.47% | 4.32% | 2.57% | 59.92% |
+| trend_8_26 AND breakout_8 | 0.67% | -10.13% | 4.32% | 0.59% | 13.84% |
+| trend_8_26 + breakout_8 | 2.37% | -6.68% | 4.32% | 1.72% | 40.35% |
+| trend_8_26 AND reversion_12 | -3.39% | -8.52% | 4.32% | 0.30% | 7.05% |
+| trend_8_26 + reversion_12 | -2.18% | -7.98% | 4.32% | 1.77% | 41.52% |
+| trend_8_26 AND volume_26 | 3.46% | 0.46% | 4.32% | 0.11% | 2.61% |
+| trend_8_26 + volume_26 | 1.07% | -4.12% | 4.32% | 1.45% | 33.95% |
+| momentum_26 AND breakout_8 | 2.60% | -8.78% | 4.32% | 0.60% | 14.10% |
+| momentum_26 + breakout_8 | 2.94% | -6.93% | 4.32% | 1.73% | 40.48% |
+| momentum_26 AND reversion_12 | -2.74% | -8.67% | 4.32% | 0.34% | 8.09% |
+| momentum_26 + reversion_12 | -1.62% | -8.42% | 4.32% | 1.78% | 41.65% |
+| momentum_26 AND volume_26 | 1.80% | -2.38% | 4.32% | 0.14% | 3.39% |
+| momentum_26 + volume_26 | 1.64% | -4.18% | 4.32% | 1.45% | 34.08% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | 4.32% | 0.00% | 0.00% |
+| breakout_8 + reversion_12 | 0.44% | -10.72% | 4.32% | 0.94% | 22.07% |
+| breakout_8 AND volume_26 | 2.07% | -0.47% | 4.32% | 0.08% | 1.83% |
+| breakout_8 + volume_26 | 3.76% | -6.98% | 4.32% | 0.62% | 14.50% |
+| reversion_12 AND volume_26 | -2.27% | -5.89% | 4.32% | 0.14% | 3.39% |
+| reversion_12 + volume_26 | -0.84% | -9.03% | 4.32% | 0.67% | 15.67% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](MSFT/comparison.json)
@@ -524,57 +524,57 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10015.42 | 15.42 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9944.24 | -55.76 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9803.43 | -196.57 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9943.00 | -57.00 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10001.08 | 1.08 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 9930.01 | -69.99 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 9789.40 | -210.60 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 9928.77 | -71.23 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | reversion_12 | 9950.66 | -49.34 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9881.39 | -118.61 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9893.34 | -106.66 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9986.13 | -13.87 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9943.64 | -56.36 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 9867.25 | -132.75 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 9879.18 | -120.82 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 9971.84 | -28.16 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 9929.41 | -70.59 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9987.26 | -12.74 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 9980.11 | -19.89 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9972.06 | -27.94 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9943.00 | -57.00 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9872.93 | -127.07 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 9964.92 | -35.08 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND breakout_8 | 9928.77 | -71.23 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9858.80 | -141.20 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9936.14 | -63.86 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9929.02 | -70.98 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9901.16 | -98.84 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9894.06 | -105.94 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9966.70 | -33.30 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9959.56 | -40.44 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9971.43 | -28.57 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 9964.28 | -35.72 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9975.27 | -24.73 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 10010.97 | 10.97 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9854.50 | -145.50 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9358.69 | -641.31 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9369.47 | -630.53 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9996.65 | -3.35 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9840.40 | -159.60 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 9345.30 | -654.70 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9356.06 | -643.94 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9991.97 | -8.03 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9826.70 | -173.30 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9814.06 | -185.94 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9624.12 | -375.88 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9406.50 | -593.50 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9609.55 | -390.45 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9800.02 | -199.98 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9610.34 | -389.66 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9393.04 | -606.96 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9595.80 | -404.20 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9981.61 | -18.39 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9964.81 | -35.19 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9957.68 | -42.32 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9800.30 | -199.70 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9841.08 | -158.92 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND breakout_8 | 9350.74 | -649.26 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9384.95 | -615.05 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9834.04 | -165.96 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND breakout_8 | 9337.36 | -662.64 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9371.52 | -628.48 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9950.76 | -49.24 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9793.17 | -206.83 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9786.15 | -213.85 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9800.30 | -199.70 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9651.37 | -348.63 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9644.45 | -355.55 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9716.68 | -283.32 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9709.72 | -290.28 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9893.34 | -106.66 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9615.68 | -384.32 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9608.79 | -391.21 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 10051.38 | 51.38 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 + volume_26 | 9930.12 | -69.88 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
@@ -582,33 +582,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | -1.81% | -0.00% | 0.00% |
-| buy_hold | -1.40% | -1.81% | -1.81% | -1.81% | 100.00% |
-| trend_8_26 | 0.13% | -3.99% | -1.81% | -0.97% | 52.74% |
-| momentum_26 | -2.91% | -9.60% | -1.81% | -0.87% | 47.26% |
-| breakout_8 | -3.66% | -18.22% | -1.81% | -0.35% | 19.06% |
-| reversion_12 | 4.63% | -9.67% | -1.81% | -0.49% | 26.37% |
-| volume_26 | -0.86% | -6.52% | -1.81% | -0.12% | 6.53% |
-| trend_8_26 AND momentum_26 | 0.22% | -4.71% | -1.81% | -0.76% | 41.51% |
-| trend_8_26 + momentum_26 | -1.39% | -6.64% | -1.81% | -0.92% | 50.00% |
-| trend_8_26 AND breakout_8 | -3.71% | -13.67% | -1.81% | -0.22% | 11.75% |
-| trend_8_26 + breakout_8 | -1.77% | -11.20% | -1.81% | -0.66% | 35.91% |
-| trend_8_26 AND reversion_12 | 2.82% | -3.46% | -1.81% | -0.12% | 6.53% |
-| trend_8_26 + reversion_12 | 2.37% | -6.29% | -1.81% | -0.73% | 39.56% |
-| trend_8_26 AND volume_26 | -1.33% | -4.99% | -1.81% | -0.07% | 3.92% |
-| trend_8_26 + volume_26 | -0.35% | -5.26% | -1.81% | -0.55% | 29.64% |
-| momentum_26 AND breakout_8 | -2.55% | -12.63% | -1.81% | -0.21% | 11.49% |
-| momentum_26 + breakout_8 | -3.27% | -13.82% | -1.81% | -0.61% | 33.17% |
-| momentum_26 AND reversion_12 | 2.89% | -3.80% | -1.81% | -0.10% | 5.48% |
-| momentum_26 + reversion_12 | 0.81% | -8.11% | -1.81% | -0.68% | 36.82% |
-| momentum_26 AND volume_26 | -0.55% | -3.02% | -1.81% | -0.05% | 2.61% |
-| momentum_26 + volume_26 | -1.87% | -7.49% | -1.81% | -0.50% | 26.90% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | -1.81% | -0.00% | 0.00% |
-| breakout_8 + reversion_12 | 0.42% | -12.60% | -1.81% | -0.42% | 22.72% |
-| breakout_8 AND volume_26 | -1.26% | -2.50% | -1.81% | -0.01% | 0.78% |
-| breakout_8 + volume_26 | -2.26% | -11.46% | -1.81% | -0.24% | 12.80% |
-| reversion_12 AND volume_26 | 1.25% | -2.10% | -1.81% | -0.06% | 3.39% |
-| reversion_12 + volume_26 | 1.86% | -7.34% | -1.81% | -0.30% | 16.45% |
+| cash | 0.00% | 0.00% | -1.84% | -0.00% | 0.00% |
+| buy_hold | -1.43% | -1.84% | -1.84% | -1.84% | 100.00% |
+| trend_8_26 | 0.10% | -4.02% | -1.84% | -0.98% | 52.74% |
+| momentum_26 | -2.94% | -9.63% | -1.84% | -0.88% | 47.26% |
+| breakout_8 | -3.80% | -18.34% | -1.84% | -0.36% | 19.32% |
+| reversion_12 | 4.63% | -9.67% | -1.84% | -0.49% | 26.37% |
+| volume_26 | -0.86% | -6.52% | -1.84% | -0.12% | 6.53% |
+| trend_8_26 AND momentum_26 | 0.19% | -4.74% | -1.84% | -0.77% | 41.51% |
+| trend_8_26 + momentum_26 | -1.42% | -6.66% | -1.84% | -0.93% | 50.00% |
+| trend_8_26 AND breakout_8 | -3.84% | -13.79% | -1.84% | -0.23% | 12.01% |
+| trend_8_26 + breakout_8 | -1.86% | -11.27% | -1.84% | -0.67% | 36.04% |
+| trend_8_26 AND reversion_12 | 2.82% | -3.46% | -1.84% | -0.12% | 6.53% |
+| trend_8_26 + reversion_12 | 2.36% | -6.30% | -1.84% | -0.74% | 39.56% |
+| trend_8_26 AND volume_26 | -1.33% | -4.99% | -1.84% | -0.07% | 3.92% |
+| trend_8_26 + volume_26 | -0.37% | -5.27% | -1.84% | -0.55% | 29.64% |
+| momentum_26 AND breakout_8 | -2.69% | -12.75% | -1.84% | -0.22% | 11.75% |
+| momentum_26 + breakout_8 | -3.35% | -13.90% | -1.84% | -0.62% | 33.30% |
+| momentum_26 AND reversion_12 | 2.89% | -3.80% | -1.84% | -0.10% | 5.48% |
+| momentum_26 + reversion_12 | 0.80% | -8.12% | -1.84% | -0.69% | 36.82% |
+| momentum_26 AND volume_26 | -0.55% | -3.02% | -1.84% | -0.05% | 2.61% |
+| momentum_26 + volume_26 | -1.88% | -7.50% | -1.84% | -0.50% | 26.90% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | -1.84% | -0.00% | 0.00% |
+| breakout_8 + reversion_12 | 0.35% | -12.66% | -1.84% | -0.43% | 22.86% |
+| breakout_8 AND volume_26 | -1.26% | -2.50% | -1.84% | -0.01% | 0.78% |
+| breakout_8 + volume_26 | -2.33% | -11.52% | -1.84% | -0.24% | 12.93% |
+| reversion_12 AND volume_26 | 1.25% | -2.10% | -1.84% | -0.06% | 3.39% |
+| reversion_12 + volume_26 | 1.86% | -7.34% | -1.84% | -0.31% | 16.45% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](JPM/comparison.json)
@@ -620,91 +620,91 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9903.17 | -96.83 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 9898.62 | -101.38 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 | 9866.85 | -133.15 | buy /  / reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | reversion_12 | 9862.31 | -137.69 | buy /  / reversion_12: prior completed bar target 100%; next bar open simulation |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9933.12 | -66.88 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 9930.83 | -69.17 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9933.12 | -66.88 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9930.83 | -69.17 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9933.12 | -66.88 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9930.83 | -69.17 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9933.12 | -66.88 | buy /  / reversion_12 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 9930.83 | -69.17 | buy /  / reversion_12 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 10150.59 | 150.59 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 10145.92 | 145.92 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 10096.25 | 96.25 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 | 10172.64 | 172.64 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 | 9471.02 | -528.98 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | reversion_12 | 9694.43 | -305.57 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | reversion_12 | 9689.97 | -310.03 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9908.04 | -91.96 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND momentum_26 | 10103.74 | 103.74 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + momentum_26 | 10134.41 | 134.41 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND breakout_8 | 9453.73 | -546.27 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + breakout_8 | 9799.57 | -200.43 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9839.70 | -160.30 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9893.19 | -106.81 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9890.92 | -109.08 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9895.61 | -104.39 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + volume_26 | 10001.66 | 1.66 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND breakout_8 | 9471.02 | -528.98 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 + breakout_8 | 9816.10 | -183.90 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9800.13 | -199.87 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 9930.58 | -69.42 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 9928.30 | -71.70 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9957.96 | -42.04 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 + volume_26 | 10060.52 | 60.52 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9581.79 | -418.21 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9579.59 | -420.41 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9970.25 | -29.75 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 + volume_26 | 9707.34 | -292.66 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 9949.87 | -50.13 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | reversion_12 + volume_26 | 9800.46 | -199.54 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | reversion_12 + volume_26 | 9798.20 | -201.80 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 
 ### 같은 기간의 비용·노출 비교 (사후 연구)
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | 7.62% | 0.00% | 0.00% |
-| buy_hold | 8.08% | 7.62% | 7.62% | 7.62% | 100.00% |
-| trend_8_26 | 1.00% | -3.16% | 7.62% | 4.70% | 62.40% |
-| momentum_26 | 0.22% | -6.69% | 7.62% | 5.12% | 67.89% |
-| breakout_8 | -3.59% | -20.53% | 7.62% | 1.69% | 22.72% |
-| reversion_12 | 5.54% | -5.78% | 7.62% | 1.59% | 21.41% |
-| volume_26 | 4.51% | -2.69% | 7.62% | 0.33% | 4.44% |
-| trend_8_26 AND momentum_26 | -0.45% | -4.95% | 7.62% | 4.30% | 57.18% |
-| trend_8_26 + momentum_26 | 0.62% | -4.73% | 7.62% | 4.91% | 65.15% |
-| trend_8_26 AND breakout_8 | -1.20% | -14.70% | 7.62% | 1.32% | 17.75% |
-| trend_8_26 + breakout_8 | -1.30% | -12.07% | 7.62% | 3.18% | 42.57% |
-| trend_8_26 AND reversion_12 | 1.89% | -3.93% | 7.62% | 0.60% | 8.09% |
-| trend_8_26 + reversion_12 | 3.27% | -4.27% | 7.62% | 3.13% | 41.91% |
-| trend_8_26 AND volume_26 | 2.54% | -1.67% | 7.62% | 0.19% | 2.61% |
-| trend_8_26 + volume_26 | 2.76% | -2.52% | 7.62% | 2.49% | 33.42% |
-| momentum_26 AND breakout_8 | -3.06% | -18.40% | 7.62% | 1.51% | 20.37% |
-| momentum_26 + breakout_8 | -1.68% | -13.87% | 7.62% | 3.39% | 45.31% |
-| momentum_26 AND reversion_12 | 2.27% | -4.38% | 7.62% | 0.66% | 8.88% |
-| momentum_26 + reversion_12 | 2.87% | -4.84% | 7.62% | 3.34% | 44.65% |
-| momentum_26 AND volume_26 | 2.32% | -1.47% | 7.62% | 0.17% | 2.35% |
-| momentum_26 + volume_26 | 2.37% | -3.29% | 7.62% | 2.70% | 36.17% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | 7.62% | 0.00% | 0.00% |
-| breakout_8 + reversion_12 | 0.89% | -13.10% | 7.62% | 1.64% | 22.07% |
-| breakout_8 AND volume_26 | 0.60% | -0.66% | 7.62% | 0.06% | 0.78% |
-| breakout_8 + volume_26 | 0.39% | -10.94% | 7.62% | 1.01% | 13.58% |
-| reversion_12 AND volume_26 | 1.52% | -1.00% | 7.62% | 0.12% | 1.57% |
-| reversion_12 + volume_26 | 5.04% | -3.64% | 7.62% | 0.96% | 12.93% |
+| cash | 0.00% | 0.00% | 7.57% | 0.00% | 0.00% |
+| buy_hold | 8.02% | 7.57% | 7.57% | 7.57% | 100.00% |
+| trend_8_26 | 1.00% | -3.16% | 7.57% | 4.66% | 62.40% |
+| momentum_26 | 0.22% | -6.69% | 7.57% | 5.08% | 67.89% |
+| breakout_8 | -3.59% | -20.53% | 7.57% | 1.67% | 22.72% |
+| reversion_12 | 5.49% | -5.82% | 7.57% | 1.60% | 21.67% |
+| volume_26 | 4.51% | -2.69% | 7.57% | 0.33% | 4.44% |
+| trend_8_26 AND momentum_26 | -0.45% | -4.95% | 7.57% | 4.26% | 57.18% |
+| trend_8_26 + momentum_26 | 0.62% | -4.73% | 7.57% | 4.87% | 65.15% |
+| trend_8_26 AND breakout_8 | -1.20% | -14.70% | 7.57% | 1.31% | 17.75% |
+| trend_8_26 + breakout_8 | -1.30% | -12.07% | 7.57% | 3.16% | 42.57% |
+| trend_8_26 AND reversion_12 | 1.89% | -3.93% | 7.57% | 0.59% | 8.09% |
+| trend_8_26 + reversion_12 | 3.25% | -4.30% | 7.57% | 3.12% | 42.04% |
+| trend_8_26 AND volume_26 | 2.54% | -1.67% | 7.57% | 0.19% | 2.61% |
+| trend_8_26 + volume_26 | 2.76% | -2.52% | 7.57% | 2.47% | 33.42% |
+| momentum_26 AND breakout_8 | -3.06% | -18.40% | 7.57% | 1.50% | 20.37% |
+| momentum_26 + breakout_8 | -1.68% | -13.87% | 7.57% | 3.37% | 45.31% |
+| momentum_26 AND reversion_12 | 2.27% | -4.38% | 7.57% | 0.65% | 8.88% |
+| momentum_26 + reversion_12 | 2.85% | -4.87% | 7.57% | 3.33% | 44.78% |
+| momentum_26 AND volume_26 | 2.32% | -1.47% | 7.57% | 0.17% | 2.35% |
+| momentum_26 + volume_26 | 2.37% | -3.29% | 7.57% | 2.68% | 36.17% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | 7.57% | 0.00% | 0.00% |
+| breakout_8 + reversion_12 | 0.87% | -13.12% | 7.57% | 1.64% | 22.20% |
+| breakout_8 AND volume_26 | 0.60% | -0.66% | 7.57% | 0.06% | 0.78% |
+| breakout_8 + volume_26 | 0.39% | -10.94% | 7.57% | 1.00% | 13.58% |
+| reversion_12 AND volume_26 | 1.52% | -1.00% | 7.57% | 0.11% | 1.57% |
+| reversion_12 + volume_26 | 5.01% | -3.66% | 7.57% | 0.96% | 13.06% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](XOM/comparison.json)
@@ -716,14 +716,14 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9803.32 | -196.68 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 9787.89 | -212.11 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 | 9797.20 | -202.80 | sell /  / trend_8_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 | 9758.70 | -241.30 | sell /  / momentum_26: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 | 9725.41 | -274.59 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 9802.37 | -197.63 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND momentum_26 | 9797.20 | -202.80 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9777.93 | -222.07 | sell /  / trend_8_26 + momentum_26: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 9761.22 | -238.78 | buy /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + breakout_8 | 9898.11 | -101.89 | sell /  / trend_8_26 + breakout_8: prior completed bar target 0%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 9847.46 | -152.54 | sell /  / trend_8_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
@@ -731,11 +731,11 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + volume_26 | 9898.11 | -101.89 | sell /  / trend_8_26 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 9878.59 | -121.41 | sell /  / momentum_26 + breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9861.71 | -138.29 | buy /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 9808.75 | -191.25 | sell /  / momentum_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + reversion_12 | 9780.52 | -219.48 | sell /  / momentum_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9763.80 | -236.20 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9878.59 | -121.41 | sell /  / momentum_26 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9861.71 | -138.29 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + reversion_12 | 9900.64 | -99.36 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
@@ -743,26 +743,26 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9900.64 | -99.36 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 9692.56 | -307.44 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9692.56 | -307.44 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 9692.56 | -307.44 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9677.30 | -322.70 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9677.30 | -322.70 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 9677.30 | -322.70 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | breakout_8 | 9343.39 | -656.61 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 | 9690.14 | -309.86 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9791.36 | -208.64 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND momentum_26 | 9692.56 | -307.44 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9692.56 | -307.44 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND momentum_26 | 9677.30 | -322.70 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9677.30 | -322.70 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND breakout_8 | 9419.39 | -580.61 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + breakout_8 | 9569.82 | -430.18 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9978.08 | -21.92 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + reversion_12 | 9732.92 | -267.08 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9870.71 | -129.29 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9818.98 | -181.02 | 중단: 손실 한도 / buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9811.17 | -188.83 | 중단: 손실 한도 / buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND breakout_8 | 9598.70 | -401.30 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9553.32 | -446.68 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9536.52 | -463.48 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9938.87 | -61.13 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 + reversion_12 | 9732.92 | -267.08 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9920.93 | -79.07 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 9818.98 | -181.02 | 중단: 손실 한도 / buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 9811.17 | -188.83 | 중단: 손실 한도 / buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | breakout_8 + reversion_12 | 9581.08 | -418.92 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9814.17 | -185.83 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
@@ -774,33 +774,33 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | -6.49% | -0.00% | 0.00% |
-| buy_hold | -6.10% | -6.49% | -6.49% | -6.49% | 100.00% |
-| trend_8_26 | 2.50% | 0.37% | -6.49% | -3.14% | 47.26% |
-| momentum_26 | 0.35% | -2.97% | -6.49% | -3.12% | 47.00% |
-| breakout_8 | -0.27% | -16.75% | -6.49% | -1.40% | 20.89% |
-| reversion_12 | -7.61% | -16.47% | -6.49% | -2.03% | 30.29% |
-| volume_26 | -0.65% | -7.11% | -6.49% | -0.44% | 6.53% |
-| trend_8_26 AND momentum_26 | 2.35% | -0.62% | -6.49% | -2.88% | 43.34% |
-| trend_8_26 + momentum_26 | 1.42% | -1.31% | -6.49% | -3.13% | 47.13% |
-| trend_8_26 AND breakout_8 | 0.78% | -11.52% | -6.49% | -1.02% | 15.14% |
-| trend_8_26 + breakout_8 | 1.13% | -8.38% | -6.49% | -2.28% | 34.08% |
-| trend_8_26 AND reversion_12 | 0.69% | -2.63% | -6.49% | -0.37% | 5.48% |
-| trend_8_26 + reversion_12 | -2.65% | -8.04% | -6.49% | -2.59% | 38.78% |
-| trend_8_26 AND volume_26 | 1.59% | -0.53% | -6.49% | -0.11% | 1.57% |
-| trend_8_26 + volume_26 | 0.94% | -3.02% | -6.49% | -1.80% | 26.90% |
-| momentum_26 AND breakout_8 | 2.20% | -9.52% | -6.49% | -0.97% | 14.36% |
-| momentum_26 + breakout_8 | 0.07% | -9.91% | -6.49% | -2.27% | 33.95% |
-| momentum_26 AND reversion_12 | -0.60% | -3.89% | -6.49% | -0.46% | 6.79% |
-| momentum_26 + reversion_12 | -3.68% | -9.40% | -6.49% | -2.58% | 38.65% |
-| momentum_26 AND volume_26 | 1.57% | -0.12% | -6.49% | -0.09% | 1.31% |
-| momentum_26 + volume_26 | -0.12% | -4.45% | -6.49% | -1.79% | 26.77% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | -6.49% | -0.00% | 0.00% |
-| breakout_8 + reversion_12 | -3.99% | -16.08% | -6.49% | -1.72% | 25.60% |
-| breakout_8 AND volume_26 | -0.11% | -2.19% | -6.49% | -0.11% | 1.57% |
-| breakout_8 + volume_26 | -0.45% | -11.32% | -6.49% | -0.92% | 13.71% |
-| reversion_12 AND volume_26 | -1.99% | -4.42% | -6.49% | -0.18% | 2.61% |
-| reversion_12 + volume_26 | -4.18% | -11.17% | -6.49% | -1.24% | 18.41% |
+| cash | 0.00% | 0.00% | -6.57% | -0.00% | 0.00% |
+| buy_hold | -6.18% | -6.57% | -6.57% | -6.57% | 100.00% |
+| trend_8_26 | 2.50% | 0.37% | -6.57% | -3.18% | 47.26% |
+| momentum_26 | 0.20% | -3.51% | -6.57% | -3.18% | 47.26% |
+| breakout_8 | -0.27% | -16.75% | -6.57% | -1.42% | 20.89% |
+| reversion_12 | -7.61% | -16.47% | -6.57% | -2.05% | 30.29% |
+| volume_26 | -0.65% | -7.11% | -6.57% | -0.45% | 6.53% |
+| trend_8_26 AND momentum_26 | 2.35% | -0.62% | -6.57% | -2.92% | 43.34% |
+| trend_8_26 + momentum_26 | 1.35% | -1.59% | -6.57% | -3.18% | 47.26% |
+| trend_8_26 AND breakout_8 | 0.78% | -11.52% | -6.57% | -1.03% | 15.14% |
+| trend_8_26 + breakout_8 | 1.13% | -8.38% | -6.57% | -2.30% | 34.08% |
+| trend_8_26 AND reversion_12 | 0.69% | -2.63% | -6.57% | -0.38% | 5.48% |
+| trend_8_26 + reversion_12 | -2.65% | -8.04% | -6.57% | -2.62% | 38.78% |
+| trend_8_26 AND volume_26 | 1.59% | -0.53% | -6.57% | -0.11% | 1.57% |
+| trend_8_26 + volume_26 | 0.94% | -3.02% | -6.57% | -1.82% | 26.90% |
+| momentum_26 AND breakout_8 | 2.20% | -9.52% | -6.57% | -0.98% | 14.36% |
+| momentum_26 + breakout_8 | -0.00% | -10.17% | -6.57% | -2.30% | 34.08% |
+| momentum_26 AND reversion_12 | -0.60% | -3.89% | -6.57% | -0.46% | 6.79% |
+| momentum_26 + reversion_12 | -3.75% | -9.65% | -6.57% | -2.62% | 38.78% |
+| momentum_26 AND volume_26 | 1.57% | -0.12% | -6.57% | -0.09% | 1.31% |
+| momentum_26 + volume_26 | -0.19% | -4.72% | -6.57% | -1.82% | 26.90% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | -6.57% | -0.00% | 0.00% |
+| breakout_8 + reversion_12 | -3.99% | -16.08% | -6.57% | -1.74% | 25.60% |
+| breakout_8 AND volume_26 | -0.11% | -2.19% | -6.57% | -0.11% | 1.57% |
+| breakout_8 + volume_26 | -0.45% | -11.32% | -6.57% | -0.94% | 13.71% |
+| reversion_12 AND volume_26 | -1.99% | -4.42% | -6.57% | -0.18% | 2.61% |
+| reversion_12 + volume_26 | -4.18% | -11.17% | -6.57% | -1.25% | 18.41% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](JNJ/comparison.json)
@@ -812,49 +812,49 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10074.91 | 74.91 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9997.94 | -2.06 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10100.20 | 100.20 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 | 10023.04 | 23.04 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
 | v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 | 10074.08 | 74.08 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | breakout_8 | 10099.37 | 99.37 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | reversion_12 | 9995.30 | -4.70 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | volume_26 | 9965.26 | -34.74 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + momentum_26 | 9998.97 | -1.03 | buy /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9997.94 | -2.06 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 10036.09 | 36.09 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 10011.50 | 11.50 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND breakout_8 | 10023.04 | 23.04 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 10061.28 | 61.28 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9996.61 | -3.39 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10009.14 | 9.14 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9981.57 | -18.43 | buy /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 9994.08 | -5.92 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 10037.02 | 37.02 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 10049.61 | 49.61 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + reversion_12 | 9997.64 | -2.36 | sell /  / momentum_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + volume_26 | 9982.60 | -17.40 | sell /  / momentum_26 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 10034.66 | 34.66 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10047.24 | 47.24 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 10019.56 | 19.56 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10032.12 | 32.12 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 9980.24 | -19.76 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 9210.50 | -789.50 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 | 9938.57 | -61.43 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 9233.62 | -766.38 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 | 9963.52 | -36.48 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | momentum_26 | 10014.59 | 14.59 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 | 9878.12 | -121.88 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | reversion_12 | 9081.87 | -918.13 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | volume_26 | 9341.61 | -658.39 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | breakout_8 | 9902.92 | -97.08 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | reversion_12 | 9104.67 | -895.33 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | volume_26 | 9365.06 | -634.94 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND momentum_26 | 10043.59 | 43.59 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 9976.55 | -23.45 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 AND breakout_8 | 9973.07 | -26.93 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + breakout_8 | 9908.56 | -91.44 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 9989.06 | -10.94 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 AND breakout_8 | 9998.11 | -1.89 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + breakout_8 | 9933.43 | -66.57 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9815.07 | -184.93 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 9631.94 | -368.06 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 9644.01 | -355.99 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 10035.44 | 35.44 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + volume_26 | 9639.79 | -360.21 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + volume_26 | 9651.87 | -348.13 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND breakout_8 | 9977.43 | -22.57 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 9946.25 | -53.75 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 9958.73 | -41.27 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND reversion_12 | 9874.73 | -125.27 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 + reversion_12 | 9668.67 | -331.33 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 10048.78 | 48.78 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
@@ -862,41 +862,41 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | breakout_8 + reversion_12 | 9610.18 | -389.82 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9998.69 | -1.31 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | breakout_8 + volume_26 | 9630.70 | -369.30 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | reversion_12 AND volume_26 | 9276.98 | -723.02 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | reversion_12 + volume_26 | 9403.81 | -596.19 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + volume_26 | 9642.78 | -357.22 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | reversion_12 AND volume_26 | 9300.27 | -699.73 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | reversion_12 + volume_26 | 9415.33 | -584.67 | 중단: 손실 한도 / sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 
 ### 같은 기간의 비용·노출 비교 (사후 연구)
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | -9.65% | -0.00% | 0.00% |
-| buy_hold | -9.27% | -9.65% | -9.65% | -9.65% | 100.00% |
-| trend_8_26 | -0.67% | -4.35% | -9.65% | -4.90% | 50.65% |
-| momentum_26 | -3.13% | -8.66% | -9.65% | -4.83% | 49.87% |
-| breakout_8 | -2.92% | -15.84% | -9.65% | -1.42% | 14.62% |
-| reversion_12 | -3.89% | -15.27% | -9.65% | -2.48% | 25.59% |
-| volume_26 | -2.95% | -10.02% | -9.65% | -0.79% | 8.09% |
-| trend_8_26 AND momentum_26 | -0.41% | -4.90% | -9.65% | -4.27% | 44.13% |
-| trend_8_26 + momentum_26 | -1.89% | -6.52% | -9.65% | -4.87% | 50.26% |
-| trend_8_26 AND breakout_8 | -1.54% | -9.09% | -9.65% | -0.71% | 7.31% |
-| trend_8_26 + breakout_8 | -1.76% | -10.06% | -9.65% | -3.16% | 32.64% |
-| trend_8_26 AND reversion_12 | 0.78% | -5.38% | -9.65% | -0.68% | 7.05% |
-| trend_8_26 + reversion_12 | -2.23% | -9.38% | -9.65% | -3.69% | 38.13% |
-| trend_8_26 AND volume_26 | 2.22% | -0.75% | -9.65% | -0.25% | 2.61% |
-| trend_8_26 + volume_26 | -1.76% | -7.01% | -9.65% | -2.85% | 29.38% |
-| momentum_26 AND breakout_8 | -2.81% | -11.01% | -9.65% | -0.84% | 8.62% |
-| momentum_26 + breakout_8 | -2.98% | -12.29% | -9.65% | -3.13% | 32.25% |
-| momentum_26 AND reversion_12 | -3.04% | -8.96% | -9.65% | -0.56% | 5.74% |
-| momentum_26 + reversion_12 | -3.46% | -11.08% | -9.65% | -3.66% | 37.73% |
-| momentum_26 AND volume_26 | 1.58% | -0.53% | -9.65% | -0.15% | 1.57% |
-| momentum_26 + volume_26 | -2.98% | -8.55% | -9.65% | -2.81% | 28.99% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | -9.65% | -0.00% | 0.00% |
-| breakout_8 + reversion_12 | -3.35% | -14.64% | -9.65% | -1.95% | 20.11% |
-| breakout_8 AND volume_26 | 0.37% | -0.47% | -9.65% | -0.05% | 0.52% |
-| breakout_8 + volume_26 | -2.90% | -12.23% | -9.65% | -1.10% | 11.36% |
-| reversion_12 AND volume_26 | -1.25% | -5.71% | -9.65% | -0.51% | 5.22% |
-| reversion_12 + volume_26 | -3.39% | -11.93% | -9.65% | -1.63% | 16.85% |
+| cash | 0.00% | 0.00% | -9.45% | -0.00% | 0.00% |
+| buy_hold | -9.07% | -9.45% | -9.45% | -9.45% | 100.00% |
+| trend_8_26 | -0.45% | -4.14% | -9.45% | -4.80% | 50.65% |
+| momentum_26 | -3.16% | -8.69% | -9.45% | -4.71% | 49.61% |
+| breakout_8 | -2.67% | -15.62% | -9.45% | -1.41% | 14.88% |
+| reversion_12 | -3.89% | -15.27% | -9.45% | -2.43% | 25.59% |
+| volume_26 | -2.95% | -10.02% | -9.45% | -0.77% | 8.09% |
+| trend_8_26 AND momentum_26 | -0.44% | -4.93% | -9.45% | -4.16% | 43.86% |
+| trend_8_26 + momentum_26 | -1.80% | -6.43% | -9.45% | -4.76% | 50.13% |
+| trend_8_26 AND breakout_8 | -1.29% | -8.86% | -9.45% | -0.72% | 7.57% |
+| trend_8_26 + breakout_8 | -1.53% | -9.85% | -9.45% | -3.11% | 32.77% |
+| trend_8_26 AND reversion_12 | 0.78% | -5.38% | -9.45% | -0.67% | 7.05% |
+| trend_8_26 + reversion_12 | -2.12% | -9.28% | -9.45% | -3.62% | 38.13% |
+| trend_8_26 AND volume_26 | 2.22% | -0.75% | -9.45% | -0.25% | 2.61% |
+| trend_8_26 + volume_26 | -1.65% | -6.91% | -9.45% | -2.79% | 29.38% |
+| momentum_26 AND breakout_8 | -2.81% | -11.01% | -9.45% | -0.82% | 8.62% |
+| momentum_26 + breakout_8 | -2.88% | -12.20% | -9.45% | -3.06% | 32.25% |
+| momentum_26 AND reversion_12 | -3.04% | -8.96% | -9.45% | -0.55% | 5.74% |
+| momentum_26 + reversion_12 | -3.48% | -11.10% | -9.45% | -3.57% | 37.60% |
+| momentum_26 AND volume_26 | 1.58% | -0.53% | -9.45% | -0.15% | 1.57% |
+| momentum_26 + volume_26 | -3.00% | -8.57% | -9.45% | -2.74% | 28.85% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | -9.45% | -0.00% | 0.00% |
+| breakout_8 + reversion_12 | -3.23% | -14.54% | -9.45% | -1.92% | 20.24% |
+| breakout_8 AND volume_26 | 0.37% | -0.47% | -9.45% | -0.05% | 0.52% |
+| breakout_8 + volume_26 | -2.78% | -12.12% | -9.45% | -1.09% | 11.49% |
+| reversion_12 AND volume_26 | -1.25% | -5.71% | -9.45% | -0.50% | 5.22% |
+| reversion_12 + volume_26 | -3.39% | -11.93% | -9.45% | -1.60% | 16.85% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](CAT/comparison.json)
@@ -908,91 +908,91 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9893.84 | -106.16 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 9877.94 | -122.06 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
 | v1 | trend_8_26 | 9869.47 | -130.53 | sell /  / trend_8_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 | 9893.84 | -106.16 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 | 9877.94 | -122.06 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 | 9907.20 | -92.80 | buy /  / reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | reversion_12 | 9886.55 | -113.45 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND momentum_26 | 9869.47 | -130.53 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9881.64 | -118.36 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 9873.69 | -126.31 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + breakout_8 | 9934.46 | -65.54 | sell /  / trend_8_26 + breakout_8: prior completed bar target 0%; next bar open simulation |
 | v1 | trend_8_26 AND reversion_12 | 9882.79 | -117.21 | sell /  / trend_8_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + reversion_12 | 9888.28 | -111.72 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 9877.98 | -122.02 | sell /  / trend_8_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + volume_26 | 9934.46 | -65.54 | sell /  / trend_8_26 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 9946.71 | -53.29 | buy /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND reversion_12 | 9907.20 | -92.80 | buy /  / momentum_26 AND reversion_12: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + reversion_12 | 9900.49 | -99.51 | buy /  / momentum_26 + reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 9938.71 | -61.29 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 AND reversion_12 | 9886.55 | -113.45 | sell /  / momentum_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 9882.22 | -117.78 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9946.71 | -53.29 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 9938.71 | -61.29 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9953.42 | -46.58 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 9943.05 | -56.95 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9953.42 | -46.58 | buy /  / reversion_12 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 9943.05 | -56.95 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | buy_hold | 10581.36 | 581.36 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | buy_hold | 10564.35 | 564.35 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 10410.62 | 410.62 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 | 10407.44 | 407.44 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 | 10390.71 | 390.71 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | breakout_8 | 9964.65 | -35.35 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | reversion_12 | 9924.28 | -75.72 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | reversion_12 | 9902.62 | -97.38 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | volume_26 | 9965.28 | -34.72 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND momentum_26 | 10410.62 | 410.62 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + momentum_26 | 10409.02 | 409.02 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + momentum_26 | 10400.65 | 400.65 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND breakout_8 | 10088.55 | 88.55 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + breakout_8 | 10185.61 | 185.61 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND reversion_12 | 9808.74 | -191.26 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | trend_8_26 + reversion_12 | 10166.04 | 166.04 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | trend_8_26 + reversion_12 | 10154.93 | 154.93 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 AND volume_26 | 9949.23 | -50.77 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 + volume_26 | 10186.98 | 186.98 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND breakout_8 | 9964.65 | -35.35 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + breakout_8 | 10184.07 | 184.07 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
-| v2 | momentum_26 AND reversion_12 | 9843.51 | -156.49 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + reversion_12 | 10207.28 | 207.28 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + breakout_8 | 10175.89 | 175.89 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 AND reversion_12 | 9822.01 | -177.99 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + reversion_12 | 10187.94 | 187.94 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | momentum_26 AND volume_26 | 9913.82 | -86.18 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | momentum_26 + volume_26 | 10185.51 | 185.51 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | momentum_26 + volume_26 | 10177.32 | 177.32 | sell / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v2 | breakout_8 + reversion_12 | 9966.57 | -33.43 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | breakout_8 + reversion_12 | 9955.68 | -44.32 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 AND volume_26 | 9950.23 | -49.77 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | breakout_8 + volume_26 | 9966.35 | -33.65 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 | v2 | reversion_12 AND volume_26 | 10009.78 | 9.78 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
-| v2 | reversion_12 + volume_26 | 9944.71 | -55.29 | buy / filled / 직전 완료 봉 목표 비중 50%; 다음 봉 시가 가정 |
+| v2 | reversion_12 + volume_26 | 9933.85 | -66.15 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
 
 ### 같은 기간의 비용·노출 비교 (사후 연구)
 
 | 전략 | 비용 전 | 비용 후 | 100% 보유 | 같은 평균 노출 보유 | 평균 노출 |
 |---|---:|---:|---:|---:|---:|
-| cash | 0.00% | 0.00% | 9.88% | 0.00% | 0.00% |
-| buy_hold | 10.34% | 9.88% | 9.88% | 9.88% | 100.00% |
-| trend_8_26 | 9.34% | 6.62% | 9.88% | 6.72% | 68.41% |
-| momentum_26 | 6.61% | 2.66% | 9.88% | 6.72% | 68.41% |
-| breakout_8 | 5.52% | -11.92% | 9.88% | 2.60% | 26.63% |
-| reversion_12 | 3.16% | -6.73% | 9.88% | 1.63% | 16.71% |
-| volume_26 | -0.57% | -5.85% | 9.88% | 0.53% | 5.48% |
-| trend_8_26 AND momentum_26 | 8.87% | 4.83% | 9.88% | 6.15% | 62.66% |
-| trend_8_26 + momentum_26 | 7.98% | 4.63% | 9.88% | 6.73% | 68.41% |
-| trend_8_26 AND breakout_8 | 6.92% | -6.91% | 9.88% | 2.17% | 22.19% |
-| trend_8_26 + breakout_8 | 7.43% | -2.87% | 9.88% | 4.66% | 47.53% |
-| trend_8_26 AND reversion_12 | 0.42% | -4.91% | 9.88% | 0.66% | 6.79% |
-| trend_8_26 + reversion_12 | 6.24% | -0.06% | 9.88% | 4.17% | 42.56% |
-| trend_8_26 AND volume_26 | 1.13% | -1.39% | 9.88% | 0.20% | 2.09% |
-| trend_8_26 + volume_26 | 4.31% | 0.62% | 9.88% | 3.61% | 36.95% |
-| momentum_26 AND breakout_8 | 5.58% | -8.47% | 9.88% | 2.27% | 23.24% |
-| momentum_26 + breakout_8 | 6.08% | -4.70% | 9.88% | 4.66% | 47.53% |
-| momentum_26 AND reversion_12 | 0.43% | -4.91% | 9.88% | 0.69% | 7.05% |
-| momentum_26 + reversion_12 | 4.91% | -0.27% | 9.88% | 4.17% | 42.56% |
-| momentum_26 AND volume_26 | 0.44% | -3.69% | 9.88% | 0.28% | 2.87% |
-| momentum_26 + volume_26 | 2.99% | -1.68% | 9.88% | 3.61% | 36.95% |
-| breakout_8 AND reversion_12 | 0.00% | 0.00% | 9.88% | 0.00% | 0.00% |
-| breakout_8 + reversion_12 | 4.36% | -8.97% | 9.88% | 2.12% | 21.68% |
-| breakout_8 AND volume_26 | 0.91% | -1.19% | 9.88% | 0.15% | 1.57% |
-| breakout_8 + volume_26 | 2.46% | -8.15% | 9.88% | 1.57% | 16.06% |
-| reversion_12 AND volume_26 | -0.51% | -2.99% | 9.88% | 0.23% | 2.35% |
-| reversion_12 + volume_26 | 1.29% | -6.10% | 9.88% | 1.08% | 11.10% |
+| cash | 0.00% | 0.00% | 9.71% | 0.00% | 0.00% |
+| buy_hold | 10.17% | 9.71% | 9.71% | 9.71% | 100.00% |
+| trend_8_26 | 9.34% | 6.62% | 9.71% | 6.61% | 68.41% |
+| momentum_26 | 6.44% | 2.49% | 9.71% | 6.64% | 68.67% |
+| breakout_8 | 5.52% | -11.92% | 9.71% | 2.56% | 26.63% |
+| reversion_12 | 3.16% | -6.73% | 9.71% | 1.58% | 16.45% |
+| volume_26 | -0.57% | -5.85% | 9.71% | 0.52% | 5.48% |
+| trend_8_26 AND momentum_26 | 8.87% | 4.83% | 9.71% | 6.05% | 62.66% |
+| trend_8_26 + momentum_26 | 7.89% | 4.54% | 9.71% | 6.62% | 68.54% |
+| trend_8_26 AND breakout_8 | 6.92% | -6.91% | 9.71% | 2.13% | 22.19% |
+| trend_8_26 + breakout_8 | 7.43% | -2.87% | 9.71% | 4.58% | 47.53% |
+| trend_8_26 AND reversion_12 | 0.42% | -4.91% | 9.71% | 0.65% | 6.79% |
+| trend_8_26 + reversion_12 | 6.24% | -0.06% | 9.71% | 4.08% | 42.43% |
+| trend_8_26 AND volume_26 | 1.13% | -1.39% | 9.71% | 0.20% | 2.09% |
+| trend_8_26 + volume_26 | 4.31% | 0.62% | 9.71% | 3.55% | 36.95% |
+| momentum_26 AND breakout_8 | 5.58% | -8.47% | 9.71% | 2.23% | 23.24% |
+| momentum_26 + breakout_8 | 5.99% | -4.77% | 9.71% | 4.59% | 47.66% |
+| momentum_26 AND reversion_12 | 0.42% | -4.92% | 9.71% | 0.67% | 7.05% |
+| momentum_26 + reversion_12 | 4.83% | -0.35% | 9.71% | 4.10% | 42.56% |
+| momentum_26 AND volume_26 | 0.44% | -3.69% | 9.71% | 0.27% | 2.87% |
+| momentum_26 + volume_26 | 2.91% | -1.76% | 9.71% | 3.56% | 37.08% |
+| breakout_8 AND reversion_12 | 0.00% | 0.00% | 9.71% | 0.00% | 0.00% |
+| breakout_8 + reversion_12 | 4.36% | -8.97% | 9.71% | 2.07% | 21.55% |
+| breakout_8 AND volume_26 | 0.91% | -1.19% | 9.71% | 0.15% | 1.57% |
+| breakout_8 + volume_26 | 2.46% | -8.15% | 9.71% | 1.54% | 16.06% |
+| reversion_12 AND volume_26 | -0.51% | -2.99% | 9.71% | 0.22% | 2.35% |
+| reversion_12 + volume_26 | 1.29% | -6.10% | 9.71% | 1.05% | 10.97% |
 
 동일 구간·초기 자금, 종료 시 청산 비용 포함. 노출 맞춤은 사후 설명용이며 v2 실제 계좌 성과가 아닙니다.
 [낙폭 분해·비용 영향·전체 구간](WMT/comparison.json)
