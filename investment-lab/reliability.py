@@ -92,7 +92,7 @@ def update_v2(stage,rows,signals,now,blocked=False):
 
 def dashboard(state,status):
     lines=['# 모의투자 운영 현황','',f"최근 확인: {status['checked_utc']} (UTC)",
-           f"다음 예약: {next_schedule(dt.datetime.fromisoformat(status['checked_utc']).timestamp())} (UTC, 실행 지연 가능)",'',
+           f"다음 15분 확인 목표 (세션 실행 중에만 적용): {next_schedule(dt.datetime.fromisoformat(status['checked_utc']).timestamp())} (UTC, 실행 지연 가능)",'',
            '실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.',
            'v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.','',
            '| 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |',
