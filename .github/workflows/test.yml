@@ -16,3 +16,14 @@ jobs:
       - run: stockbot demo
 
       - run: python -m unittest discover -s investment-lab/tests -p test_session_worker.py -v
+      - run: python -m unittest discover -s investment-lab/tests -p test_market_continuity.py -v
+
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install exchange_calendars==4.12 pandas==2.2.3
+      - run: python -m unittest discover -s investment-lab/tests -v

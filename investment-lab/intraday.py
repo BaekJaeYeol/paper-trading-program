@@ -15,6 +15,7 @@ from data import symbol_name
 from engine import evaluate
 from paper import Paper
 from comparison import report as comparison_report
+from market_continuity import validate_continuity
 from bar_reconciliation import reconcile_bars
 from operational_audit import record_run
 from reliability import session_bounds, freshness, update_v2, dashboard
@@ -127,6 +128,8 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
             existing=json.loads(account_file.read_text()) if account_file.exists() else {}
             protected_since=min((a['last_date'] for a in existing.values()),default=None)
             rows,revisions=reconcile_bars(saved,rows,protected_since=protected_since)
+            if protected_since is not None:
+                validate_continuity(rows,protected_since,session_bounds)
             ss=intraday_candidates(rows)
             now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
             health=freshness(rows,now)
