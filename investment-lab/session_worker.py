@@ -12,10 +12,19 @@ def next_poll(now):
     return ((int(now)-420)//900+1)*900+420
 
 def git(repo,*args):
-    return subprocess.run(['git',*args],cwd=repo,check=True,text=True,capture_output=True).stdout
+    return subprocess.run(['git',*args],cwd=repo,check=True,text=True,capture_output=True,timeout=90).stdout
 
 def refresh(repo):
-    git(repo,'pull','--rebase','origin','paper-hourly-state')
+    for attempt in range(3):
+        try:
+            git(repo,'pull','--rebase','origin','paper-hourly-state')
+            return
+        except (subprocess.CalledProcessError,subprocess.TimeoutExpired):
+            # Never retry an unresolved rebase or merge conflict.
+            base=Path(repo)/'.git'
+            if any((base/name).exists() for name in ('rebase-merge','rebase-apply','MERGE_HEAD')) or attempt==2:
+                raise
+            time.sleep(2*(attempt+1))
 
 def publish(repo):
     git(repo,'add','intraday-state')
@@ -28,7 +37,8 @@ def publish(repo):
         try:
             git(repo,'push','origin','HEAD:paper-hourly-state')
             return
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError,subprocess.TimeoutExpired):
+            # A lost push response can still mean success; refresh before retry.
             if attempt==2:raise
 
 def run_session(tick,persist,refresh_state,bounds,max_seconds=19800,once=False,

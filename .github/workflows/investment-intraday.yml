@@ -80,7 +80,7 @@ jobs:
         run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Verify styled desktop and mobile dashboard in Chromium
+      - name: Verify dashboard freshness notice and desktop mobile interactions
         if: ${{ always() && !cancelled() && github.event_name != 'schedule' && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
         run: python investment-lab/check_dashboard_browser.py saved-state/intraday-state/dashboard.html
       - name: Upload dashboard verification
