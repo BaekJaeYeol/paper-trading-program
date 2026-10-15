@@ -21,6 +21,7 @@ jobs:
         with:
           ref: paper-hourly-state
           path: saved-state
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -36,8 +37,16 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add hourly-state
           if ! git diff --cached --quiet; then
-            git commit -m 'chore: hourly paper data and account update'
-            git push origin HEAD:paper-hourly-state
+            git commit -m '기록: 일봉 모의투자 데이터·계좌 갱신'
+            for attempt in 1 2 3; do
+              git pull --rebase origin paper-hourly-state
+              if git push origin HEAD:paper-hourly-state; then
+                break
+              fi
+              if [ "$attempt" = "3" ]; then
+                exit 1
+              fi
+            done
           fi
       - name: Publish run status
         if: always()

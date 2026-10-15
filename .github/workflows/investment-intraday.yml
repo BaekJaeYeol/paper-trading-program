@@ -1,7 +1,8 @@
 name: Intraday 15-minute paper research
 on:
   schedule:
-    - cron: '7,22,37,52 * * * 1-5'
+    # Start/restart opportunities; a running session polls internally every 15 minutes.
+    - cron: '7 11-21 * * 1-5'
   workflow_dispatch:
     inputs:
       emergency_stop:
@@ -14,18 +15,30 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: hourly-paper-state
+  group: ${{ inputs.emergency_stop == true && 'intraday-control' || 'intraday-session' }}
   cancel-in-progress: false
 jobs:
-  hourly:
+  cadence-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q investment-lab
+      - run: python -m unittest discover -s investment-lab/tests -p test_session_worker.py -v
+  hourly:
+    if: github.ref == 'refs/heads/main'
+    needs: cadence-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
           ref: paper-hourly-state
           path: saved-state
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -46,35 +59,42 @@ jobs:
         run: python -m unittest discover -s investment-lab/tests -p test_operational_audit.py -v
       - name: Verify frozen bars and active account revision protection
         run: python -m unittest discover -s investment-lab/tests -p test_bar_reconciliation.py -v
-      - name: Collect and update virtual accounts
-        run: python investment-lab/intraday.py --state saved-state/intraday-state --symbols SPY QQQ IWM DIA MSFT JPM XOM JNJ CAT WMT
+      - name: Configure per-cycle account checkpoints
+        run: |
+          git -C saved-state config user.name 'github-actions[bot]'
+          git -C saved-state config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ -f saved-state/intraday-state/emergency-stop.json ]; then
+            python -c "import sys; from pathlib import Path; sys.path.insert(0, 'investment-lab'); from session_worker import publish; publish(Path('saved-state').resolve())"
+          fi
+      - name: Poll internally during scheduled sessions; single cycle for manual checks
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            python -u investment-lab/session_worker.py --repo saved-state
+          else
+            python -u investment-lab/session_worker.py --repo saved-state --once
+          fi
       - name: Install dashboard browser checks
-        if: ${{ always() && !cancelled() && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
+        if: ${{ always() && !cancelled() && github.event_name != 'schedule' && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
         run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
       - name: Verify styled desktop and mobile dashboard in Chromium
-        if: ${{ always() && !cancelled() && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
+        if: ${{ always() && !cancelled() && github.event_name != 'schedule' && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
         run: python investment-lab/check_dashboard_browser.py saved-state/intraday-state/dashboard.html
       - name: Upload dashboard verification
-        if: always()
+        if: ${{ always() && github.event_name != 'schedule' }}
         uses: actions/upload-artifact@v4
         with:
           name: dashboard-browser-verification
           path: |
             saved-state/intraday-state/dashboard.html
             saved-state/intraday-state/dashboard-*.png
-      - name: Persist accounts and status even on data errors
+      - name: Preserve pending account checkpoint even on errors
         if: always()
-        working-directory: saved-state
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add intraday-state
-          if ! git diff --cached --quiet; then
-            git commit -m '기록: 장중 모의투자 데이터·계좌·대시보드 갱신'
-            git push origin HEAD:paper-hourly-state
-          fi
+          python -c "import sys; from pathlib import Path; sys.path.insert(0, 'investment-lab'); from session_worker import publish; publish(Path('saved-state').resolve())"
       - name: Publish run status
         if: always()
         run: |

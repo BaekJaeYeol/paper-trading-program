@@ -14,3 +14,5 @@ jobs:
       - run: pip install -e .
       - run: python -m unittest discover -s tests -v
       - run: stockbot demo
+
+      - run: python -m unittest discover -s investment-lab/tests -p test_session_worker.py -v
