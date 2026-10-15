@@ -13,6 +13,10 @@ with sync_playwright() as p:
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(report.as_uri())
     page.get_by_role("heading", name="계좌별 자산과 매매 이유").wait_for()
+    assert page.locator("#report-age").inner_text()
+    page.evaluate("window.originalNow = Date.now; Date.now = () => Date.parse(checkedAt) + 3600000; showReportAge()")
+    assert "60분 전 기록" in page.locator("#report-age").inner_text()
+    page.evaluate("Date.now = window.originalNow; showReportAge()")
     for name, section in [("전략 비교", "comparison"), ("주문 기록", "orders"), ("운영 관리", "health"), ("운영 요약", "overview")]:
         page.get_by_role("tab", name=name).click()
         assert page.locator("#" + section).is_visible(), name
