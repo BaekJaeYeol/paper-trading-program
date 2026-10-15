@@ -1,25 +1,25 @@
 # 모의투자 운영 현황
 
-최근 확인: 2026-10-14T22:41:16.865052+00:00 (UTC)
-다음 예약: 2026-10-14T22:52:00+00:00 (UTC, 실행 지연 가능)
+최근 확인: 2026-10-15T00:56:24.722618+00:00 (UTC)
+다음 예약: 2026-10-15T01:07:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
 v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| QQQ | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| IWM | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| DIA | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| MSFT | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| JPM | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| XOM | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| JNJ | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| CAT | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
-| WMT | new accounts waiting for next completed bar | 2026-10-14T22:41:16.865052+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| SPY | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| QQQ | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| IWM | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| DIA | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| MSFT | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| JPM | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| XOM | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| JNJ | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| CAT | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
+| WMT | new accounts waiting for next completed bar | 2026-10-15T00:56:24.722618+00:00 | 2026-10-14T19:45:00+00:00 | 0 |
 
-이번 실행 소요: 69.15초
+이번 실행 소요: 41.02초
 [최근 200회 운영·복구 이력](operations-history.json)
 
 | 종목 | 연속 오류 | 복구 |
