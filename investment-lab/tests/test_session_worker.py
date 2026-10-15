@@ -59,5 +59,32 @@ class GitCheckpointTests(unittest.TestCase):
    self.assertEqual((a/'hourly-state'/'status.json').read_text(),'hourly')
    self.assertEqual((a/'intraday-state'/'status.json').read_text(),'intraday')
    self.assertEqual(git(a,'status','--porcelain'),'')
+
+class RefreshResilienceTests(unittest.TestCase):
+ def test_transient_network_recovers(self):
+  import tempfile,subprocess
+  from unittest.mock import patch
+  from session_worker import refresh
+  with tempfile.TemporaryDirectory() as d, patch('session_worker.git',side_effect=[subprocess.TimeoutExpired('git',90),subprocess.CalledProcessError(1,'git'),'ok']) as command, patch('session_worker.time.sleep') as sleep:
+   refresh(d)
+   self.assertEqual(command.call_count,3)
+   self.assertEqual([call.args[0] for call in sleep.call_args_list],[2,4])
+ def test_conflict_stops_without_retry(self):
+  import tempfile,subprocess
+  from unittest.mock import patch
+  from session_worker import refresh
+  with tempfile.TemporaryDirectory() as d:
+   (Path(d)/'.git'/'rebase-merge').mkdir(parents=True)
+   with patch('session_worker.git',side_effect=subprocess.CalledProcessError(1,'git')) as command,patch('session_worker.time.sleep') as sleep:
+    with self.assertRaises(subprocess.CalledProcessError):refresh(d)
+    self.assertEqual(command.call_count,1);sleep.assert_not_called()
+ def test_network_failure_is_bounded(self):
+  import tempfile,subprocess
+  from unittest.mock import patch
+  from session_worker import refresh
+  with tempfile.TemporaryDirectory() as d,patch('session_worker.git',side_effect=subprocess.TimeoutExpired('git',90)) as command,patch('session_worker.time.sleep'):
+   with self.assertRaises(subprocess.TimeoutExpired):refresh(d)
+   self.assertEqual(command.call_count,3)
+
 if __name__=='__main__':unittest.main()
 
