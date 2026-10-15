@@ -63,6 +63,9 @@ jobs:
         run: |
           git -C saved-state config user.name 'github-actions[bot]'
           git -C saved-state config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ -f saved-state/intraday-state/emergency-stop.json ]; then
+            python -c "import sys; from pathlib import Path; sys.path.insert(0, 'investment-lab'); from session_worker import publish; publish(Path('saved-state').resolve())"
+          fi
       - name: Poll internally during scheduled sessions; single cycle for manual checks
         env:
           EVENT_NAME: ${{ github.event_name }}
