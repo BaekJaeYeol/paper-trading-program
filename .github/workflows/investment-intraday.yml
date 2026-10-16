@@ -60,6 +60,8 @@ jobs:
         run: python -m unittest discover -s investment-lab/tests -p test_operational_audit.py -v
       - name: Verify frozen bars and active account revision protection
         run: python -m unittest discover -s investment-lab/tests -p test_bar_reconciliation.py -v
+      - name: Verify actual session coverage and delayed startup warnings
+        run: python -m unittest discover -s investment-lab/tests -p test_session_coverage.py -v
       - name: Configure per-cycle account checkpoints
         run: |
           git -C saved-state config user.name 'github-actions[bot]'

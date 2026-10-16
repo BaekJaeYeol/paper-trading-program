@@ -46,3 +46,32 @@ def record_run(state,status,previous,duration):
     temporary.write_text(json.dumps(history[-200:],ensure_ascii=False,indent=2),encoding='utf-8')
     temporary.replace(path)
     status['duration_seconds']=entry['duration_seconds']
+
+def cadence_summary(history,checked_utc,session_bounds):
+    """Audit recorded polls, not broker fills; allow two minutes of runner jitter."""
+    import datetime as dt
+    from zoneinfo import ZoneInfo
+    now=dt.datetime.fromisoformat(checked_utc).timestamp()
+    day=dt.datetime.fromtimestamp(now,ZoneInfo('America/New_York')).date()
+    for offset in range(14):
+        bounds=session_bounds(day-dt.timedelta(days=offset))
+        if bounds and bounds[0]<=now:
+            break
+    else:
+        return {'summary':'주기 검증: 최근 거래일을 확인할 수 없습니다'}
+    opening,closing=bounds
+    stamps=sorted({dt.datetime.fromisoformat(item['checked_utc']).timestamp() for item in history})
+    expected=list(range(int(opening)+1320,int(closing)+421,900))
+    due=[slot for slot in expected if slot+120<=now]
+    missing=[dt.datetime.fromtimestamp(slot,dt.timezone.utc).isoformat()
+             for slot in due if not any(slot<=stamp<=slot+120 for stamp in stamps)]
+    first=next((stamp for stamp in stamps if opening<=stamp<=closing+1800),None)
+    summary=f"완료 봉 확인 주기: 기록 {len(due)-len(missing)}/{len(due)}회 · 기록 없는 예정 {len(missing)}회 · 아직 판정 전 {len(expected)-len(due)}회"
+    if missing:
+        summary+=' · 주의: 예약 시작 지연 또는 실행·저장 누락을 확인하세요.'
+    return {'session_date':str(dt.datetime.fromtimestamp(opening,dt.timezone.utc).date()),
+            'due_slots':len(due),'recorded_slots':len(due)-len(missing),
+            'missing_slots_utc':missing,'pending_slots':len(expected)-len(due),
+            'first_record_utc':dt.datetime.fromtimestamp(first,dt.timezone.utc).isoformat() if first is not None else None,
+            'summary':summary,
+            'note':'각 정규장 완료 봉의 종료 7분 후를 목표로 2분 이내 실행 기록을 검사합니다. 기록 존재는 종목 성공·체결을 보장하지 않습니다. 최근 200회 이력 기준이며 예약 지연을 방지하는 기능은 아닙니다.'}
