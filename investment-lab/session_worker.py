@@ -29,6 +29,10 @@ def refresh(repo):
 
 def publish(repo):
     git(repo,'add','intraday-state')
+    # Root ignore rules intentionally exclude GUI databases; persist only the
+    # credential-free research checkpoints needed by the next runner.
+    if any((Path(repo)/'intraday-state').glob('**/accounts/*.sqlite')):
+        git(repo,'add','--force','--',':(glob)intraday-state/**/accounts/*.sqlite')
     code=subprocess.run(['git','diff','--cached','--quiet'],cwd=repo).returncode
     if code not in (0,1):raise RuntimeError('저장 변경 검사 실패')
     if code==1:
