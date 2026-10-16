@@ -16,6 +16,8 @@ def render_dashboard(state, status, next_run):
     details = []
     count = 0
     for symbol, info in status.get('symbols', {}).items():
+        evidence_path=state/symbol/'strategy-evidence.json'
+        evidence=json.loads(evidence_path.read_text(encoding='utf-8')) if evidence_path.exists() else {}
         health.append([symbol, info.get('health', {}).get('market', '확인 필요'), info.get('health', {}).get('data', info.get('status', '-')), info.get('last_success_utc') or '없음', info.get('last_completed_bar_start_utc', '-'), info.get('message', info.get('detail', '-'))])
         path = state / symbol / 'accounts-v2.json'
         if path.exists():
@@ -26,7 +28,7 @@ def render_dashboard(state, status, next_run):
                 points = [{'time': e['bar'], 'equity': e['equity']} for e in events if 'equity' in e]
                 details.append(dict(symbol=symbol, strategy=strategy, equity=account['equity'], cash=account['cash'], qty=account['qty'], initial=account.get('initial',10000), points=points, events=events[-200:], halted=risk.get('halted',False), reason=risk.get('reason','')))
 
-                reason = ('중단: '+risk.get('reason', '')) if risk.get('halted') else events[-1].get('reason', '새 완료 봉·매매 신호 대기') if events else '계좌 준비 완료 · 다음 새 완료 봉 대기'
+                reason = ('중단: '+risk.get('reason', '')) if risk.get('halted') else events[-1].get('reason', '새 완료 봉·매매 신호 대기') if events else evidence.get(strategy,{}).get('reason','계좌 준비 완료 · 다음 새 완료 봉 대기')
                 accounts.append([symbol, strategy, f"${account['equity']:,.2f}", f"${account['equity']-account.get('initial',10000):+,.2f}", f"${account['cash']:,.2f}", f"{account['qty']:.4f}", reason])
                 for event in events:
                     if event.get('side') == 'hold':

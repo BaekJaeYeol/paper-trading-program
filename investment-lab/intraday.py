@@ -19,6 +19,7 @@ from market_continuity import validate_continuity
 from bar_reconciliation import reconcile_bars
 from operational_audit import record_run, cadence_summary
 from reliability import session_bounds, freshness, update_v2, dashboard
+from extended_strategies import extended_analysis
 
 NY=ZoneInfo('America/New_York')
 INTERVAL=900
@@ -57,7 +58,7 @@ def download_bars(symbol, now=None):
     return decode_bars(raw,symbol,now)
 
 
-def intraday_candidates(rows):
+def intraday_candidates(rows, extended=None):
     closes=[r[4] for r in rows]
     sig={k:[] for k in ('trend_8_26','momentum_26','breakout_8','reversion_12','volume_26')}
     for i,c in enumerate(closes):
@@ -76,6 +77,7 @@ def intraday_candidates(rows):
         for y in keys[i+1:]:
             out[x+' AND '+y]=[min(a,b) for a,b in zip(sig[x],sig[y])]
             out[x+' + '+y]=[(a+b)/2 for a,b in zip(sig[x],sig[y])]
+    out.update(extended if extended is not None else extended_analysis(rows)[0])
     return out
 
 
@@ -130,7 +132,8 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
             rows,revisions=reconcile_bars(saved,rows,protected_since=protected_since)
             if protected_since is not None:
                 validate_continuity(rows,protected_since,session_bounds)
-            ss=intraday_candidates(rows)
+            extended, evidence=extended_analysis(rows)
+            ss=intraday_candidates(rows,extended)
             now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
             health=freshness(rows,now)
             if health['stale']:raise ValueError('데이터 지연: 계좌 갱신 중단, 이전 기록 유지')
@@ -139,10 +142,12 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                 if previous.exists():shutil.copytree(previous,stage)
                 else:stage.mkdir()
                 (stage/'data-revisions.json').write_text(json.dumps(revisions,ensure_ascii=False,indent=2),encoding='utf-8')
+                (stage/'strategy-evidence.json').write_text(json.dumps({name:items[-1] for name,items in evidence.items()},ensure_ascii=False,indent=2),encoding='utf-8')
                 accounts={};new_bars=0;trades=0
                 for name in ss:
                     key=hashlib.sha256(name.encode()).hexdigest()[:16]
-                    paper=Paper(stage/'accounts'/(key+'.sqlite'),intraday_candidates)
+                    # All accounts use this cycle's same completed-bar signal matrix.
+                    paper=Paper(stage/'accounts'/(key+'.sqlite'),lambda _:ss)
                     old=paper.snapshot(full=True)
                     if not old['active']:snap=paper.start(rows,name,'real_download')
                     else:
@@ -164,10 +169,10 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                         events.append(dict(fill_bar_start_utc=stamp,signal_bar_start_utc=signal_at,
                                            strategy=name,target_weight=signal,side=side,quantity=qty,
                                            simulated_fill_price=price,fee=fee,equity=equity,
-                                           reason=f'{name}: prior completed bar target {signal:.0%}; next bar open simulation'))
+                                           reason=(evidence[name][index-1]['reason'] if name in evidence and index is not None and index>0 else f'{name}: prior completed bar target {signal:.0%}; next bar open simulation')))
                     accounts[name]={k:snap[k] for k in ('cash','qty','equity','last_date','config')}
                     accounts[name]['events']=events
-                digest=hashlib.sha256(json.dumps(rows).encode()).hexdigest()
+                digest=hashlib.sha256(json.dumps(dict(rows=rows,strategies=list(ss),rules_version='extended-v1')).encode()).hexdigest()
                 if not (stage/'digest.txt').exists() or (stage/'digest.txt').read_text()!=digest:
                     (stage/'research.json').write_text(json.dumps(historical_report(rows),ensure_ascii=False,indent=2),encoding='utf-8')
                     (stage/'digest.txt').write_text(digest)
@@ -176,7 +181,7 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                 if not (stage/'comparison.json').exists() or (stage/'comparison-digest.txt').read_text()!=digest:
                     (stage/'comparison.json').write_text(json.dumps(comparison_report(rows,ss),ensure_ascii=False,indent=2),encoding='utf-8')
                     (stage/'comparison-digest.txt').write_text(digest)
-                update_v2(stage,rows,ss,now,blocked)
+                update_v2(stage,rows,ss,now,blocked,evidence=evidence)
                 publish_directory(stage,previous)
                 status['symbols'][symbol]=dict(status='ok',last_completed_bar_start_utc=rows[-1][0],
                                                accounts=len(accounts),new_bars=new_bars,new_trades=trades,provider_revisions=len(revisions),
