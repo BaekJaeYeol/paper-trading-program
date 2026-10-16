@@ -26,6 +26,32 @@ def raw_bars(rs):
         'indicators':{'quote':[{k:[r[i] for r in rs] for i,k in enumerate(('open','high','low','close','volume'),1)}]}}]}}
 
 class IntradayTests(unittest.TestCase):
+    def test_strategy_expansion_preserves_existing_accounts(self):
+        from unittest.mock import patch
+        from extended_strategies import NAMES
+        rs=rows()
+        with tempfile.TemporaryDirectory() as d:
+            with patch('intraday.extended_analysis',return_value=({},{})):
+                first=tick(d,['SPY'],lambda symbol:rs)
+            self.assertEqual(first['symbols']['SPY']['accounts'],27)
+            folder=Path(d)/'SPY'
+            old_v1=json.loads((folder/'accounts.json').read_text())
+            old_v2=json.loads((folder/'accounts-v2.json').read_text())
+            result=tick(d,['SPY'],lambda symbol:rs)
+            self.assertEqual(result['symbols']['SPY']['accounts'],37)
+            new_v1=json.loads((folder/'accounts.json').read_text())
+            new_v2=json.loads((folder/'accounts-v2.json').read_text())
+            for name in old_v1:
+                self.assertEqual(new_v1[name],old_v1[name])
+                self.assertEqual(new_v2[name],old_v2[name])
+            for name in NAMES:
+                self.assertEqual(new_v2[name]['cash'],10000.)
+                self.assertEqual(new_v2[name]['events'],[])
+            research=json.loads((folder/'comparison.json').read_text())
+            self.assertEqual(len(research['results']),37)
+            result=tick(d,['SPY'],lambda symbol:rs)
+            self.assertEqual(result['symbols']['SPY']['new_trades'],0)
+
     def test_complete_regular_only(self):
         rs=rows();raw=raw_bars(rs)
         now=dt.datetime.fromisoformat(rs[-1][0]).timestamp()+500
@@ -49,6 +75,12 @@ class IntradayTests(unittest.TestCase):
             self.assertEqual(initial['buy_hold']['qty'],0)
             result=tick(d,['SPY'],lambda symbol:rs)
             self.assertEqual(result['symbols']['SPY']['new_bars'],1)
+            v2=json.loads((Path(d)/'SPY/accounts-v2.json').read_text())
+            for name in __import__('extended_strategies').NAMES:
+                event=v2[name]['events'][-1]
+                self.assertEqual(event['evidence']['signal_bar'],rs[-2][0])
+                self.assertEqual(event['evidence']['target'],event['target'])
+                self.assertIn('다음 봉 시가',event['reason'])
             path=Path(d)/'SPY/accounts.json';first=path.read_bytes()
             account=json.loads(first)['buy_hold'];self.assertGreater(account['qty'],0)
             event=account['events'][0]
