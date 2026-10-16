@@ -28,27 +28,31 @@ def raw_bars(rs):
 class IntradayTests(unittest.TestCase):
     def test_strategy_expansion_preserves_existing_accounts(self):
         from unittest.mock import patch
-        from extended_strategies import NAMES
+        from extended_strategies import MORE_NAMES, extended_analysis
+        def original_candidates(rows):
+            signals,evidence=extended_analysis(rows)
+            return ({k:v for k,v in signals.items() if k not in MORE_NAMES},
+                    {k:v for k,v in evidence.items() if k not in MORE_NAMES})
         rs=rows()
         with tempfile.TemporaryDirectory() as d:
-            with patch('intraday.extended_analysis',return_value=({},{})):
+            with patch('intraday.extended_analysis',side_effect=original_candidates):
                 first=tick(d,['SPY'],lambda symbol:rs)
-            self.assertEqual(first['symbols']['SPY']['accounts'],27)
+            self.assertEqual(first['symbols']['SPY']['accounts'],37)
             folder=Path(d)/'SPY'
             old_v1=json.loads((folder/'accounts.json').read_text())
             old_v2=json.loads((folder/'accounts-v2.json').read_text())
             result=tick(d,['SPY'],lambda symbol:rs)
-            self.assertEqual(result['symbols']['SPY']['accounts'],37)
+            self.assertEqual(result['symbols']['SPY']['accounts'],47)
             new_v1=json.loads((folder/'accounts.json').read_text())
             new_v2=json.loads((folder/'accounts-v2.json').read_text())
             for name in old_v1:
                 self.assertEqual(new_v1[name],old_v1[name])
                 self.assertEqual(new_v2[name],old_v2[name])
-            for name in NAMES:
+            for name in MORE_NAMES:
                 self.assertEqual(new_v2[name]['cash'],10000.)
                 self.assertEqual(new_v2[name]['events'],[])
             research=json.loads((folder/'comparison.json').read_text())
-            self.assertEqual(len(research['results']),37)
+            self.assertEqual(len(research['results']),47)
             result=tick(d,['SPY'],lambda symbol:rs)
             self.assertEqual(result['symbols']['SPY']['new_trades'],0)
 

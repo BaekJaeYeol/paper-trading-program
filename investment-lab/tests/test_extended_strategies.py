@@ -34,7 +34,7 @@ class ExtendedStrategiesTests(unittest.TestCase):
 
     def test_flat_zero_volume_and_warmup_wait(self):
         signals,evidence=extended_analysis(bars([100.]*60,volume=0,spread=0))
-        self.assertEqual(len(signals),10)
+        self.assertEqual(len(signals),20)
         for name in NAMES:
             self.assertEqual(signals[name],[0.]*60,name)
             for decision in evidence[name]:
