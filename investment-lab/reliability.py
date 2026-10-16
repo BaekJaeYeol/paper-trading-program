@@ -97,6 +97,7 @@ def dashboard(state,status):
            'v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.','',
            '| 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |',
            '|---|---|---|---|---|']
+    lines[2:2]=[status.get('cadence',{}).get('summary','실행 주기 검사 기록 없음'), '', '[주기 판정 기준](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/session-coverage.md)', '']
     for symbol,s in status['symbols'].items():
         lines.append(f"| {symbol} | {s.get('message',s.get('detail',''))} | {s.get('last_success_utc','-')} | {s.get('last_completed_bar_start_utc','-')} | {s.get('new_bars',0)} |")
     if status.get('emergency_stop'):lines+=['','**사용자 비상 중단 활성: v2 신규 매매 차단. 보유분 자동 청산 없음.**']
