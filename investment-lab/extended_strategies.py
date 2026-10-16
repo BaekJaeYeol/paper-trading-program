@@ -1,4 +1,4 @@
-"""Ten fixed, long/cash research rules using completed OHLCV bars only.
+"""Twenty fixed, long/cash research rules using completed OHLCV bars only.
 
 Indicators use SMA-seeded EMA and Wilder RSI/ATR. No optimization or ranking.
 Recovery rules are one-bar target pulses, not latched trade instructions.
@@ -12,6 +12,11 @@ NY = ZoneInfo('America/New_York')
 NAMES = ('ema_12_26', 'macd_12_26_9', 'rsi_14_recovery',
          'bollinger_20_reentry', 'donchian_20', 'atr_14_breakout',
          'session_vwap', 'obv_20', 'stochastic_14_3_recovery', 'mfi_14_recovery')
+MORE_NAMES = ('adx_14_trend', 'aroon_25_trend', 'cci_20_momentum',
+              'williams_14_recovery', 'cmf_20_accumulation', 'chaikin_3_10',
+              'roc_10_momentum', 'trix_15_trend', 'keltner_20_breakout',
+              'opening_range_30m')
+NAMES += MORE_NAMES
 
 
 def ema(values, period):
@@ -37,18 +42,36 @@ def extended_analysis(rows):
         return signals, evidence
     close = [r[4] for r in rows]
     fast, slow = ema(close, 12), ema(close, 26)
+    middle = ema(close, 20)
+    first_ema = ema(close, 15)
+    second_ema = [None]*14+ema(first_ema[14:],15) if len(rows)>=15 else [None]*len(rows)
+    third_ema = [None]*28+ema(second_ema[28:],15) if len(rows)>=29 else [None]*len(rows)
+    flows, adl = [], []
+    for row in rows:
+        flow=(2*row[4]-row[2]-row[3])/(row[2]-row[3])*row[5] if row[2]>row[3] else 0.
+        flows.append(flow)
+        adl.append((adl[-1] if adl else 0.)+flow)
+    adl_fast, adl_slow = ema(adl,3), ema(adl,10)
     macd = [fast[i]-slow[i] if slow[i] is not None else None for i in range(len(rows))]
     macd_signal = [None]*25 + ema(macd[25:], 9) if len(rows) >= 26 else [None]*len(rows)
     gains, losses, tr, positive, negative, obv = [], [], [], [], [], []
     rsi, mfi, atr, kvalues = [], [], [], []
     gain_avg = loss_avg = atr_avg = None
+    plus_dm, minus_dm, dx = [], [], []
+    plus_avg = minus_avg = adx = None
+    opening_rows = []
     session = None
     weighted = volume = 0.
     for i, row in enumerate(rows):
         stamp, opening, high, low, c, v = row
-        day = dt.datetime.fromisoformat(stamp).astimezone(NY).date()
+        local = dt.datetime.fromisoformat(stamp).astimezone(NY)
+        day = local.date()
         if day != session:
             session, weighted, volume = day, 0., 0.
+            opening_rows = []
+        minute=local.hour*60+local.minute
+        if minute in (570,585):
+            opening_rows.append((minute,high))
         typical = (high+low+c)/3
         weighted += typical*v
         volume += v
@@ -124,4 +147,76 @@ def extended_analysis(rows):
         add('mfi_14_recovery', i >= 15 and mfi[i-1] < 20 <= mfi[i],
             '직전 MFI14 < 20, 현재 MFI14 >= 20 (한 봉 목표)',
             {'MFI14':mfi[i], 'previous_MFI14':mfi[i-1] if i else None}, i >= 15 and sum(positive[i-13:i+1])+sum(negative[i-13:i+1]) > 0)
+
+        up=high-rows[i-1][2] if i else 0.
+        down=rows[i-1][3]-low if i else 0.
+        plus_dm.append(up if up>down and up>0 else 0.)
+        minus_dm.append(down if down>up and down>0 else 0.)
+        if i==14:
+            plus_avg=statistics.mean(plus_dm[1:15])
+            minus_avg=statistics.mean(minus_dm[1:15])
+        elif i>14:
+            plus_avg=(plus_avg*13+plus_dm[i])/14
+            minus_avg=(minus_avg*13+minus_dm[i])/14
+        plus_di=100*plus_avg/atr_avg if i>=14 and atr_avg>0 else 0.
+        minus_di=100*minus_avg/atr_avg if i>=14 and atr_avg>0 else 0.
+        dx.append(100*abs(plus_di-minus_di)/(plus_di+minus_di) if plus_di+minus_di>0 else 0.)
+        if i==27:
+            adx=statistics.mean(dx[14:28])
+        elif i>27:
+            adx=(adx*13+dx[i])/14
+        add('adx_14_trend', i>=27 and adx>=25 and plus_di>minus_di,
+            'Wilder ADX14 >= 25 그리고 +DI14 > -DI14',
+            {'ADX14':adx,'plus_DI14':plus_di,'minus_DI14':minus_di}, i>=27 and atr_avg>0)
+
+        aroon_up=aroon_down=None
+        if i>=25:
+            window=rows[i-25:i+1]
+            hi_index=max(range(26),key=lambda j:(window[j][2],j))
+            lo_index=min(range(26),key=lambda j:(window[j][3],-j))
+            aroon_up=100*hi_index/25
+            aroon_down=100*lo_index/25
+        add('aroon_25_trend', i>=25 and aroon_up>70 and aroon_down<30,
+            'Aroon25 Up > 70 그리고 Down < 30 (동률이면 최신 극값)',
+            {'Aroon_up':aroon_up,'Aroon_down':aroon_down},i>=25)
+
+        typical_window=[sum(r[j] for j in (2,3,4))/3 for r in rows[max(0,i-19):i+1]]
+        typical_mean=statistics.mean(typical_window)
+        deviation=statistics.mean(abs(p-typical_mean) for p in typical_window)
+        cci=(typical-typical_mean)/(.015*deviation) if deviation>0 else None
+        add('cci_20_momentum',cci is not None and cci>100,
+            'CCI20 > 100 (전형가격·평균절대편차)',{'CCI20':cci},i>=19 and deviation>0)
+
+        williams=kval-100 if kval is not None else None
+        prior_williams=prev_k-100 if prev_k is not None else None
+        add('williams_14_recovery',williams is not None and prior_williams is not None and prior_williams< -80<=williams,
+            '직전 Williams %R14 < -80, 현재 >= -80 (한 봉 목표)',
+            {'Williams_R14':williams,'previous_R14':prior_williams},i>=14 and williams is not None and prior_williams is not None)
+
+        recent_volume=sum(r[5] for r in rows[max(0,i-19):i+1])
+        cmf=sum(flows[max(0,i-19):i+1])/recent_volume if recent_volume>0 else None
+        add('cmf_20_accumulation',cmf is not None and cmf>.1,
+            'Chaikin Money Flow20 > 0.1',{'CMF20':cmf,'volume20':recent_volume},i>=19 and recent_volume>0)
+        chaikin=adl_fast[i]-adl_slow[i] if adl_slow[i] is not None else None
+        add('chaikin_3_10',i>=25 and chaikin>0 and c>slow[i],
+            'ADL의 EMA3 - EMA10 > 0 그리고 종가 > EMA26',
+            {'Chaikin3_10':chaikin,'ADL':adl[i],'close':c,'EMA26':slow[i]},i>=25 and recent_volume>0)
+
+        roc=100*(c/close[i-10]-1) if i>=10 else None
+        add('roc_10_momentum',i>=25 and roc>1 and c>slow[i],
+            '10봉 ROC > 1% 그리고 종가 > EMA26',{'ROC10_percent':roc,'close':c,'EMA26':slow[i]},i>=25)
+        trix=100*(third_ema[i]/third_ema[i-1]-1) if i>=43 else None
+        add('trix_15_trend',i>=43 and trix>0 and c>slow[i],
+            '15봉 삼중 EMA의 1봉 변화율 TRIX > 0 그리고 종가 > EMA26',
+            {'TRIX15_percent':trix,'close':c,'EMA26':slow[i]},i>=43)
+
+        upper=middle[i]+2*atr_avg if i>=19 else None
+        add('keltner_20_breakout',upper is not None and c>upper,
+            '종가 > EMA20 + 2 x Wilder ATR14',
+            {'close':c,'upper_Keltner':upper,'EMA20':middle[i],'ATR14':atr_avg},i>=19 and atr_avg>0)
+        complete_opening=[entry[0] for entry in opening_rows]==[570,585]
+        opening_high=max(entry[1] for entry in opening_rows) if complete_opening else None
+        add('opening_range_30m',complete_opening and 600<=minute<960 and c>opening_high,
+            '뉴욕 09:30·09:45 두 완료 봉 최고가를 10:00 이후 종가가 돌파',
+            {'close':c,'opening_high':opening_high},complete_opening and 600<=minute<960)
     return signals, evidence
