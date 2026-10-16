@@ -54,3 +54,12 @@ py -3.12 investment-lab/state_recovery.py --state saved-state/intraday-state --r
 연구의 OS 잠금은 Windows와 Linux 경로를 구현하고 CI에서 프로세스 강제 종료 후 잠금 해제를 검사합니다. 사용자의 Windows11 하드웨어에서 실제 정전·절전·네트워크 단절을 일으킨 검증은 아닙니다. atomic replace·fsync·교체 전 검증도 디스크 고장·파일시스템 손상·모든 전원 장애를 막지는 못하므로 독립 백업이 필요합니다. 복구 코드는 실계좌 주문을 실행하지 않습니다.
 
 참고: [Python os.replace/fsync](https://docs.python.org/3/library/os.html), [SQLite PRAGMA quick_check](https://www.sqlite.org/pragma.html#pragma_quick_check), [Git push](https://git-scm.com/docs/git-push).
+
+
+## 기존 연구 DB가 GitHub에서 누락된 경우
+
+과거 저장 규칙의 `*.sqlite*` 제외 때문에 실행기 교체 시 연구 SQLite가 내려오지 않는 문제가 실제 서버 검증에서 확인됐습니다. 연구 폴더의 DB만 별도로 추적하도록 수정했으며 GUI 주문 DB·API 키는 추가 저장하지 않습니다.
+
+JSON 잔고·평가액·기준 봉과 v2 무결성을 먼저 확인한 뒤, 기존 설정·현금·수량·기준 봉·저장된 체결 이벤트를 그대로 SQLite로 옮깁니다. 이 작업은 새 계좌 초기화나 과거 체결 계산이 아닙니다. 정보가 부족하거나 이미 존재하는 DB가 손상됐으면 덮어쓰지 않습니다. 과거 체크포인트에 애초 기록되지 않은 이벤트는 복구할 수 없습니다. 이전 실행에서 DB 누락 때문에 재시작됐던 v1 성과는 연속 운영 성과로 간주하면 안 됩니다. v2 기록과 구분해 확인하세요.
+
+새 연구 DB와 복구 보관함의 연구 DB는 다음 실행기에서도 복구 가능하도록 원격 체크포인트에 포함합니다. 임시 복원 파일은 연구 DB 추적 대상에서 제외합니다. 테스트에는 Git의 SQLite 제외 규칙을 둔 원격 저장소에 업로드한 뒤 새 폴더로 다시 clone해 잔고·DB가 보존되는지 확인하는 경로를 추가했습니다.
