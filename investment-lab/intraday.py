@@ -184,7 +184,6 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                                                detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else '새 데이터 없음 / '+health['market'])
         except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc),last_success_utc=old_status['symbols'].get(symbol,{}).get('last_success_utc'))
     record_run(state,status,old_status,time.monotonic()-started)
-    (state/'status.json').write_text(json.dumps(status,ensure_ascii=False,indent=2),encoding='utf-8')
     status['cadence']=cadence_summary(json.loads((state/'operations-history.json').read_text()),status['checked_utc'],session_bounds)
     (state/'status.json').write_text(json.dumps(status,ensure_ascii=False,indent=2),encoding='utf-8')
     dashboard(state,status)
