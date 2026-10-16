@@ -5,6 +5,7 @@ import json
 import subprocess
 import time
 from pathlib import Path
+from state_recovery import state_lock
 
 SYMBOLS=['SPY','QQQ','IWM','DIA','MSFT','JPM','XOM','JNJ','CAT','WMT']
 
@@ -29,9 +30,10 @@ def refresh(repo):
 def publish(repo):
     git(repo,'add','intraday-state')
     code=subprocess.run(['git','diff','--cached','--quiet'],cwd=repo).returncode
-    if code==0:return
-    if code!=1:raise RuntimeError('저장 변경 검사 실패')
-    git(repo,'commit','-m','기록: 장중 세션 15분 갱신·계좌·운영 상태 저장')
+    if code not in (0,1):raise RuntimeError('저장 변경 검사 실패')
+    if code==1:
+        git(repo,'commit','-m','기록: 장중 세션 15분 갱신·계좌·운영 상태 저장')
+    # A previous failed push may have left an unpushed commit despite a clean tree.
     for attempt in range(3):
         refresh(repo)
         try:
@@ -81,9 +83,10 @@ def main():
     state=repo/'intraday-state'
     def bounds(now):
         return session_bounds(dt.datetime.fromtimestamp(now,NY).date())
-    code,cycles=run_session(lambda:tick(state,symbols=SYMBOLS),lambda:publish(repo),
-                            lambda:refresh(repo),bounds,max_seconds=args.max_seconds,once=args.once,
-                            stopped=lambda:(state/'emergency-stop.json').exists())
+    with state_lock(repo):
+        code,cycles=run_session(lambda:tick(state,symbols=SYMBOLS),lambda:publish(repo),
+                                lambda:refresh(repo),bounds,max_seconds=args.max_seconds,once=args.once,
+                                stopped=lambda:(state/'emergency-stop.json').exists())
     print(json.dumps(dict(mode='once' if args.once else 'warm-session',cycles=cycles,exit_code=code)))
     return code
 
