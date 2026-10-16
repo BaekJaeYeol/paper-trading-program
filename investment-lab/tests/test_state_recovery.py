@@ -12,7 +12,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from state_recovery import atomic_json, ensure_space, recover_snapshot, state_lock, validate_snapshot
+from state_recovery import atomic_json, ensure_space, recover_snapshot, restore_missing_databases, state_lock, validate_snapshot
 
 
 def snapshot(folder,cash=10000.):
@@ -20,7 +20,8 @@ def snapshot(folder,cash=10000.):
     stamp='2026-10-15T19:45:00+00:00'
     qty=(10000-cash)/100
     atomic_json(folder/'bars.json',[(stamp,100,101,99,100,1000)])
-    atomic_json(folder/'accounts.json',{'cash':dict(cash=cash,qty=qty,equity=10000,last_date=stamp)})
+    atomic_json(folder/'accounts.json',{'cash':dict(cash=cash,qty=qty,equity=10000,last_date=stamp,
+                config=dict(strategy='cash',source='real_download',fee=.001,slippage=.001,started_after=stamp,reference=100),events=[])})
     atomic_json(folder/'accounts-v2.json',{'cash':dict(cash=cash,qty=qty,equity=10000,initial=10000,mark=100,
                 last_date=stamp,fee=.001,slippage=.001,half_spread=.0001,participation=.01)})
     (folder/'accounts').mkdir()
@@ -32,6 +33,21 @@ def snapshot(folder,cash=10000.):
 
 
 class RecoveryTests(unittest.TestCase):
+    def test_legacy_json_restores_balance_and_ledger_without_reset(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)/'SPY';snapshot(root,9000)
+            path=root/'accounts.json';accounts=json.loads(path.read_text())
+            accounts['cash']['events']=[dict(fill_bar_start_utc='2026-10-15T19:45:00+00:00',target_weight=.1,
+                side='buy',quantity=10,simulated_fill_price=100,fee=0,equity=10000)]
+            atomic_json(path,accounts);before=path.read_bytes()
+            db_path=next((root/'accounts').glob('*.sqlite'));db_path.unlink()
+            self.assertTrue(restore_missing_databases(root))
+            validate_snapshot(root)
+            with closing(sqlite3.connect(db_path)) as db:
+                self.assertEqual(db.execute('SELECT cash,qty FROM account').fetchone(),(9000.,10.))
+                self.assertEqual(db.execute('SELECT side,qty,price FROM ledger').fetchone(),('buy',10.,100.))
+            self.assertEqual(path.read_bytes(),before)
+            self.assertEqual(restore_missing_databases(root),[])
     def test_interrupted_swap_rolls_back_without_initializing(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);snapshot(root/'SPY.backup')
