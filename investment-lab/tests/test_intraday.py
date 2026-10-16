@@ -26,6 +26,20 @@ def raw_bars(rs):
         'indicators':{'quote':[{k:[r[i] for r in rs] for i,k in enumerate(('open','high','low','close','volume'),1)}]}}]}}
 
 class IntradayTests(unittest.TestCase):
+    def test_restart_after_interrupted_directory_swap(self):
+        rs=rows()
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(tick(d,['SPY'],lambda _:rs)['symbols']['SPY']['status'],'ok')
+            folder=Path(d)/'SPY'
+            before=[(folder/name).read_bytes() for name in ('accounts.json','accounts-v2.json')]
+            folder.rename(Path(d)/'SPY.backup')
+            (Path(d)/'SPY.pending').mkdir()
+            result=tick(d,['SPY'],lambda _:rs)
+            self.assertEqual(result['symbols']['SPY']['status'],'ok')
+            self.assertTrue(result['recovery_actions']['SPY'])
+            self.assertEqual([(folder/name).read_bytes() for name in ('accounts.json','accounts-v2.json')],before)
+            self.assertEqual(result['symbols']['SPY']['new_trades'],0)
+
     def test_strategy_expansion_preserves_existing_accounts(self):
         from unittest.mock import patch
         from extended_strategies import MORE_NAMES, extended_analysis
