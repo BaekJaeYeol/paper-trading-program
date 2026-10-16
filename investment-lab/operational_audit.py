@@ -2,6 +2,7 @@
 import math
 import json
 from pathlib import Path
+from state_recovery import atomic_json
 
 def validate_account(account):
     for key in ('cash','qty','mark','equity','initial'):
@@ -42,9 +43,7 @@ def record_run(state,status,previous,duration):
     # Same run timestamp replaces its entry rather than duplicating it.
     history=[item for item in history if item['checked_utc']!=entry['checked_utc']]
     history.append(entry)
-    temporary=path.with_suffix('.tmp')
-    temporary.write_text(json.dumps(history[-200:],ensure_ascii=False,indent=2),encoding='utf-8')
-    temporary.replace(path)
+    atomic_json(path,history[-200:])
     status['duration_seconds']=entry['duration_seconds']
 
 def cadence_summary(history,checked_utc,session_bounds):
