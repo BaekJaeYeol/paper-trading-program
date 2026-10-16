@@ -1,25 +1,29 @@
 # 모의투자 운영 현황
 
-최근 확인: 2026-10-15T20:22:00.533681+00:00 (UTC)
-다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-15T20:37:00+00:00 (UTC, 실행 지연 가능)
+완료 봉 확인 주기: 기록 19/26회 · 기록 없는 예정 7회 · 아직 판정 전 0회 · 주의: 예약 시작 지연 또는 실행·저장 누락을 확인하세요.
+
+[주기 판정 기준](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/session-coverage.md)
+
+최근 확인: 2026-10-16T00:36:16.017410+00:00 (UTC)
+다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-16T00:37:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
 v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| QQQ | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| IWM | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| DIA | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| MSFT | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| JPM | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| XOM | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| JNJ | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| CAT | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| WMT | 새 데이터 없음 / 장 마감·휴장 | 2026-10-15T20:22:00.533681+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| SPY | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| QQQ | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| IWM | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| DIA | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| MSFT | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| JPM | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| XOM | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| JNJ | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| CAT | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| WMT | new accounts waiting for next completed bar | 2026-10-16T00:36:16.017410+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
 
-이번 실행 소요: 54.5초
+이번 실행 소요: 56.28초
 [최근 200회 운영·복구 이력](operations-history.json)
 
 | 종목 | 연속 오류 | 복구 |
@@ -44,32 +48,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9998.43 | -1.57 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9997.36 | -2.64 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9955.54 | -44.46 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9914.99 | -85.01 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | volume_26 | 9949.83 | -50.17 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 9955.54 | -44.46 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9976.42 | -23.58 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9914.99 | -85.01 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9956.08 | -43.92 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9998.62 | -1.38 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
-| v1 | trend_8_26 AND volume_26 | 9949.83 | -50.17 | sell /  / trend_8_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + volume_26 | 9973.53 | -26.47 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9914.99 | -85.01 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9935.22 | -64.78 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9977.68 | -22.32 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9972.54 | -27.46 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9957.36 | -42.64 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9932.34 | -67.66 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9974.87 | -25.13 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 9888.82 | -111.18 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9844.63 | -155.37 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -140,32 +144,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10027.55 | 27.55 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10037.66 | 37.66 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9962.68 | -37.32 | sell /  / momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | breakout_8 | 9940.04 | -59.96 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | volume_26 | 9962.28 | -37.72 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 9962.68 | -37.32 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10000.10 | 0.10 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9983.87 | -16.13 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9988.72 | -11.28 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10018.78 | 18.78 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9999.85 | -0.15 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9962.68 | -37.32 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9951.33 | -48.67 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9981.30 | -18.70 | sell /  / momentum_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9962.45 | -37.55 | sell /  / momentum_26 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9969.93 | -30.07 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9951.10 | -48.90 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9981.11 | -18.89 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 9691.50 | -308.50 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9817.65 | -182.35 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -236,30 +240,30 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10021.57 | 21.57 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10021.57 | 21.57 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 10021.57 | 21.57 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9955.91 | -44.09 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 10021.57 | 21.57 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10021.57 | 21.57 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9955.91 | -44.09 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9988.67 | -11.33 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10010.71 | 10.71 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 10010.71 | 10.71 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9955.91 | -44.09 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9988.67 | -11.33 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 10010.71 | 10.71 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 10010.71 | 10.71 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9977.89 | -22.11 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9977.89 | -22.11 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
@@ -332,30 +336,30 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9988.84 | -11.16 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9988.84 | -11.16 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9988.84 | -11.16 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9889.97 | -110.03 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9988.84 | -11.16 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9988.84 | -11.16 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9889.97 | -110.03 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9939.29 | -60.71 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9994.36 | -5.64 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9994.36 | -5.64 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9889.97 | -110.03 | buy /  / momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9939.29 | -60.71 | buy /  / momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9994.36 | -5.64 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9994.36 | -5.64 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9944.78 | -55.22 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9944.78 | -55.22 | buy /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
@@ -428,32 +432,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10017.64 | 17.64 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 10017.64 | 17.64 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 10019.69 | 19.69 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9880.37 | -119.63 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | volume_26 | 9952.64 | -47.36 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND momentum_26 | 10019.69 | 19.69 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 10018.67 | 18.67 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9880.37 | -119.63 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9948.77 | -51.23 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 10008.74 | 8.74 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
-| v1 | trend_8_26 AND volume_26 | 9952.64 | -47.36 | sell /  / trend_8_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + volume_26 | 9985.08 | -14.92 | buy /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9880.37 | -119.63 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9949.80 | -50.20 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 10009.78 | 9.78 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND volume_26 | 9952.64 | -47.36 | sell /  / momentum_26 AND volume_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + volume_26 | 9986.10 | -13.90 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9939.95 | -60.05 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9936.22 | -63.78 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9976.25 | -23.75 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 10002.40 | 2.40 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9884.99 | -115.01 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -524,32 +528,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10019.90 | 19.90 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9948.69 | -51.31 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 | 9807.81 | -192.19 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | breakout_8 | 9908.03 | -91.97 | sell /  / breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | reversion_12 | 9950.66 | -49.34 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9885.81 | -114.19 | buy /  / trend_8_26 AND momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9897.76 | -102.24 | buy /  / trend_8_26 + momentum_26: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9951.02 | -48.98 | sell /  / trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 9928.38 | -71.62 | sell /  / trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9989.49 | -10.51 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9974.29 | -25.71 | buy /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND breakout_8 | 9908.03 | -91.97 | sell /  / momentum_26 AND breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + breakout_8 | 9857.78 | -142.22 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9938.35 | -61.65 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9903.36 | -96.64 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9949.16 | -50.84 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 9953.88 | -46.12 | sell /  / breakout_8 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9975.27 | -24.73 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 10015.45 | 15.45 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9858.91 | -141.09 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -620,32 +624,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9943.02 | -56.98 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 | 9906.56 | -93.44 | buy /  / reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9953.10 | -46.90 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9953.10 | -46.90 | buy /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9953.10 | -46.90 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9953.10 | -46.90 | buy /  / reversion_12 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 10191.44 | 191.44 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 10096.25 | 96.25 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
@@ -716,32 +720,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9776.70 | -223.30 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9797.20 | -202.80 | sell /  / trend_8_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 | 9714.29 | -285.71 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 | 9802.37 | -197.63 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9797.20 | -202.80 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9755.64 | -244.36 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + breakout_8 | 9898.11 | -101.89 | sell /  / trend_8_26 + breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND reversion_12 | 9847.46 | -152.54 | sell /  / trend_8_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + reversion_12 | 9799.79 | -200.21 | sell /  / trend_8_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9898.11 | -101.89 | sell /  / trend_8_26 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 9856.07 | -143.93 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND reversion_12 | 9808.75 | -191.25 | sell /  / momentum_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 + reversion_12 | 9758.22 | -241.78 | sell /  / momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9856.07 | -143.93 | sell /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9900.64 | -99.36 | sell /  / breakout_8 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9900.64 | -99.36 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 9666.23 | -333.77 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9666.23 | -333.77 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -812,32 +816,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 10055.36 | 55.36 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9978.54 | -21.46 | buy /  / trend_8_26: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 | 10054.53 | 54.53 | buy /  / breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | reversion_12 | 9995.30 | -4.70 | sell /  / reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | volume_26 | 9965.26 | -34.74 | sell /  / volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + momentum_26 | 9989.26 | -10.74 | sell /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
-| v1 | trend_8_26 AND breakout_8 | 9978.54 | -21.46 | buy /  / trend_8_26 AND breakout_8: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 + breakout_8 | 10016.61 | 16.61 | buy /  / trend_8_26 + breakout_8: prior completed bar target 100%; next bar open simulation |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + reversion_12 | 9986.91 | -13.09 | sell /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9971.88 | -28.12 | sell /  / trend_8_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 10027.29 | 27.29 | sell /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + reversion_12 | 9997.64 | -2.36 | sell /  / momentum_26 + reversion_12: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9982.60 | -17.40 | sell /  / momentum_26 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 10024.93 | 24.93 | sell /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + volume_26 | 10009.84 | 9.84 | sell /  / breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9980.24 | -19.76 | sell /  / reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 9192.63 | -807.37 | 중단: 손실 한도 / buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 9919.28 | -80.72 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
@@ -908,32 +912,32 @@ v2 신규 주문 제한: 일중 손실 3%, 최고 평가액 대비 낙폭 10%. �
 | 모델 | 전략 | 평가액 USD | 손익 USD | 최근 매매·이유 |
 |---|---|---:|---:|---|
 | v1 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | buy_hold | 9860.78 | -139.22 | buy /  / buy_hold: prior completed bar target 100%; next bar open simulation |
-| v1 | trend_8_26 | 9869.47 | -130.53 | sell /  / trend_8_26: prior completed bar target 0%; next bar open simulation |
-| v1 | momentum_26 | 9860.78 | -139.22 | buy /  / momentum_26: prior completed bar target 100%; next bar open simulation |
+| v1 | buy_hold | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 | 9849.68 | -150.32 | buy /  / reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 AND momentum_26 | 9869.47 | -130.53 | sell /  / trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + momentum_26 | 9865.11 | -134.89 | buy /  / trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 AND momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + momentum_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + breakout_8 | 9934.46 | -65.54 | sell /  / trend_8_26 + breakout_8: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 AND reversion_12 | 9882.79 | -117.21 | sell /  / trend_8_26 AND reversion_12: prior completed bar target 0%; next bar open simulation |
-| v1 | trend_8_26 + reversion_12 | 9859.52 | -140.48 | buy /  / trend_8_26 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | trend_8_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | trend_8_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | trend_8_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | trend_8_26 + volume_26 | 9934.46 | -65.54 | sell /  / trend_8_26 + volume_26: prior completed bar target 0%; next bar open simulation |
+| v1 | trend_8_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + breakout_8 | 9930.07 | -69.93 | buy /  / momentum_26 + breakout_8: prior completed bar target 50%; next bar open simulation |
-| v1 | momentum_26 AND reversion_12 | 9849.68 | -150.32 | buy /  / momentum_26 AND reversion_12: prior completed bar target 100%; next bar open simulation |
-| v1 | momentum_26 + reversion_12 | 9855.21 | -144.79 | buy /  / momentum_26 + reversion_12: prior completed bar target 100%; next bar open simulation |
+| v1 | momentum_26 + breakout_8 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
+| v1 | momentum_26 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | momentum_26 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | momentum_26 + volume_26 | 9930.07 | -69.93 | buy /  / momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | momentum_26 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | breakout_8 + reversion_12 | 9924.46 | -75.54 | buy /  / breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation |
+| v1 | breakout_8 + reversion_12 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | breakout_8 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v1 | reversion_12 AND volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
-| v1 | reversion_12 + volume_26 | 9924.46 | -75.54 | buy /  / reversion_12 + volume_26: prior completed bar target 50%; next bar open simulation |
+| v1 | reversion_12 + volume_26 | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | cash | 10000.00 | 0.00 | 대기 /  / 새 신호 대기 |
 | v2 | buy_hold | 10546.00 | 546.00 | buy / partial / 직전 완료 봉 목표 비중 100%; 다음 봉 시가 가정 |
 | v2 | trend_8_26 | 10410.62 | 410.62 | sell / filled / 직전 완료 봉 목표 비중 0%; 다음 봉 시가 가정 |
