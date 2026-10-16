@@ -5,6 +5,10 @@ on:
     - cron: '7 11-21 * * 1-5'
   workflow_dispatch:
     inputs:
+      continue_session:
+        description: 'After successful manual checks, continue internal 15-minute polling'
+        type: boolean
+        default: false
       emergency_stop:
         description: 'Stop v2 new trades; keep positions'
         type: boolean
@@ -15,7 +19,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: ${{ inputs.emergency_stop == true && 'intraday-control' || 'intraday-session' }}
+  group: ${{ github.ref != 'refs/heads/main' && format('intraday-test-{0}', github.ref) || inputs.emergency_stop == true && 'intraday-control' || 'intraday-session' }}
   cancel-in-progress: false
 jobs:
   cadence-tests:
@@ -122,3 +126,33 @@ jobs:
           if [ -f saved-state/intraday-state/README.md ]; then
             cat saved-state/intraday-state/README.md >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  continue-session:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.continue_session == true) && inputs.emergency_stop != true
+    needs: hourly
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install exchange calendar
+        run: python -m pip install exchange_calendars==4.12 pandas==2.2.3
+      - name: Verify fresh checkout contains valid persisted accounts
+        run: python investment-lab/state_recovery.py --state saved-state/intraday-state
+      - name: Configure durable checkpoints
+        run: |
+          git -C saved-state config user.name 'github-actions[bot]'
+          git -C saved-state config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Continue internal polling after successful deployment checks
+        run: python -u investment-lab/session_worker.py --repo saved-state
+      - name: Preserve latest pending checkpoint
+        if: always()
+        run: |
+          python -c "import sys; from pathlib import Path; sys.path.insert(0, 'investment-lab'); from session_worker import publish; publish(Path('saved-state').resolve())"
