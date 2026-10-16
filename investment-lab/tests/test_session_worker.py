@@ -37,6 +37,24 @@ class SessionTests(unittest.TestCase):
    run_session(lambda:{'symbols':{}},fail,lambda:None,lambda _:(0,1),once=True)
 
 class GitCheckpointTests(unittest.TestCase):
+ def test_ignored_research_databases_survive_a_fresh_clone(self):
+  import tempfile,subprocess
+  from session_worker import git,publish
+  from test_state_recovery import snapshot,validate_snapshot
+  with tempfile.TemporaryDirectory() as d:
+   root=Path(d);bare=root/'remote.git';repo=root/'local';fresh=root/'fresh'
+   subprocess.run(['git','init','--bare',str(bare)],check=True,capture_output=True)
+   subprocess.run(['git','clone',str(bare),str(repo)],check=True,capture_output=True)
+   git(repo,'config','user.name','test');git(repo,'config','user.email','test@example.invalid')
+   git(repo,'checkout','-b','paper-hourly-state')
+   (repo/'.gitignore').write_text('*.sqlite*\n')
+   git(repo,'add','.gitignore');git(repo,'commit','-m','ignore private GUI databases')
+   git(repo,'push','-u','origin','paper-hourly-state')
+   snapshot(repo/'intraday-state'/'SPY',9000)
+   publish(repo)
+   subprocess.run(['git','clone','--branch','paper-hourly-state',str(bare),str(fresh)],check=True,capture_output=True)
+   validate_snapshot(fresh/'intraday-state'/'SPY')
+   self.assertEqual(len(list((fresh/'intraday-state'/'SPY'/'accounts').glob('*.sqlite'))),1)
  def test_clean_tree_retries_a_previously_failed_push(self):
   import tempfile,subprocess
   from unittest.mock import patch
