@@ -80,10 +80,16 @@ def advance_v2(account,rows,signals,now,blocked=False):
     validate_account(account)
     return account
 
-def update_v2(stage,rows,signals,now,blocked=False):
+def update_v2(stage,rows,signals,now,blocked=False,evidence=None):
     path=Path(stage)/'accounts-v2.json'
     old=json.loads(path.read_text()) if path.exists() else {}
     result={name:advance_v2(old.get(name),rows,sig,now,blocked) for name,sig in signals.items()}
+    by_stamp={row[0]:i for i,row in enumerate(rows)}
+    for name,items in (evidence or {}).items():
+        for event in result[name]['events'][len(old.get(name,{}).get('events',[])):]:
+            decision=items[by_stamp[event['signal_bar']]]
+            event['evidence']=decision
+            event['reason']=decision['reason']+'; 직전 완료 봉 목표를 다음 봉 시가에 모의 적용'
     if blocked:
         for account in result.values():
             risk=account.setdefault('risk',dict(peak=account['equity'],day=None,day_equity=account['equity'],daily_limit=.03,drawdown_limit=.10))
