@@ -66,6 +66,8 @@ jobs:
         run: python -m unittest discover -s investment-lab/tests -p test_extended_strategies.py -v
       - name: Verify trend strength, money flow and opening range
         run: python -m unittest discover -s investment-lab/tests -p test_more_strategies.py -v
+      - name: Verify crash recovery and disk safety
+        run: python -m unittest discover -s investment-lab/tests -p test_state_recovery.py -v
       - name: Configure per-cycle account checkpoints
         run: |
           git -C saved-state config user.name 'github-actions[bot]'
@@ -82,6 +84,8 @@ jobs:
           else
             python -u investment-lab/session_worker.py --repo saved-state --once
           fi
+      - name: Diagnose saved account snapshots without broker access
+        run: python investment-lab/state_recovery.py --state saved-state/intraday-state
       - name: Install dashboard browser checks
         if: ${{ always() && !cancelled() && github.event_name != 'schedule' && hashFiles('saved-state/intraday-state/dashboard.html') != '' }}
         run: |

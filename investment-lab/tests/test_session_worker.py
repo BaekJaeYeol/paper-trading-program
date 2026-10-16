@@ -37,6 +37,27 @@ class SessionTests(unittest.TestCase):
    run_session(lambda:{'symbols':{}},fail,lambda:None,lambda _:(0,1),once=True)
 
 class GitCheckpointTests(unittest.TestCase):
+ def test_clean_tree_retries_a_previously_failed_push(self):
+  import tempfile,subprocess
+  from unittest.mock import patch
+  from session_worker import git,publish
+  with tempfile.TemporaryDirectory() as d:
+   root=Path(d);bare=root/'remote.git';repo=root/'local'
+   subprocess.run(['git','init','--bare',str(bare)],check=True,capture_output=True)
+   subprocess.run(['git','clone',str(bare),str(repo)],check=True,capture_output=True)
+   git(repo,'config','user.name','test');git(repo,'config','user.email','test@example.invalid')
+   git(repo,'checkout','-b','paper-hourly-state')
+   (repo/'initial').write_text('initial');git(repo,'add','.');git(repo,'commit','-m','initial')
+   git(repo,'push','-u','origin','paper-hourly-state')
+   (repo/'intraday-state').mkdir();(repo/'intraday-state'/'status.json').write_text('checkpoint')
+   def outage(folder,*args):
+    if args[0]=='push':raise subprocess.CalledProcessError(1,'push')
+    return git(folder,*args)
+   with patch('session_worker.git',side_effect=outage):
+    with self.assertRaises(subprocess.CalledProcessError):publish(repo)
+   self.assertEqual(git(repo,'status','--porcelain'),'')
+   publish(repo)
+   self.assertEqual(git(repo,'rev-parse','HEAD').strip(),git(repo,'ls-remote','origin','refs/heads/paper-hourly-state').split()[0])
  def test_concurrent_hourly_checkpoint_is_preserved(self):
   import tempfile,subprocess
   from session_worker import git,publish
@@ -87,4 +108,3 @@ class RefreshResilienceTests(unittest.TestCase):
    self.assertEqual(command.call_count,3)
 
 if __name__=='__main__':unittest.main()
-

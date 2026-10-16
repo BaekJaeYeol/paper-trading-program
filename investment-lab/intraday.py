@@ -20,6 +20,7 @@ from bar_reconciliation import reconcile_bars
 from operational_audit import record_run, cadence_summary
 from reliability import session_bounds, freshness, update_v2, dashboard
 from extended_strategies import extended_analysis
+from state_recovery import state_lock, recover_snapshot, validate_snapshot, ensure_space, atomic_json
 
 NY=ZoneInfo('America/New_York')
 INTERVAL=900
@@ -102,8 +103,9 @@ def publish_directory(stage, destination):
     destination=Path(destination)
     pending=destination.with_name(destination.name+'.pending')
     backup=destination.with_name(destination.name+'.backup')
-    if pending.exists():shutil.rmtree(pending)
+    if pending.exists():raise ValueError('미완료 저장이 있습니다. 복구 진단 후 재개하세요.')
     shutil.copytree(stage,pending)
+    validate_snapshot(pending)
     if backup.exists():raise ValueError('이전 계좌 백업 복구를 확인하세요')
     if destination.exists():destination.rename(backup)
     try:pending.rename(destination)
@@ -114,6 +116,11 @@ def publish_directory(stage, destination):
 
 
 def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now=None):
+    with state_lock(state):
+        return _tick(state,symbols,downloader,now)
+
+
+def _tick(state, symbols, downloader, now):
     started=time.monotonic()
     state=Path(state);state.mkdir(parents=True,exist_ok=True)
     old_status=json.loads((state/'status.json').read_text()) if (state/'status.json').exists() else {'symbols':{}}
@@ -121,8 +128,13 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
     status=dict(checked_utc=dt.datetime.fromtimestamp(now,dt.timezone.utc).isoformat(),interval='15m',real_orders=False,symbols={})
     blocked=(state/'emergency-stop.json').exists()
     status['emergency_stop']=blocked
+    status['recovery_actions']={}
     for symbol in symbols:
         try:
+            actions=recover_snapshot(state/symbol)
+            if actions:status['recovery_actions'][symbol]=actions
+            if (state/symbol).exists():validate_snapshot(state/symbol)
+            ensure_space(state,symbol)
             rows=downloader(symbol)
             previous_bars=state/symbol/'bars.json'
             saved=json.loads(previous_bars.read_text()) if previous_bars.exists() else []
@@ -137,7 +149,7 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
             now=dt.datetime.fromisoformat(status['checked_utc']).timestamp()
             health=freshness(rows,now)
             if health['stale']:raise ValueError('데이터 지연: 계좌 갱신 중단, 이전 기록 유지')
-            with tempfile.TemporaryDirectory() as temp:
+            with tempfile.TemporaryDirectory(dir=state.parent,prefix='.paper-stage-') as temp:
                 stage=Path(temp)/symbol;previous=state/symbol
                 if previous.exists():shutil.copytree(previous,stage)
                 else:stage.mkdir()
@@ -187,10 +199,11 @@ def tick(state, symbols=('SPY','QQQ','IWM','DIA'), downloader=download_bars, now
                                                accounts=len(accounts),new_bars=new_bars,new_trades=trades,provider_revisions=len(revisions),
                                                last_success_utc=status['checked_utc'],health=health,
                                                detail='new accounts waiting for next completed bar' if not old['active'] else 'updated' if new_bars else '새 데이터 없음 / '+health['market'])
+                if actions:status['symbols'][symbol]['detail']+=' / 장애 복구: '+' · '.join(actions)
         except Exception as exc:status['symbols'][symbol]=dict(status='error',message=str(exc),last_success_utc=old_status['symbols'].get(symbol,{}).get('last_success_utc'))
     record_run(state,status,old_status,time.monotonic()-started)
     status['cadence']=cadence_summary(json.loads((state/'operations-history.json').read_text()),status['checked_utc'],session_bounds)
-    (state/'status.json').write_text(json.dumps(status,ensure_ascii=False,indent=2),encoding='utf-8')
+    atomic_json(state/'status.json',status)
     dashboard(state,status)
     print(json.dumps(status,ensure_ascii=False))
     return status
