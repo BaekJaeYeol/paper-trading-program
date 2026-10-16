@@ -1,43 +1,47 @@
 # 모의투자 운영 현황
 
-완료 봉 확인 주기: 기록 19/26회 · 기록 없는 예정 7회 · 아직 판정 전 0회 · 주의: 예약 시작 지연 또는 실행·저장 누락을 확인하세요.
+[PC·서버 장애 진단과 복구 방법](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/failure-recovery.md)
+
+이번 실행 복구: {}
+
+완료 봉 확인 주기: 기록 0/0회 · 기록 없는 예정 0회 · 아직 판정 전 26회
 
 [주기 판정 기준](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/session-coverage.md)
 
-최근 확인: 2026-10-16T02:36:15.223454+00:00 (UTC)
-다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-16T02:37:00+00:00 (UTC, 실행 지연 가능)
+최근 확인: 2026-10-16T13:37:47.632988+00:00 (UTC)
+다음 15분 확인 목표 (세션 실행 중에만 적용): 2026-10-16T13:52:00+00:00 (UTC, 실행 지연 가능)
 
 실제 주문 없음. v1 기존 계좌와 v2 새 계좌의 시작일이 다르므로 수익률을 직접 우열 비교하지 마세요.
 v2는 다음 봉 시가에 비용·스프레드·직전 거래량 제한을 적용한 가상 체결입니다. 미체결 잔량은 만료됩니다.
 
 | 종목 | 상태 | 최근 성공 UTC | 마지막 완료 봉 UTC | 이번 새 봉 |
 |---|---|---|---|---|
-| SPY | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| QQQ | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| IWM | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| DIA | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| MSFT | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| JPM | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| XOM | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| JNJ | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| CAT | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
-| WMT | new accounts waiting for next completed bar | 2026-10-16T02:36:15.223454+00:00 | 2026-10-15T19:45:00+00:00 | 0 |
+| SPY | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| QQQ | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| IWM | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| DIA | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| MSFT | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| JPM | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| XOM | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| JNJ | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| CAT | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
+| WMT | unable to open database file | 2026-10-16T02:36:15.223454+00:00 | - | 0 |
 
-이번 실행 소요: 43.17초
+이번 실행 소요: 0.12초
 [최근 200회 운영·복구 이력](operations-history.json)
 
 | 종목 | 연속 오류 | 복구 |
 |---|---:|---|
-| SPY | 0 | - |
-| QQQ | 0 | - |
-| IWM | 0 | - |
-| DIA | 0 | - |
-| MSFT | 0 | - |
-| JPM | 0 | - |
-| XOM | 0 | - |
-| JNJ | 0 | - |
-| CAT | 0 | - |
-| WMT | 0 | - |
+| SPY | 1 | - |
+| QQQ | 1 | - |
+| IWM | 1 | - |
+| DIA | 1 | - |
+| MSFT | 1 | - |
+| JPM | 1 | - |
+| XOM | 1 | - |
+| JNJ | 1 | - |
+| CAT | 1 | - |
+| WMT | 1 | - |
 
 [공정 비교·복구 검증 설명](https://github.com/BaekJaeYeol/paper-trading-program/blob/main/investment-lab/docs/comparison-orders.md)
 
