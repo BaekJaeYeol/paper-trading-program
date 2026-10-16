@@ -84,6 +84,16 @@ jobs:
           else
             python -u investment-lab/session_worker.py --repo saved-state --once
           fi
+      - name: Verify research databases are tracked for the next runner
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess
+          root=pathlib.Path('saved-state')
+          files=[str(p.relative_to(root)) for p in (root/'intraday-state').glob('**/accounts/*.sqlite')]
+          if not files:raise SystemExit('No persisted research databases')
+          subprocess.run(['git','-C',str(root),'ls-files','--error-unmatch','--',*files],stdout=subprocess.DEVNULL,check=True)
+          print('Persisted research databases:',len(files))
+          PY
       - name: Diagnose saved account snapshots without broker access
         run: python investment-lab/state_recovery.py --state saved-state/intraday-state
       - name: Install dashboard browser checks

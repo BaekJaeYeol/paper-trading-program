@@ -57,7 +57,7 @@ def atomic_json(path,value):
             temporary.unlink()
 
 
-def validate_snapshot(folder):
+def validate_snapshot(folder,allow_missing_databases=False):
     from operational_audit import validate_account
     folder=Path(folder)
     bars=json.loads((folder/'bars.json').read_text(encoding='utf-8'))
@@ -76,6 +76,8 @@ def validate_snapshot(folder):
         if not math.isclose(account['cash']+account['qty']*last[4],account['equity'],abs_tol=.01,rel_tol=1e-9):
             raise ValueError('복구 스냅샷 v1 평가액 불일치')
         path=folder/'accounts'/(hashlib.sha256(name.encode()).hexdigest()[:16]+'.sqlite')
+        if not path.exists() and allow_missing_databases:
+            continue
         with closing(sqlite3.connect(path.resolve().as_uri()+'?mode=ro',uri=True)) as db:
             if db.execute('PRAGMA quick_check').fetchone()[0]!='ok':
                 raise ValueError('복구 스냅샷 SQLite 무결성 오류')
@@ -84,16 +86,53 @@ def validate_snapshot(folder):
                 raise ValueError('복구 스냅샷 SQLite·계좌 요약 불일치')
 
 
+def restore_missing_databases(folder):
+    """Migrate legacy JSON checkpoints without changing balances or inventing fills."""
+    folder=Path(folder)
+    accounts=json.loads((folder/'accounts.json').read_text(encoding='utf-8'))
+    missing=[name for name in accounts if not (folder/'accounts'/(hashlib.sha256(name.encode()).hexdigest()[:16]+'.sqlite')).exists()]
+    if not missing:return []
+    validate_snapshot(folder,allow_missing_databases=True)
+    bars=json.loads((folder/'bars.json').read_text(encoding='utf-8'))
+    for name in missing:
+        account=accounts[name]
+        config=account.get('config',{})
+        if config.get('strategy')!=name or config.get('source')!='real_download' or 'events' not in account:
+            raise ValueError('기존 계좌 요약에 복원 정보가 부족합니다. 새 계좌 생성 중단.')
+        target=folder/'accounts'/(hashlib.sha256(name.encode()).hexdigest()[:16]+'.sqlite')
+        target.parent.mkdir(exist_ok=True)
+        fd,temporary=tempfile.mkstemp(dir=target.parent,prefix='.restore-',suffix='.sqlite.tmp')
+        os.close(fd)
+        temporary=Path(temporary)
+        try:
+            with closing(sqlite3.connect(temporary)) as db:
+                with db:
+                    db.executescript('CREATE TABLE account(id INTEGER PRIMARY KEY CHECK(id=1),config TEXT,cash REAL,qty REAL,last_date TEXT,mark REAL); CREATE TABLE ledger(day TEXT PRIMARY KEY,signal REAL,side TEXT,qty REAL,price REAL,cost REAL,equity REAL);')
+                    db.execute('INSERT INTO account VALUES(1,?,?,?,?,?)',(json.dumps(config),account['cash'],account['qty'],account['last_date'],bars[-1][4]))
+                    for event in account['events']:
+                        if event['fill_bar_start_utc']>account['last_date']:
+                            raise ValueError('복원할 체결 기록의 기준 봉 순서 오류')
+                        db.execute('INSERT INTO ledger VALUES(?,?,?,?,?,?,?)',tuple(event[k] for k in ('fill_bar_start_utc','target_weight','side','quantity','simulated_fill_price','fee','equity')))
+            temporary.replace(target)
+        finally:
+            if temporary.exists():temporary.unlink()
+    validate_snapshot(folder)
+    return [f'저장된 잔고·설정·체결 기록으로 누락 연구 DB {len(missing)}개 복원 (계좌 초기화 없음)']
+
+
 def recover_snapshot(destination):
     """Caller holds state lock. Restore only an unambiguous validated backup."""
     destination=Path(destination)
     backup=destination.with_name(destination.name+'.backup')
     pending=destination.with_name(destination.name+'.pending')
     actions=[]
+    if destination.exists():
+        actions.extend(restore_missing_databases(destination))
     if not destination.exists() and not backup.exists() and pending.exists():
         raise ValueError('미완료 저장만 남았습니다. 새 계좌 생성 중단; 장애 복구 안내를 확인하세요.')
     if backup.exists():
         if not destination.exists():
+            actions.extend(restore_missing_databases(backup))
             validate_snapshot(backup)
             backup.rename(destination)
             actions.append('검증된 교체 전 백업 복구')
