@@ -79,15 +79,8 @@ jobs:
           if [ -f saved-state/intraday-state/emergency-stop.json ]; then
             python -c "import sys; from pathlib import Path; sys.path.insert(0, 'investment-lab'); from session_worker import publish; publish(Path('saved-state').resolve())"
           fi
-      - name: Poll internally during scheduled sessions; single cycle for manual checks
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-        run: |
-          if [ "$EVENT_NAME" = "schedule" ]; then
-            python -u investment-lab/session_worker.py --repo saved-state
-          else
-            python -u investment-lab/session_worker.py --repo saved-state --once
-          fi
+      - name: Verify one collection cycle before starting sessions
+        run: python -u investment-lab/session_worker.py --repo saved-state --once
       - name: Verify research databases are tracked for the next runner
         run: |
           python - <<'PY'
@@ -128,7 +121,13 @@ jobs:
           fi
 
   continue-session:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.continue_session == true) && inputs.emergency_stop != true
+    name: Bounded polling segment (${{ matrix.segment }})
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        segment: [1, 2]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push' || inputs.continue_session == true) && inputs.emergency_stop != true
     needs: hourly
     runs-on: ubuntu-latest
     timeout-minutes: 355
