@@ -55,6 +55,7 @@ def run_session(tick,persist,refresh_state,bounds,max_seconds=19800,once=False,
     while clock()<deadline:
         refresh_state()
         now=clock()
+        if now>=deadline:break
         window=bounds(now)
         if not once and (window is None or now<window[0]-12600 or now>window[1]+1800):
             break
