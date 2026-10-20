@@ -15,6 +15,15 @@ class SessionTests(unittest.TestCase):
   result=run_session(tick,save,refresh,lambda _:window,max_seconds=duration,once=once,
                      clock=lambda:now[0],sleep=sleep,stopped=lambda:stop_at is not None and now[0]>=stop_at)
   return result,ticks,saves,now[0]
+ def test_refresh_past_deadline_does_not_start_another_cycle(self):
+  now=[420.0];ticks=[];saves=[]
+  def refresh():now[0]+=101
+  result=run_session(lambda:(ticks.append(now[0]) or {'symbols':{}}),lambda:saves.append(now[0]),
+                     refresh,lambda _:(0,20000),max_seconds=100,
+                     clock=lambda:now[0],sleep=lambda _:None)
+  self.assertEqual(result,(0,0))
+  self.assertEqual(ticks,[])
+  self.assertEqual(saves,[])
  def test_next_slot(self):
   self.assertEqual(next_poll(420),1320)
   self.assertEqual(next_poll(1319),1320)
