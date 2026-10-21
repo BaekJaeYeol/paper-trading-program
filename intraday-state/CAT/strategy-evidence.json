@@ -1,217 +1,217 @@
 {
   "ema_12_26": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "EMA12 > EMA26",
     "indicators": {
-      "EMA12": 738.5563559355348,
-      "EMA26": 735.1613712077676
+      "EMA12": 738.907689923217,
+      "EMA26": 735.5820123668566
     },
-    "reason": "EMA12 > EMA26; 조건 충족; EMA12=738.556, EMA26=735.161"
+    "reason": "EMA12 > EMA26; 조건 충족; EMA12=738.908, EMA26=735.582"
   },
   "macd_12_26_9": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "MACD > 신호선 그리고 MACD > 0",
     "indicators": {
-      "MACD": 3.3949847277672234,
-      "signal9": 2.982553264607181
+      "MACD": 3.3256775563604606,
+      "signal9": 3.051178122957837
     },
-    "reason": "MACD > 신호선 그리고 MACD > 0; 조건 충족; MACD=3.39498, signal9=2.98255"
+    "reason": "MACD > 신호선 그리고 MACD > 0; 조건 충족; MACD=3.32568, signal9=3.05118"
   },
   "rsi_14_recovery": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "직전 RSI14 < 30, 현재 RSI14 >= 30 (한 봉 목표)",
     "indicators": {
-      "RSI14": 71.38093259146964,
-      "previous_RSI14": 72.83224842347016
+      "RSI14": 69.8342187165607,
+      "previous_RSI14": 71.38093259146964
     },
-    "reason": "직전 RSI14 < 30, 현재 RSI14 >= 30 (한 봉 목표); 조건 미충족; RSI14=71.3809, previous_RSI14=72.8322"
+    "reason": "직전 RSI14 < 30, 현재 RSI14 >= 30 (한 봉 목표); 조건 미충족; RSI14=69.8342, previous_RSI14=71.3809"
   },
   "bollinger_20_reentry": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "직전 종가 < 직전 하단밴드, 현재 하단밴드 <= 종가 <= SMA20 (한 봉 목표)",
     "indicators": {
-      "close": 741.1599731445312,
-      "lower20": 728.9527874906729,
-      "SMA20": 736.1829620361328,
-      "previous_lower20": 727.1635866304107
+      "close": 740.8400268554688,
+      "lower20": 729.2052020328708,
+      "SMA20": 736.5669647216797,
+      "previous_lower20": 728.9527874906729
     },
-    "reason": "직전 종가 < 직전 하단밴드, 현재 하단밴드 <= 종가 <= SMA20 (한 봉 목표); 조건 미충족; close=741.16, lower20=728.953, SMA20=736.183, previous_lower20=727.164"
+    "reason": "직전 종가 < 직전 하단밴드, 현재 하단밴드 <= 종가 <= SMA20 (한 봉 목표); 조건 미충족; close=740.84, lower20=729.205, SMA20=736.567, previous_lower20=728.953"
   },
   "donchian_20": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "종가 > 현재 봉을 제외한 직전 20봉 최고가",
     "indicators": {
-      "close": 741.1599731445312,
+      "close": 740.8400268554688,
       "prior_high20": 745.0
     },
-    "reason": "종가 > 현재 봉을 제외한 직전 20봉 최고가; 조건 미충족; close=741.16, prior_high20=745"
+    "reason": "종가 > 현재 봉을 제외한 직전 20봉 최고가; 조건 미충족; close=740.84, prior_high20=745"
   },
   "atr_14_breakout": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "종가 > 직전 종가 + 직전 ATR14 그리고 종가 > EMA26",
     "indicators": {
-      "close": 741.1599731445312,
-      "threshold": 744.3224965957422,
-      "prior_ATR14": 2.8525258926172024,
-      "EMA26": 735.1613712077676
+      "close": 740.8400268554688,
+      "threshold": 743.956247362062,
+      "prior_ATR14": 2.796274217530706,
+      "EMA26": 735.5820123668566
     },
-    "reason": "종가 > 직전 종가 + 직전 ATR14 그리고 종가 > EMA26; 조건 미충족; close=741.16, threshold=744.322, prior_ATR14=2.85253, EMA26=735.161"
+    "reason": "종가 > 직전 종가 + 직전 ATR14 그리고 종가 > EMA26; 조건 미충족; close=740.84, threshold=743.956, prior_ATR14=2.79627, EMA26=735.582"
   },
   "session_vwap": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "종가 > 뉴욕 거래일별 누적 전형가격 VWAP",
     "indicators": {
-      "close": 741.1599731445312,
-      "session_VWAP": 735.8153132248282,
-      "session_volume": 1234735.0
+      "close": 740.8400268554688,
+      "session_VWAP": 735.9461457282899,
+      "session_volume": 1264993.0
     },
-    "reason": "종가 > 뉴욕 거래일별 누적 전형가격 VWAP; 조건 충족; close=741.16, session_VWAP=735.815, session_volume=1.23474e+06"
+    "reason": "종가 > 뉴욕 거래일별 누적 전형가격 VWAP; 조건 충족; close=740.84, session_VWAP=735.946, session_volume=1.26499e+06"
   },
   "obv_20": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "OBV > OBV의 SMA20 그리고 종가 > EMA26",
     "indicators": {
-      "OBV": -4658088.0,
-      "OBV_SMA20": -4889268.2,
-      "close": 741.1599731445312,
-      "EMA26": 735.1613712077676
+      "OBV": -4688346.0,
+      "OBV_SMA20": -4870850.45,
+      "close": 740.8400268554688,
+      "EMA26": 735.5820123668566
     },
-    "reason": "OBV > OBV의 SMA20 그리고 종가 > EMA26; 조건 충족; OBV=-4.65809e+06, OBV_SMA20=-4.88927e+06, close=741.16, EMA26=735.161"
+    "reason": "OBV > OBV의 SMA20 그리고 종가 > EMA26; 조건 충족; OBV=-4.68835e+06, OBV_SMA20=-4.87085e+06, close=740.84, EMA26=735.582"
   },
   "stochastic_14_3_recovery": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "직전 %K14 < 20에서 %K14가 %D3 상향 돌파 (한 봉 목표)",
     "indicators": {
-      "K14": 87.9185754993887,
-      "D3": 92.71709934820055,
-      "previous_K14": 95.62681922104606,
-      "previous_D3": 95.99356514771196
+      "K14": 84.50709210892266,
+      "D3": 89.35082894311914,
+      "previous_K14": 87.9185754993887,
+      "previous_D3": 92.71709934820055
     },
-    "reason": "직전 %K14 < 20에서 %K14가 %D3 상향 돌파 (한 봉 목표); 조건 미충족; K14=87.9186, D3=92.7171, previous_K14=95.6268, previous_D3=95.9936"
+    "reason": "직전 %K14 < 20에서 %K14가 %D3 상향 돌파 (한 봉 목표); 조건 미충족; K14=84.5071, D3=89.3508, previous_K14=87.9186, previous_D3=92.7171"
   },
   "mfi_14_recovery": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "직전 MFI14 < 20, 현재 MFI14 >= 20 (한 봉 목표)",
     "indicators": {
-      "MFI14": 90.32387489728993,
-      "previous_MFI14": 90.65420490721465
+      "MFI14": 95.14795328445857,
+      "previous_MFI14": 90.32387489728993
     },
-    "reason": "직전 MFI14 < 20, 현재 MFI14 >= 20 (한 봉 목표); 조건 미충족; MFI14=90.3239, previous_MFI14=90.6542"
+    "reason": "직전 MFI14 < 20, 현재 MFI14 >= 20 (한 봉 목표); 조건 미충족; MFI14=95.148, previous_MFI14=90.3239"
   },
   "adx_14_trend": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "Wilder ADX14 >= 25 그리고 +DI14 > -DI14",
     "indicators": {
-      "ADX14": 40.134791339039324,
-      "plus_DI14": 37.52885696898512,
-      "minus_DI14": 9.230120506043956
+      "ADX14": 41.590908727125054,
+      "plus_DI14": 36.055947768873146,
+      "minus_DI14": 8.86786248622924
     },
-    "reason": "Wilder ADX14 >= 25 그리고 +DI14 > -DI14; 조건 충족; ADX14=40.1348, plus_DI14=37.5289, minus_DI14=9.23012"
+    "reason": "Wilder ADX14 >= 25 그리고 +DI14 > -DI14; 조건 충족; ADX14=41.5909, plus_DI14=36.0559, minus_DI14=8.86786"
   },
   "aroon_25_trend": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "Aroon25 Up > 70 그리고 Down < 30 (동률이면 최신 극값)",
     "indicators": {
-      "Aroon_up": 24.0,
-      "Aroon_down": 16.0
+      "Aroon_up": 20.0,
+      "Aroon_down": 12.0
     },
-    "reason": "Aroon25 Up > 70 그리고 Down < 30 (동률이면 최신 극값); 조건 미충족; Aroon_up=24, Aroon_down=16"
+    "reason": "Aroon25 Up > 70 그리고 Down < 30 (동률이면 최신 극값); 조건 미충족; Aroon_up=20, Aroon_down=12"
   },
   "cci_20_momentum": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
-    "target": 1.0,
+    "signal_bar": "2026-10-21T18:30:00+00:00",
+    "target": 0.0,
     "rule": "CCI20 > 100 (전형가격·평균절대편차)",
     "indicators": {
-      "CCI20": 116.19209730213667
+      "CCI20": 99.21225515633951
     },
-    "reason": "CCI20 > 100 (전형가격·평균절대편차); 조건 충족; CCI20=116.192"
+    "reason": "CCI20 > 100 (전형가격·평균절대편차); 조건 미충족; CCI20=99.2123"
   },
   "williams_14_recovery": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "직전 Williams %R14 < -80, 현재 >= -80 (한 봉 목표)",
     "indicators": {
-      "Williams_R14": -12.081424500611305,
-      "previous_R14": -4.373180778953937
+      "Williams_R14": -15.492907891077337,
+      "previous_R14": -12.081424500611305
     },
-    "reason": "직전 Williams %R14 < -80, 현재 >= -80 (한 봉 목표); 조건 미충족; Williams_R14=-12.0814, previous_R14=-4.37318"
+    "reason": "직전 Williams %R14 < -80, 현재 >= -80 (한 봉 목표); 조건 미충족; Williams_R14=-15.4929, previous_R14=-12.0814"
   },
   "cmf_20_accumulation": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "Chaikin Money Flow20 > 0.1",
     "indicators": {
-      "CMF20": -0.1299062399557794,
-      "volume20": 1234735.0
+      "CMF20": -0.00036455560445668606,
+      "volume20": 1072655.0
     },
-    "reason": "Chaikin Money Flow20 > 0.1; 조건 미충족; CMF20=-0.129906, volume20=1.23474e+06"
+    "reason": "Chaikin Money Flow20 > 0.1; 조건 미충족; CMF20=-0.000364556, volume20=1.07266e+06"
   },
   "chaikin_3_10": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "ADL의 EMA3 - EMA10 > 0 그리고 종가 > EMA26",
     "indicators": {
-      "Chaikin3_10": 20287.022736413404,
-      "ADL": -5263563.693352196,
-      "close": 741.1599731445312,
-      "EMA26": 735.1613712077676
+      "Chaikin3_10": 6146.12350079231,
+      "ADL": -5290764.80210682,
+      "close": 740.8400268554688,
+      "EMA26": 735.5820123668566
     },
-    "reason": "ADL의 EMA3 - EMA10 > 0 그리고 종가 > EMA26; 조건 충족; Chaikin3_10=20287, ADL=-5.26356e+06, close=741.16, EMA26=735.161"
+    "reason": "ADL의 EMA3 - EMA10 > 0 그리고 종가 > EMA26; 조건 충족; Chaikin3_10=6146.12, ADL=-5.29076e+06, close=740.84, EMA26=735.582"
   },
   "roc_10_momentum": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "10봉 ROC > 1% 그리고 종가 > EMA26",
     "indicators": {
-      "ROC10_percent": 0.7517322872929499,
-      "close": 741.1599731445312,
-      "EMA26": 735.1613712077676
+      "ROC10_percent": 0.5619675009960634,
+      "close": 740.8400268554688,
+      "EMA26": 735.5820123668566
     },
-    "reason": "10봉 ROC > 1% 그리고 종가 > EMA26; 조건 미충족; ROC10_percent=0.751732, close=741.16, EMA26=735.161"
+    "reason": "10봉 ROC > 1% 그리고 종가 > EMA26; 조건 미충족; ROC10_percent=0.561968, close=740.84, EMA26=735.582"
   },
   "trix_15_trend": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 1.0,
     "rule": "15봉 삼중 EMA의 1봉 변화율 TRIX > 0 그리고 종가 > EMA26",
     "indicators": {
-      "TRIX15_percent": 0.06045583325398063,
-      "close": 741.1599731445312,
-      "EMA26": 735.1613712077676
+      "TRIX15_percent": 0.06202541694815267,
+      "close": 740.8400268554688,
+      "EMA26": 735.5820123668566
     },
-    "reason": "15봉 삼중 EMA의 1봉 변화율 TRIX > 0 그리고 종가 > EMA26; 조건 충족; TRIX15_percent=0.0604558, close=741.16, EMA26=735.161"
+    "reason": "15봉 삼중 EMA의 1봉 변화율 TRIX > 0 그리고 종가 > EMA26; 조건 충족; TRIX15_percent=0.0620254, close=740.84, EMA26=735.582"
   },
   "keltner_20_breakout": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "종가 > EMA20 + 2 x Wilder ATR14",
     "indicators": {
-      "close": 741.1599731445312,
-      "upper_Keltner": 742.0007084036515,
-      "EMA20": 736.4081599685901,
-      "ATR14": 2.796274217530706
+      "close": 740.8400268554688,
+      "upper_Keltner": 742.235463983454,
+      "EMA20": 736.8302425292452,
+      "ATR14": 2.7026107271044055
     },
-    "reason": "종가 > EMA20 + 2 x Wilder ATR14; 조건 미충족; close=741.16, upper_Keltner=742.001, EMA20=736.408, ATR14=2.79627"
+    "reason": "종가 > EMA20 + 2 x Wilder ATR14; 조건 미충족; close=740.84, upper_Keltner=742.235, EMA20=736.83, ATR14=2.70261"
   },
   "opening_range_30m": {
-    "signal_bar": "2026-10-21T18:15:00+00:00",
+    "signal_bar": "2026-10-21T18:30:00+00:00",
     "target": 0.0,
     "rule": "뉴욕 09:30·09:45 두 완료 봉 최고가를 10:00 이후 종가가 돌파",
     "indicators": {
-      "close": 741.1599731445312,
+      "close": 740.8400268554688,
       "opening_high": 745.0
     },
-    "reason": "뉴욕 09:30·09:45 두 완료 봉 최고가를 10:00 이후 종가가 돌파; 조건 미충족; close=741.16, opening_high=745"
+    "reason": "뉴욕 09:30·09:45 두 완료 봉 최고가를 10:00 이후 종가가 돌파; 조건 미충족; close=740.84, opening_high=745"
   }
 }
