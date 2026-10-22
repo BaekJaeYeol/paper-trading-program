@@ -3,7 +3,7 @@
     "cash": 10000.0,
     "qty": 0.0,
     "equity": 10000.0,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "cash",
       "source": "real_download",
@@ -13,6 +13,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "cash",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 10000.0,
+        "reason": "cash: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -1542,8 +1554,8 @@
   "buy_hold": {
     "cash": 0.0,
     "qty": 36.22252597997423,
-    "equity": 10001.76369672268,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "equity": 10013.717749333382,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "buy_hold",
       "source": "real_download",
@@ -1553,6 +1565,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "buy_hold",
+        "target_weight": 1.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 10013.717749333382,
+        "reason": "buy_hold: prior completed bar target 100%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -3083,7 +3107,7 @@
     "cash": 9801.265534097407,
     "qty": 0.0,
     "equity": 9801.265534097407,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26",
       "source": "real_download",
@@ -3093,6 +3117,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9801.265534097407,
+        "reason": "trend_8_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -4620,10 +4656,10 @@
     ]
   },
   "momentum_26": {
-    "cash": 9795.942899086207,
-    "qty": 0.0,
-    "equity": 9795.942899086207,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 35.406274572157336,
+    "equity": 9788.065037678396,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26",
       "source": "real_download",
@@ -4633,6 +4669,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 35.406274572157336,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.786156742343865,
+        "equity": 9788.065037678396,
+        "reason": "momentum_26: prior completed bar target 100%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -6160,10 +6208,10 @@
     ]
   },
   "breakout_8": {
-    "cash": 9349.324343433593,
-    "qty": 0.0,
-    "equity": 9349.324343433593,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 33.792024736959554,
+    "equity": 9341.805651032771,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "breakout_8",
       "source": "real_download",
@@ -6173,6 +6221,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "breakout_8",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 33.792024736959554,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.339984359074519,
+        "equity": 9341.805651032771,
+        "reason": "breakout_8: prior completed bar target 100%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -7703,7 +7763,7 @@
     "cash": 9736.365835645014,
     "qty": 0.0,
     "equity": 9736.365835645014,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "reversion_12",
       "source": "real_download",
@@ -7713,6 +7773,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "reversion_12",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9736.365835645014,
+        "reason": "reversion_12: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -9243,7 +9315,7 @@
     "cash": 9885.15941802737,
     "qty": 0.0,
     "equity": 9885.15941802737,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "volume_26",
       "source": "real_download",
@@ -9253,6 +9325,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9885.15941802737,
+        "reason": "volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -10783,7 +10867,7 @@
     "cash": 9746.902784430742,
     "qty": 0.0,
     "equity": 9746.902784430742,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 AND momentum_26",
       "source": "real_download",
@@ -10793,6 +10877,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 AND momentum_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9746.902784430742,
+        "reason": "trend_8_26 AND momentum_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -12320,10 +12416,10 @@
     ]
   },
   "trend_8_26 + momentum_26": {
-    "cash": 9798.72689025704,
-    "qty": 0.0,
-    "equity": 9798.72689025704,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4889.559818874819,
+    "qty": 17.743602534286556,
+    "equity": 9794.778956075048,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 + momentum_26",
       "source": "real_download",
@@ -12333,6 +12429,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 + momentum_26",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.743602534286556,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.904262808573647,
+        "equity": 9794.778956075048,
+        "reason": "trend_8_26 + momentum_26: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -13863,7 +13971,7 @@
     "cash": 9504.103404459198,
     "qty": 0.0,
     "equity": 9504.103404459198,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 AND breakout_8",
       "source": "real_download",
@@ -13873,6 +13981,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 AND breakout_8",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9504.103404459198,
+        "reason": "trend_8_26 AND breakout_8: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -15400,10 +15520,10 @@
     ]
   },
   "trend_8_26 + breakout_8": {
-    "cash": 9572.836365224217,
-    "qty": 0.0,
-    "equity": 9572.836365224217,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4776.840559828703,
+    "qty": 17.334558406683712,
+    "equity": 9568.979442959911,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 + breakout_8",
       "source": "real_download",
@@ -15413,6 +15533,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 + breakout_8",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.334558406683712,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.791204600794719,
+        "equity": 9568.979442959911,
+        "reason": "trend_8_26 + breakout_8: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -16943,7 +17075,7 @@
     "cash": 9811.31041390104,
     "qty": 0.0,
     "equity": 9811.31041390104,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 AND reversion_12",
       "source": "real_download",
@@ -16953,6 +17085,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 AND reversion_12",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9811.31041390104,
+        "reason": "trend_8_26 AND reversion_12: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -18483,7 +18627,7 @@
     "cash": 9768.564651108292,
     "qty": 0.0,
     "equity": 9768.564651108292,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 + reversion_12",
       "source": "real_download",
@@ -18493,6 +18637,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 + reversion_12",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9768.564651108292,
+        "reason": "trend_8_26 + reversion_12: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -20023,7 +20179,7 @@
     "cash": 9927.896778001888,
     "qty": 0.0,
     "equity": 9927.896778001888,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 AND volume_26",
       "source": "real_download",
@@ -20033,6 +20189,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 AND volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9927.896778001888,
+        "reason": "trend_8_26 AND volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -21563,7 +21731,7 @@
     "cash": 9862.678345654607,
     "qty": 0.0,
     "equity": 9862.678345654607,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trend_8_26 + volume_26",
       "source": "real_download",
@@ -21573,6 +21741,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trend_8_26 + volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9862.678345654607,
+        "reason": "trend_8_26 + volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -23100,10 +23280,10 @@
     ]
   },
   "momentum_26 AND breakout_8": {
-    "cash": 9552.123645058233,
-    "qty": 0.0,
-    "equity": 9552.123645058233,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 34.52501877646478,
+    "equity": 9544.441862201673,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 AND breakout_8",
       "source": "real_download",
@@ -23113,6 +23293,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 AND breakout_8",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 34.52501877646478,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.54258106399424,
+        "equity": 9544.441862201673,
+        "reason": "momentum_26 AND breakout_8: prior completed bar target 100%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -24640,10 +24832,10 @@
     ]
   },
   "momentum_26 + breakout_8": {
-    "cash": 9589.356645351147,
-    "qty": 0.0,
-    "equity": 9589.356645351147,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 34.65959304308684,
+    "equity": 9581.644919852093,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 + breakout_8",
       "source": "real_download",
@@ -24653,6 +24845,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 + breakout_8",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 34.65959304308684,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.579776868482664,
+        "equity": 9581.644919852093,
+        "reason": "momentum_26 + breakout_8: prior completed bar target 100%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -26183,7 +26387,7 @@
     "cash": 9876.66685852781,
     "qty": 0.0,
     "equity": 9876.66685852781,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 AND reversion_12",
       "source": "real_download",
@@ -26193,6 +26397,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 AND reversion_12",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9876.66685852781,
+        "reason": "momentum_26 AND reversion_12: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -27720,10 +27936,10 @@
     ]
   },
   "momentum_26 + reversion_12": {
-    "cash": 9844.405923518996,
-    "qty": 0.0,
-    "equity": 9844.405923518996,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4912.353633633018,
+    "qty": 17.826318444162208,
+    "equity": 9840.439585128086,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 + reversion_12",
       "source": "real_download",
@@ -27733,6 +27949,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 + reversion_12",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.826318444162208,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.927125164721256,
+        "equity": 9840.439585128086,
+        "reason": "momentum_26 + reversion_12: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -29263,7 +29491,7 @@
     "cash": 9977.142347499992,
     "qty": 0.0,
     "equity": 9977.142347499992,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 AND volume_26",
       "source": "real_download",
@@ -29273,6 +29501,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 AND volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9977.142347499992,
+        "reason": "momentum_26 AND volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -30800,10 +31040,10 @@
     ]
   },
   "momentum_26 + volume_26": {
-    "cash": 9879.833782044963,
-    "qty": 0.0,
-    "equity": 9879.833782044963,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4930.032117323546,
+    "qty": 17.890471455810154,
+    "equity": 9875.853169671807,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "momentum_26 + volume_26",
       "source": "real_download",
@@ -30813,6 +31053,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "momentum_26 + volume_26",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.890471455810154,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.944856807913504,
+        "equity": 9875.853169671807,
+        "reason": "momentum_26 + volume_26: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -32343,7 +32595,7 @@
     "cash": 10000.0,
     "qty": 0.0,
     "equity": 10000.0,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "breakout_8 AND reversion_12",
       "source": "real_download",
@@ -32353,6 +32605,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "breakout_8 AND reversion_12",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 10000.0,
+        "reason": "breakout_8 AND reversion_12: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -33880,10 +34144,10 @@
     ]
   },
   "breakout_8 + reversion_12": {
-    "cash": 9559.783420166139,
-    "qty": 0.0,
-    "equity": 9559.783420166139,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4770.327146771195,
+    "qty": 17.310922043347297,
+    "equity": 9555.931756969521,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "breakout_8 + reversion_12",
       "source": "real_download",
@@ -33893,6 +34157,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "breakout_8 + reversion_12",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.310922043347297,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.784671601793152,
+        "equity": 9555.931756969521,
+        "reason": "breakout_8 + reversion_12: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -35423,7 +35699,7 @@
     "cash": 9967.277876022661,
     "qty": 0.0,
     "equity": 9967.277876022661,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "breakout_8 AND volume_26",
       "source": "real_download",
@@ -35433,6 +35709,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "breakout_8 AND volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9967.277876022661,
+        "reason": "breakout_8 AND volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -36960,10 +37248,10 @@
     ]
   },
   "breakout_8 + volume_26": {
-    "cash": 9632.700785673234,
-    "qty": 0.0,
-    "equity": 9632.700785673234,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 4806.712875700551,
+    "qty": 17.442961313948018,
+    "equity": 9628.819743868255,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "breakout_8 + volume_26",
       "source": "real_download",
@@ -36973,6 +37261,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "breakout_8 + volume_26",
+        "target_weight": 0.5,
+        "side": "buy",
+        "quantity": 17.442961313948018,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 4.821166743229454,
+        "equity": 9628.819743868255,
+        "reason": "breakout_8 + volume_26: prior completed bar target 50%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -38503,7 +38803,7 @@
     "cash": 9937.59728345816,
     "qty": 0.0,
     "equity": 9937.59728345816,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "reversion_12 AND volume_26",
       "source": "real_download",
@@ -38513,6 +38813,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "reversion_12 AND volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9937.59728345816,
+        "reason": "reversion_12 AND volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -40043,7 +40355,7 @@
     "cash": 9849.758780669625,
     "qty": 0.0,
     "equity": 9849.758780669625,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "reversion_12 + volume_26",
       "source": "real_download",
@@ -40053,6 +40365,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "reversion_12 + volume_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9849.758780669625,
+        "reason": "reversion_12 + volume_26: prior completed bar target 0%; next bar open simulation"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -41583,7 +41907,7 @@
     "cash": 9815.205425384465,
     "qty": 0.0,
     "equity": 9815.205425384465,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "ema_12_26",
       "source": "real_download",
@@ -41593,6 +41917,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "ema_12_26",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9815.205425384465,
+        "reason": "EMA12 > EMA26; 조건 미충족; EMA12=275.912, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -43123,7 +43459,7 @@
     "cash": 9906.415273948447,
     "qty": 0.0,
     "equity": 9906.415273948447,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "macd_12_26_9",
       "source": "real_download",
@@ -43133,6 +43469,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "macd_12_26_9",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9906.415273948447,
+        "reason": "MACD > 신호선 그리고 MACD > 0; 조건 미충족; MACD=-0.0728767, signal9=-0.0951093"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -44663,7 +45011,7 @@
     "cash": 9786.950414211502,
     "qty": 0.0,
     "equity": 9786.950414211502,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "rsi_14_recovery",
       "source": "real_download",
@@ -44673,6 +45021,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "rsi_14_recovery",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9786.950414211502,
+        "reason": "직전 RSI14 < 30, 현재 RSI14 >= 30 (한 봉 목표); 조건 미충족; RSI14=51.4917, previous_RSI14=47.7613"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -46203,7 +46563,7 @@
     "cash": 9848.194769922338,
     "qty": 0.0,
     "equity": 9848.194769922338,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "bollinger_20_reentry",
       "source": "real_download",
@@ -46213,6 +46573,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "bollinger_20_reentry",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9848.194769922338,
+        "reason": "직전 종가 < 직전 하단밴드, 현재 하단밴드 <= 종가 <= SMA20 (한 봉 목표); 조건 미충족; close=276.12, lower20=274.975, SMA20=275.798, previous_lower20=274.976"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -47743,7 +48115,7 @@
     "cash": 9835.910737855394,
     "qty": 0.0,
     "equity": 9835.910737855394,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "donchian_20",
       "source": "real_download",
@@ -47753,6 +48125,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "donchian_20",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9835.910737855394,
+        "reason": "종가 > 현재 봉을 제외한 직전 20봉 최고가; 조건 미충족; close=276.12, prior_high20=277.28"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -49283,7 +49667,7 @@
     "cash": 9732.891044489452,
     "qty": 0.0,
     "equity": 9732.891044489452,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "atr_14_breakout",
       "source": "real_download",
@@ -49293,6 +49677,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "atr_14_breakout",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9732.891044489452,
+        "reason": "종가 > 직전 종가 + 직전 ATR14 그리고 종가 > EMA26; 조건 미충족; close=276.12, threshold=276.422, prior_ATR14=0.642349, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -50820,10 +51216,10 @@
     ]
   },
   "session_vwap": {
-    "cash": 9398.242844938048,
-    "qty": 0.0,
-    "equity": 9398.242844938048,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 33.968834862719554,
+    "equity": 9390.68481245745,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "session_vwap",
       "source": "real_download",
@@ -50833,6 +51229,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "session_vwap",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 33.968834862719554,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.3888539909471,
+        "equity": 9390.68481245745,
+        "reason": "종가 > 뉴욕 거래일별 누적 전형가격 VWAP; 조건 충족; close=276.12, session_VWAP=275.837, session_volume=1.90371e+07"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -52360,10 +52768,10 @@
     ]
   },
   "obv_20": {
-    "cash": 9715.63055549666,
-    "qty": 0.0,
-    "equity": 9715.63055549666,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 35.11599512504764,
+    "equity": 9707.81728098147,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "obv_20",
       "source": "real_download",
@@ -52373,6 +52781,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "obv_20",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 35.11599512504764,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.705924630865796,
+        "equity": 9707.81728098147,
+        "reason": "OBV > OBV의 SMA20 그리고 종가 > EMA26; 조건 충족; OBV=-2.00376e+07, OBV_SMA20=-2.00756e+07, close=276.12, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -53903,7 +54323,7 @@
     "cash": 9629.027738547687,
     "qty": 0.0,
     "equity": 9629.027738547687,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "stochastic_14_3_recovery",
       "source": "real_download",
@@ -53913,6 +54333,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "stochastic_14_3_recovery",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9629.027738547687,
+        "reason": "직전 %K14 < 20에서 %K14가 %D3 상향 돌파 (한 봉 목표); 조건 미충족; K14=55.9207, D3=45.4965, previous_K14=34.4153, previous_D3=45.4114"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -55443,7 +55875,7 @@
     "cash": 9934.222018622191,
     "qty": 0.0,
     "equity": 9934.222018622191,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "mfi_14_recovery",
       "source": "real_download",
@@ -55453,6 +55885,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "mfi_14_recovery",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9934.222018622191,
+        "reason": "직전 MFI14 < 20, 현재 MFI14 >= 20 (한 봉 목표); 조건 미충족; MFI14=51.9355, previous_MFI14=54.7334"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -56983,7 +57427,7 @@
     "cash": 9726.049684844205,
     "qty": 0.0,
     "equity": 9726.049684844205,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "adx_14_trend",
       "source": "real_download",
@@ -56993,6 +57437,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "adx_14_trend",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9726.049684844205,
+        "reason": "Wilder ADX14 >= 25 그리고 +DI14 > -DI14; 조건 미충족; ADX14=17.4511, plus_DI14=20.9851, minus_DI14=22.8273"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -58523,7 +58979,7 @@
     "cash": 9745.847873954417,
     "qty": 0.0,
     "equity": 9745.847873954417,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "aroon_25_trend",
       "source": "real_download",
@@ -58533,6 +58989,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "aroon_25_trend",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9745.847873954417,
+        "reason": "Aroon25 Up > 70 그리고 Down < 30 (동률이면 최신 극값); 조건 미충족; Aroon_up=20, Aroon_down=28"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -60063,7 +60531,7 @@
     "cash": 9825.512836046213,
     "qty": 0.0,
     "equity": 9825.512836046213,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "cci_20_momentum",
       "source": "real_download",
@@ -60073,6 +60541,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "cci_20_momentum",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9825.512836046213,
+        "reason": "CCI20 > 100 (전형가격·평균절대편차); 조건 미충족; CCI20=49.9845"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -61603,7 +62083,7 @@
     "cash": 9757.63988387022,
     "qty": 0.0,
     "equity": 9757.63988387022,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "williams_14_recovery",
       "source": "real_download",
@@ -61613,6 +62093,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "williams_14_recovery",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9757.63988387022,
+        "reason": "직전 Williams %R14 < -80, 현재 >= -80 (한 봉 목표); 조건 미충족; Williams_R14=-44.0793, previous_R14=-65.5847"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -63143,7 +63635,7 @@
     "cash": 9709.107029198094,
     "qty": 0.0,
     "equity": 9709.107029198094,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "cmf_20_accumulation",
       "source": "real_download",
@@ -63153,6 +63645,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "cmf_20_accumulation",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9709.107029198094,
+        "reason": "Chaikin Money Flow20 > 0.1; 조건 미충족; CMF20=0.086362, volume20=1.29297e+07"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -64680,10 +65184,10 @@
     ]
   },
   "chaikin_3_10": {
-    "cash": 9562.843825155687,
-    "qty": 0.0,
-    "equity": 9562.843825155687,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "cash": 0.0,
+    "qty": 34.56376559684783,
+    "equity": 9555.153421169549,
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "chaikin_3_10",
       "source": "real_download",
@@ -64693,6 +65197,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "chaikin_3_10",
+        "target_weight": 1.0,
+        "side": "buy",
+        "quantity": 34.56376559684783,
+        "simulated_fill_price": 276.39611511230464,
+        "fee": 9.553290534621068,
+        "equity": 9555.153421169549,
+        "reason": "ADL의 EMA3 - EMA10 > 0 그리고 종가 > EMA26; 조건 충족; Chaikin3_10=107103, ADL=-3.21358e+07, close=276.12, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -66223,7 +66739,7 @@
     "cash": 9996.38945680231,
     "qty": 0.0,
     "equity": 9996.38945680231,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "roc_10_momentum",
       "source": "real_download",
@@ -66233,6 +66749,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "roc_10_momentum",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9996.38945680231,
+        "reason": "10봉 ROC > 1% 그리고 종가 > EMA26; 조건 미충족; ROC10_percent=0.213399, close=276.12, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -67763,7 +68291,7 @@
     "cash": 9811.920979784383,
     "qty": 0.0,
     "equity": 9811.920979784383,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "trix_15_trend",
       "source": "real_download",
@@ -67773,6 +68301,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "trix_15_trend",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9811.920979784383,
+        "reason": "15봉 삼중 EMA의 1봉 변화율 TRIX > 0 그리고 종가 > EMA26; 조건 미충족; TRIX15_percent=-0.00646421, close=276.12, EMA26=275.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -69303,7 +69843,7 @@
     "cash": 9879.229624515398,
     "qty": 0.0,
     "equity": 9879.229624515398,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "keltner_20_breakout",
       "source": "real_download",
@@ -69313,6 +69853,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "keltner_20_breakout",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9879.229624515398,
+        "reason": "종가 > EMA20 + 2 x Wilder ATR14; 조건 미충족; close=276.12, upper_Keltner=277.251, EMA20=275.957, ATR14=0.647183"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
@@ -70843,7 +71395,7 @@
     "cash": 9963.152189075076,
     "qty": 0.0,
     "equity": 9963.152189075076,
-    "last_date": "2026-10-22T19:00:00+00:00",
+    "last_date": "2026-10-22T19:15:00+00:00",
     "config": {
       "strategy": "opening_range_30m",
       "source": "real_download",
@@ -70853,6 +71405,18 @@
       "reference": 275.0299987792969
     },
     "events": [
+      {
+        "fill_bar_start_utc": "2026-10-22T19:15:00+00:00",
+        "signal_bar_start_utc": "2026-10-22T19:00:00+00:00",
+        "strategy": "opening_range_30m",
+        "target_weight": 0.0,
+        "side": "hold",
+        "quantity": 0.0,
+        "simulated_fill_price": 276.1199951171875,
+        "fee": 0.0,
+        "equity": 9963.152189075076,
+        "reason": "뉴욕 09:30·09:45 두 완료 봉 최고가를 10:00 이후 종가가 돌파; 조건 미충족; close=276.12, opening_high=276.985"
+      },
       {
         "fill_bar_start_utc": "2026-10-22T19:00:00+00:00",
         "signal_bar_start_utc": "2026-10-22T18:45:00+00:00",
