@@ -16,6 +16,7 @@ from .kis import KISPaper
 from .cli import load_config, cycle, read_csv
 from .core import backtest
 from .paper_journal import fingerprint,reconcile_snapshot
+from . import diagnostics
 
 BG = '#f3f5fa'
 INK = '#17233b'
@@ -42,6 +43,8 @@ class Dashboard:
         self.closed = False
         self.stop_event=threading.Event()
         self.resume_pending=False
+        self.diagnostic_snapshot=None
+        self.diagnostic_time=None
         self.last_account_time=None
         self.last_account_label="미조회"
         self.account_error=False
@@ -130,6 +133,8 @@ class Dashboard:
         for title, key, columns in specs:
             panel = ttk.Frame(tabs, padding=6 if compact else 10)
             tabs.add(panel, text=title)
+            if key=='review':
+                ttk.Button(panel,text='진단 요약 저장',command=self.export_diagnostics).pack(anchor='w',pady=(0,4))
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
@@ -264,6 +269,9 @@ class Dashboard:
 
     def render_journal(self,data):
         if 'order_history' not in data:return
+        # Build the allowlisted summary immediately; never retain account IDs or raw payloads.
+        self.diagnostic_snapshot=diagnostics.build(data,age_seconds=0,read_failed=False,stopped=False,running=False)
+        self.diagnostic_time=data.get('received_monotonic',time.monotonic())
         self.fill('history',[[r[k] for k in ('symbol','qty','filled_qty','remaining_qty','status','client_id','checked_at')] for r in data['order_history']])
         self.fill('timeline',[[r[k] for k in ('client_id','kind','status','filled_qty','checked_at')] for r in data['order_events']])
         r=data['reconciliation']
@@ -279,6 +287,33 @@ class Dashboard:
             self.fill('inventory',[[r['symbol'],r['expected'],r['actual'],'일치' if r['matched'] else '불일치 · 재개 차단'] for r in inv['rows']])
             self.order_notice.set(self.order_notice.get()+' / 수량 대조: '+inv['reason'])
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
+
+    def export_diagnostics(self):
+        if self.busy:
+            messagebox.showinfo('진단 요약', '대조 작업이 끝난 뒤 저장하세요.',parent=self.root)
+            return
+        if self.diagnostic_snapshot is None:
+            messagebox.showinfo('진단 요약', '미국 모의계좌의 계좌·주문 대조를 먼저 실행하세요.',parent=self.root)
+            return
+        target=filedialog.asksaveasfilename(parent=self.root,title='진단 요약 저장',defaultextension='.json',filetypes=[('JSON 보고서','*.json')],initialfile='paper-diagnostics.json')
+        if not target:return
+        destination=Path(target).resolve()
+        state=Path(self.config['state_dir']).resolve()
+        if destination.suffix.lower()!='.json' or destination==self.path.resolve() or destination==state or state in destination.parents:
+            messagebox.showerror('진단 요약', '설정 파일과 상태 폴더 밖의 JSON 파일을 선택하세요.',parent=self.root)
+            return
+        report=dict(self.diagnostic_snapshot)
+        report.update(generated_at=datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+                      snapshot_age_seconds=max(0,int(time.monotonic()-self.diagnostic_time)),
+                      read_failed_since_snapshot=bool(self.account_error),
+                      stop_requested=self.stop_event.is_set() or (state/'STOP').exists(),
+                      automatic_paper_running=bool(self.running))
+        report['stale']=report['read_failed_since_snapshot'] or report['snapshot_age_seconds']>=60
+        try:diagnostics.write_report(destination,report)
+        except (OSError,ValueError):
+            messagebox.showerror('진단 요약', '저장하지 못했습니다. 폴더 권한과 파일 사용 여부를 확인하세요.',parent=self.root)
+            return
+        messagebox.showinfo('진단 요약', '식별정보를 제외한 모의계좌 진단 요약을 저장했습니다. 캐시된 정보이며 주문·재개 상태는 바뀌지 않습니다.',parent=self.root)
 
     def show_review_detail(self,event=None):
         table=self.tables['review'];selection=table.selection()
@@ -327,6 +362,8 @@ class Dashboard:
         ttk.Button(window, text='연결 확인', command=apply, style='Primary.TButton').pack(pady=18)
 
     def change_market(self, event=None):
+        self.diagnostic_snapshot=None
+        self.diagnostic_time=None
         self.last_account_time=None
         self.account_error=False
         self.order_notice.set('미체결 주문 미조회')
