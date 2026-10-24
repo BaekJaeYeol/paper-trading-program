@@ -49,7 +49,7 @@ class SafetyTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):cycle(c,True,b)
             self.assertEqual(len(b.sent),1)
             from stockbot.paper_journal import fingerprint
-            snapshot={'can_trade':True,'request_seconds':1,'account_fingerprint':fingerprint({'id':'offline-paper'}),'orders':[]}
+            snapshot={'can_trade':True,'request_seconds':1,'account_fingerprint':fingerprint({'id':'offline-paper'}),'orders':[],'positions':[]}
             with self.assertRaises(RuntimeError):resume_snapshot(c,b,lambda b:snapshot)
             self.assertEqual(len(unresolved_attempts(tmp)),1)
             self.assertFalse(Path(tmp,'cycle.lock').exists())

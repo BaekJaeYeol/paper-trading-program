@@ -29,17 +29,22 @@ class TrackingBroker(FakeBroker):
             return copy.deepcopy(self.orders[params['client_order_id']])
         if path=='/v2/orders' and body is not None:
             self.sent.append(copy.deepcopy(body));bid='broker-'+str(len(self.sent));cid=body['client_order_id']
-            order={**body,'id':bid,'filled_qty':'0','status':'new'};self.orders[cid]=order
+            order={**body,'id':bid,'filled_qty':'0','status':'new'}
+            order['legs']=[{'id':bid+'-tp','symbol':body['symbol'],'side':'sell','type':'limit','time_in_force':body['time_in_force'],'qty':body['qty'],'filled_qty':'0','status':'held','limit_price':body['take_profit']['limit_price']},{'id':bid+'-sl','symbol':body['symbol'],'side':'sell','type':'stop','time_in_force':body['time_in_force'],'qty':body['qty'],'filled_qty':'0','status':'held','stop_price':body['stop_loss']['stop_price']}]
+            self.orders[cid]=order
             if self.fail_after_accept:raise TimeoutError('accepted but response lost')
             return copy.deepcopy(order)
         if path=='/v2/orders' and body is None:
             return [copy.deepcopy(o) for o in self.orders.values() if o['status'] not in ('filled','canceled','rejected','expired','replaced')]
         if path=='/v2/positions':
-            return [{'symbol':o['symbol'],'qty':o['filled_qty'],'avg_entry_price':o['limit_price'],'current_price':o['limit_price'],'unrealized_pl':'0'} for o in self.orders.values() if float(o['filled_qty'])>0]
+            return [{'symbol':o['symbol'],'qty':str(float(o['filled_qty'])-sum(float(l['filled_qty']) for l in o.get('legs',[]))),'avg_entry_price':o['limit_price'],'current_price':o['limit_price'],'unrealized_pl':'0'} for o in self.orders.values() if float(o['filled_qty'])-sum(float(l['filled_qty']) for l in o.get('legs',[]))!=0]
         r=super().request(path,params,body)
         if path=='/v2/account':r.update(id=self.account_id,cash='8000')
         return r
     def find_order(self,cid):return AlpacaPaper.find_order(self,cid)
+    def bracket_order(self,bid):
+        root=next(o for o in self.orders.values() if o['id']==bid)
+        return copy.deepcopy(root)
 
 class JournalTests(unittest.TestCase):
     def setUp(self):
@@ -106,7 +111,7 @@ class JournalTests(unittest.TestCase):
         self.b.orders[cid]['status']='canceled';data=self.check()
         self.assertEqual(data['order_history'][0]['filled_qty'],'2')
         self.assertEqual(data['order_history'][0]['status'],'취소 완료')
-        before=len(self.b.lookups);self.check();self.assertEqual(len(self.b.lookups),before)
+        before=len(self.b.lookups);self.check();self.assertGreater(len(self.b.lookups),before)
     def test_repeated_unchanged_query_does_not_duplicate_event(self):
         self.submit();one=self.check();two=self.check()
         self.assertEqual(len(one['order_events']),len(two['order_events']))

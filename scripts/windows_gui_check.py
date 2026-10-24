@@ -174,6 +174,22 @@ def run():
         assert s['table_heights']['history']>=100,s['table_heights']
         record('history-tab-mouse-navigation')
         keyboard.send_keys('^{TAB}')
+        s=wait(lambda s:s.get('visible_tables',{}).get('inventory'))
+        assert any(r[0]=='MSFT' and r[3]=='일치' for r in s['tables']['inventory'])
+        record('managed-inventory-matches')
+        (OUT/'control.json').write_text('{"holding_extra":1}')
+        time.sleep(.3)
+        click('계좌·주문 대조')
+        s=wait(lambda s:not s.get('busy',True) and any(r[0]=='MSFT' and '불일치' in r[3] for r in s.get('tables',{}).get('inventory',[])))
+        assert s['stop'] and s['submitted']==1
+        record('managed-inventory-mismatch-no-liquidation')
+        click('모의매매 시작');notice('모의매매 시작')
+        s=wait(lambda s:s.get('account_error') and not s.get('busy',True))
+        assert s['stop'] and not s['running'] and s['submitted']==1
+        record('inventory-mismatch-blocks-resume')
+        tabs=state()['notebook_tabs'];target=next(t for t in tabs if t['text']=='보유 수량 대조')
+        mouse.click(coords=(target['x'],target['y']))
+        keyboard.send_keys('^{TAB}')
         wait(lambda s:s.get('visible_tables',{}).get('timeline'))
         record('timeline-tab-keyboard-navigation')
         main.close();process.wait(timeout=20)

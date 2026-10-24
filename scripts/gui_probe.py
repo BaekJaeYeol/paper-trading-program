@@ -34,6 +34,7 @@ class OfflineBroker(TrackingBroker):
     saved_posts=[]
     missing=False
     injected=False
+    holding_extra=0
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -48,6 +49,9 @@ class OfflineBroker(TrackingBroker):
             return [{'symbol':'AAPL','side':'buy','qty':'10','filled_qty':'3','limit_price':'100','status':'partially_filled'}]
         result = super().request(path, params, body)
         if path == '/v2/account': result['cash'] = '8000'
+        if path=='/v2/positions' and OfflineBroker.holding_extra:
+            for position in result:
+                if position['symbol']=='MSFT':position['qty']=str(float(position['qty'])+OfflineBroker.holding_extra)
         if body: OfflineBroker.calls += 1
         return result
 
@@ -117,6 +121,7 @@ def snapshot():
             OfflineBroker.partial=settings.get('partial',False)
             OfflineBroker.delay=settings.get('delay',0)
             OfflineBroker.missing=settings.get('missing',False)
+            OfflineBroker.holding_extra=settings.get('holding_extra',0)
             if settings.get('inject_unknown') and not OfflineBroker.injected:
                 import sqlite3
                 from stockbot.paper_journal import intent,submission_uncertain

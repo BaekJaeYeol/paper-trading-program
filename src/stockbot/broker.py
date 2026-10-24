@@ -1,7 +1,7 @@
 import json
 import os
 from urllib.request import Request, urlopen
-from urllib.parse import urlencode
+from urllib.parse import urlencode,quote
 from urllib.error import HTTPError
 
 class AlpacaHTTPError(RuntimeError):
@@ -57,3 +57,6 @@ class AlpacaPaper:
         except AlpacaHTTPError as exc:
             if exc.status==404:return None
             raise
+
+    def bracket_order(self,order_id):
+        return self.request('/v2/orders/'+quote(order_id,safe=''),{'nested':'true'})
