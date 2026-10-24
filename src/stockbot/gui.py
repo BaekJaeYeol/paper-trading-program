@@ -5,7 +5,7 @@ import queue
 import threading
 import time
 import math
-from datetime import datetime
+from datetime import datetime,timedelta
 from zoneinfo import ZoneInfo
 from .ui_safety import order_row, resume_snapshot, unresolved_attempts
 import tkinter as tk
@@ -17,6 +17,7 @@ from .cli import load_config, cycle, read_csv
 from .core import backtest
 from .paper_journal import fingerprint,reconcile_snapshot
 from . import diagnostics
+from .cadence import Cadence
 
 BG = '#f3f5fa'
 INK = '#17233b'
@@ -40,6 +41,7 @@ class Dashboard:
         self.busy = False
         self.running = False
         self.timer = None
+        self.cadence=None
         self.closed = False
         self.stop_event=threading.Event()
         self.resume_pending=False
@@ -85,6 +87,8 @@ class Dashboard:
         ttk.Label(outer, textvariable=self.status, padding=(0, 6 if compact else 12),wraplength=880).pack(anchor='w')
         self.context=tk.StringVar(value='모의투자 · Alpaca Paper · 미국 모의계좌 · USD · 실계좌 주문 비활성화')
         ttk.Label(outer,textvariable=self.context,foreground='#2545ba',wraplength=880).pack(anchor='w')
+        self.schedule_status=tk.StringVar(value='자동 실행 대기 · 시작 전 계좌·주문 대조')
+        ttk.Label(outer,textvariable=self.schedule_status,foreground='#526079',wraplength=880).pack(anchor='w')
         self.freshness=tk.StringVar(value='계좌 데이터 미조회 · 수신 시각과 시세 기준 시각은 다릅니다.')
         ttk.Label(outer,textvariable=self.freshness,foreground='#526079',wraplength=880).pack(anchor='w',pady=(2,6))
         cards = ttk.Frame(outer)
@@ -252,14 +256,15 @@ class Dashboard:
                     if (Path(self.config['state_dir']) / 'STOP').exists():
                         label = '비상 중단 · 신규 주문 차단'
                     if kind=='trade' and data['status'] in ('halted','daily_loss_limit','reconciliation_required'):self.pause()
-                    self.status.set(label + (' · 5분마다 실행 중' if self.running else ''))
+                    self.status.set(label + (' · 5분 기준 예약 실행 중' if self.running else ''))
                     self.write(f"{label} · 주문 계획 {len(data.get('orders', []))}건")
                     if 'account_snapshot' in data:self.render_journal(data['account_snapshot'])
                     if self.running and kind == 'trade':
                         if data['status'] in ('halted', 'daily_loss_limit','reconciliation_required'):
                             self.pause()
                         else:
-                            self.timer = self.root.after(300000, self.trade)
+                            self.cadence.complete(time.monotonic())
+                            self.schedule_trade()
                 elif kind == 'demo':
                     self.fill('demo', [[r['date'], r['side'], r['qty'], f"${r['price']:,.2f}"] for r in data['trades']])
                     self.demo_summary.set(f"백테스트 최종자산 ${data['ending_equity']:,.2f} · 최대 낙폭 {data['max_drawdown']:.2%} · 미청산 {data['open_qty']}주 · 실제 성과 아님")
@@ -349,6 +354,16 @@ class Dashboard:
             age=max(0,int(time.monotonic()-self.last_account_time))
             state='조회 실패 · 이전 데이터' if self.account_error else ('오래된 계좌 정보' if age>=60 else '정상 수신')
             self.freshness.set(f'{state} · 마지막 정상 수신 {self.last_account_label} · {age}초 경과 / KST')
+        if hasattr(self,'schedule_status'):
+            cadence=getattr(self,'cadence',None)
+            if self.running and cadence:
+                if cadence.in_flight:label='자동 실행 처리 중 · 다음 예약은 완료 후 확인'
+                else:
+                    remaining=math.ceil(cadence.delay(time.monotonic()))
+                    due=datetime.now(ZoneInfo('Asia/Seoul'))+timedelta(seconds=remaining)
+                    label=f'다음 실행 {due:%H:%M:%S} KST · 약 {remaining}초 후'
+                self.schedule_status.set(label+f' · 지연으로 건너뛴 예약 {cadence.skipped}회')
+            else:self.schedule_status.set('자동 실행 중지 · 재개 시 새 계좌·주문 대조 · 밀린 예약 재실행 없음')
         if self.stop_failed:self.status.set('중단 기록 실패 · 이 창의 실행은 차단됨 · 다른 프로세스와 증권사 주문을 확인하세요.')
         elif (Path(self.config['state_dir'])/'STOP').exists():self.status.set('비상 중단 · 신규 주문 차단 확인 · 기존 주문 취소·보유종목 청산은 수행하지 않음')
 
@@ -445,7 +460,7 @@ class Dashboard:
             return
         if self.running or self.busy:
             return
-        if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분마다 반복합니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
+        if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분 기준으로 반복합니다. 지연된 예약은 건너뜁니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
             return
         self.resume_pending=True
         self.work('resume',lambda:resume_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view))
@@ -465,6 +480,7 @@ class Dashboard:
             self.order_notice.set('재개 차단 · 오래된 계좌 조회 · 다시 점검하세요.');return
         self.last_account_time=data.get('received_monotonic',time.monotonic());self.last_account_label=data['received_at'];self.account_error=False
         self.stop_event.clear();self.stop_failed=False
+        self.cadence=Cadence(300,time.monotonic())
         self.running=True;self.selector.configure(state='disabled')
         self.write('재개 전 읽기 점검 통과. 모의매매 시작 · 실계좌 주문 비활성화.')
         self.trade()
@@ -478,10 +494,19 @@ class Dashboard:
         result=cycle(c,True,b);result['account_snapshot']=snapshot
         return result
 
+    def schedule_trade(self):
+        if self.timer is not None:self.root.after_cancel(self.timer)
+        delay=max(1,math.ceil(self.cadence.delay(time.monotonic())*1000))
+        self.timer=self.root.after(delay,self.trade)
+
     def trade(self):
         self.timer = None
-        if self.running and not self.work('trade', self.checked_trade):
-            self.timer = self.root.after(1000, self.trade)
+        if not self.running:return
+        if self.busy:
+            self.timer=self.root.after(1000,self.trade);return
+        if not self.cadence.claim(time.monotonic()):
+            self.schedule_trade();return
+        self.work('trade',self.checked_trade)
 
     def pause(self):
         self.running = False

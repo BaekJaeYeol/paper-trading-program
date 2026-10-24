@@ -4,6 +4,7 @@ from contextlib import closing
 import os
 import socket
 import sys
+import time
 import tkinter as tk
 from pathlib import Path
 
@@ -38,6 +39,7 @@ class OfflineBroker(TrackingBroker):
     root_replaced=False
     price_changed=False
     closed_flat=False
+    late_schedule_injected=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -105,7 +107,9 @@ def snapshot():
         x,y=coords[len(coords)//2]
         tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
-             'running': app.running, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
+             'running': app.running, 'schedule_status':app.schedule_status.get(),
+             'schedule_skipped':app.cadence.skipped if app.cadence else 0,
+             'schedule_delay_seconds':app.cadence.delay(time.monotonic()) if app.cadence else None, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
              'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
              'table_heights':{k:t.winfo_height() for k,t in app.tables.items()},
@@ -125,6 +129,11 @@ def snapshot():
     if control.exists():
         try:
             settings=json.loads(control.read_text())
+            if settings.get('late_schedule') and app.running and not app.busy and app.cadence and not OfflineBroker.late_schedule_injected:
+                # Simulate a delayed callback, not actual OS suspension or real trading.
+                OfflineBroker.late_schedule_injected=True
+                app.cadence.next_due-=3600
+                app.schedule_trade()
             OfflineBroker.fail=settings.get('fail',False)
             OfflineBroker.partial=settings.get('partial',False)
             OfflineBroker.delay=settings.get('delay',0)
