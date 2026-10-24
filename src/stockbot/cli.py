@@ -12,6 +12,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from .broker import AlpacaPaper
 from .cadence import Cadence
+from .power import SleepGuard
 from .core import Bar, signal, size, backtest
 from .ui_safety import unresolved_attempts
 from .brackets import enforce_entry
@@ -148,6 +149,18 @@ def cycle(c, execute=False, broker=None):
         lock.rmdir()
 
 
+def stop_requested(c):
+    return bool(c.get('state_dir')) and (Path(c['state_dir'])/'STOP').is_file()
+
+def wait_for_run(c,delay):
+    deadline=time.monotonic()+delay
+    while True:
+        if stop_requested(c):raise SystemExit('STOP active; automatic run stopped')
+        remaining=deadline-time.monotonic()
+        if remaining<=0:return
+        time.sleep(min(5,remaining))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("command", choices=["demo","backtest","scan","paper","run","reconcile"])
@@ -174,28 +187,35 @@ def main():
         ap.error("paper/run requires --execute-paper (simulated orders only)")
     if args.interval < 30:
         ap.error("interval must be >= 30 seconds")
-    cadence=Cadence(args.interval,time.monotonic())
-    while True:
-        if not cadence.claim(time.monotonic()):
-            time.sleep(cadence.delay(time.monotonic()));continue
-        try:
-            if args.command in ('paper','run'):
-                from .paper_journal import reconcile_snapshot,account_snapshot
-                b=AlpacaPaper();snapshot=reconcile_snapshot(c,b,account_snapshot)
-                if snapshot['reconciliation']['unresolved'] or not snapshot['inventory']['ready']:raise SystemExit('Reconciliation blocked entry; inspect orders/holdings before restarting')
-                result=cycle(c,True,b)
-            else:result=cycle(c,False)
-            print(json.dumps(result,indent=2),flush=True)
-        except Exception as exc:
-            logging.error("Cycle stopped: %s",exc)
+    guard=SleepGuard() if args.command=='run' else None
+    try:
+        if guard and stop_requested(c):raise SystemExit('STOP active; automatic run stopped')
+        if guard and not guard.acquire():raise SystemExit('Windows sleep request failed; automatic run blocked')
+        cadence=Cadence(args.interval,time.monotonic())
+        while True:
+            if args.command=='run' and stop_requested(c):raise SystemExit('STOP active; automatic run stopped')
+            if not cadence.claim(time.monotonic()):
+                wait_for_run(c,cadence.delay(time.monotonic()));continue
+            try:
+                if args.command in ('paper','run'):
+                    from .paper_journal import reconcile_snapshot,account_snapshot
+                    b=AlpacaPaper();snapshot=reconcile_snapshot(c,b,account_snapshot)
+                    if snapshot['reconciliation']['unresolved'] or not snapshot['inventory']['ready']:raise SystemExit('Reconciliation blocked entry; inspect orders/holdings before restarting')
+                    result=cycle(c,True,b)
+                else:result=cycle(c,False)
+                print(json.dumps(result,indent=2),flush=True)
+            except Exception as exc:
+                logging.error("Cycle stopped: %s",exc)
+                if args.command != "run":
+                    raise SystemExit(1) from None
             if args.command != "run":
-                raise SystemExit(1) from None
-        if args.command != "run":
-            return
-        cadence.complete(time.monotonic())
-        delay=cadence.delay(time.monotonic())
-        logging.info('Next cycle in %.1f seconds; skipped slots: %d',delay,cadence.skipped)
-        time.sleep(delay)
+                return
+            cadence.complete(time.monotonic())
+            delay=cadence.delay(time.monotonic())
+            logging.info('Next cycle in %.1f seconds; skipped slots: %d',delay,cadence.skipped)
+            wait_for_run(c,delay)
+    finally:
+        if guard and not guard.release():logging.warning('Sleep request release failed; inspect Windows power state')
 
 if __name__ == "__main__":
     main()
