@@ -299,7 +299,7 @@ class Dashboard:
         if not target:return
         destination=Path(target).resolve()
         state=Path(self.config['state_dir']).resolve()
-        if destination.suffix.lower()!='.json' or destination==self.path or destination==state or state in destination.parents:
+        if destination.suffix.lower()!='.json' or destination==self.path.resolve() or destination==state or state in destination.parents:
             messagebox.showerror('진단 요약', '설정 파일과 상태 폴더 밖의 JSON 파일을 선택하세요.',parent=self.root)
             return
         report=dict(self.diagnostic_snapshot)
