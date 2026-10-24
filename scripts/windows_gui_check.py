@@ -121,6 +121,14 @@ def run():
         s=wait(lambda s:s.get('running') and s.get('submitted')==1 and not s.get('busy',True))
         assert s['tables']['plans'][0][-1]=='제출됨'
         record('start-offline-order')
+        s=wait(lambda s:s.get('running') and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
+        assert 'KST' in s['schedule_status'] and s['schedule_delay_seconds']>=30
+        record('next-run-time-and-countdown-visible')
+        (OUT/'control.json').write_text('{"late_schedule":true}')
+        s=wait(lambda s:s.get('schedule_skipped',0)>=10 and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
+        assert s['submitted']==1 and s['schedule_delay_seconds']>=30
+        record('late-callback-skips-slots-no-order-replay')
+        (OUT/'control.json').write_text('{}')
         click('비상 중단')
         wait(lambda s:s.get('stop') and not s.get('running',True))
         record('emergency-stop')

@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from .broker import AlpacaPaper
+from .cadence import Cadence
 from .core import Bar, signal, size, backtest
 from .ui_safety import unresolved_attempts
 from .brackets import enforce_entry
@@ -173,7 +174,10 @@ def main():
         ap.error("paper/run requires --execute-paper (simulated orders only)")
     if args.interval < 30:
         ap.error("interval must be >= 30 seconds")
+    cadence=Cadence(args.interval,time.monotonic())
     while True:
+        if not cadence.claim(time.monotonic()):
+            time.sleep(cadence.delay(time.monotonic()));continue
         try:
             if args.command in ('paper','run'):
                 from .paper_journal import reconcile_snapshot,account_snapshot
@@ -188,7 +192,10 @@ def main():
                 raise SystemExit(1) from None
         if args.command != "run":
             return
-        time.sleep(args.interval)
+        cadence.complete(time.monotonic())
+        delay=cadence.delay(time.monotonic())
+        logging.info('Next cycle in %.1f seconds; skipped slots: %d',delay,cadence.skipped)
+        time.sleep(delay)
 
 if __name__ == "__main__":
     main()
