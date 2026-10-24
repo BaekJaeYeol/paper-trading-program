@@ -58,4 +58,4 @@ class CadenceTests(unittest.TestCase):
         snapshot={'reconciliation':{'unresolved':0},'inventory':{'ready':True}}
         with patch.object(cli,'time',fake_time),patch.object(cli,'load_config',return_value={}),patch.object(cli,'AlpacaPaper'),patch.object(cli,'cycle',side_effect=cycle),patch('stockbot.paper_journal.reconcile_snapshot',return_value=snapshot),patch('sys.argv',['stockbot','run','--execute-paper','--interval','300']),redirect_stdout(io.StringIO()):
             with self.assertRaises(KeyboardInterrupt):cli.main()
-        self.assertEqual(starts,[0,300,1200]);self.assertEqual(sleeps,[260,260])
+        self.assertEqual(starts,[0,300,1200]);self.assertEqual(sum(sleeps),520);self.assertTrue(all(d<=5 for d in sleeps))

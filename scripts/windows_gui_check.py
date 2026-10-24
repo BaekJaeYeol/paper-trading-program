@@ -117,6 +117,14 @@ def run():
         s=wait(lambda s:not s.get('running',True))
         assert s['submitted']==0
         record('start-cancel-no-orders')
+        (OUT/'control.json').write_text('{"power_fail":true}')
+        time.sleep(.3)
+        click('모의매매 시작');notice('모의매매 시작')
+        s=wait(lambda s:s.get('power_error')=='acquire' and not s.get('busy',True))
+        assert s['submitted']==0 and not s['running'] and not s['power_active']
+        record('sleep-request-failure-blocks-automatic-start')
+        (OUT/'control.json').write_text('{}')
+        time.sleep(.3)
         click('모의매매 시작');notice('모의매매 시작')
         s=wait(lambda s:s.get('running') and s.get('submitted')==1 and not s.get('busy',True))
         assert s['tables']['plans'][0][-1]=='제출됨'
@@ -124,6 +132,8 @@ def run():
         s=wait(lambda s:s.get('running') and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
         assert 'KST' in s['schedule_status'] and s['schedule_delay_seconds']>=30
         record('next-run-time-and-countdown-visible')
+        assert s['power_supported'] and s['power_active'] and '절전 방지 요청 적용' in s['schedule_status']
+        record('windows-sleep-request-active-during-run')
         (OUT/'control.json').write_text('{"late_schedule":true}')
         s=wait(lambda s:s.get('schedule_skipped',0)>=10 and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
         assert s['submitted']==1 and s['schedule_delay_seconds']>=30
@@ -132,9 +142,12 @@ def run():
         click('비상 중단')
         wait(lambda s:s.get('stop') and not s.get('running',True))
         record('emergency-stop')
+        s=wait(lambda s:not s.get('power_active',True) and not s.get('busy',True))
+        record('emergency-stop-releases-windows-sleep-request')
         click('모의매매 시작');notice('모의매매 시작');notice('비상 중단 해제')
         s=wait(lambda s:s.get('running') and not s.get('busy',True) and not s.get('stop',True))
         assert s['submitted']==1
+        assert s['power_active']
         record('resume-no-duplicate')
         click('비상 중단');wait(lambda s:s.get('stop') and not s.get('running',True))
         (OUT/'control.json').write_text('{"fail":true}')

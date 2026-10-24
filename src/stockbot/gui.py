@@ -18,6 +18,7 @@ from .core import backtest
 from .paper_journal import fingerprint,reconcile_snapshot
 from . import diagnostics
 from .cadence import Cadence
+from .power import SleepGuard
 
 BG = '#f3f5fa'
 INK = '#17233b'
@@ -42,6 +43,7 @@ class Dashboard:
         self.running = False
         self.timer = None
         self.cadence=None
+        self.sleep_guard=SleepGuard()
         self.closed = False
         self.stop_event=threading.Event()
         self.resume_pending=False
@@ -272,6 +274,8 @@ class Dashboard:
                     self.write('CSV 백테스트를 완료했습니다. 기본 파일은 합성 데이터입니다.')
         except queue.Empty:
             pass
+        guard=getattr(self,'sleep_guard',None)
+        if not self.running and not self.busy and guard and guard.active and guard.error!='release':guard.release()
         self.update_safety_display()
         self.root.after(100, self.poll)
 
@@ -325,6 +329,8 @@ class Dashboard:
             messagebox.showerror('진단 요약', '설정 파일과 상태 폴더 밖의 JSON 파일을 선택하세요.',parent=self.root)
             return
         report=dict(self.diagnostic_snapshot)
+        guard=getattr(self,'sleep_guard',None)
+        report['sleep_prevention']={'supported':bool(guard and guard.supported),'requested':bool(guard and guard.active),'error':guard.error if guard and guard.error in ('acquire','release') else None}
         report.update(generated_at=datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
                       snapshot_age_seconds=max(0,int(time.monotonic()-self.diagnostic_time)),
                       read_failed_since_snapshot=bool(self.account_error),
@@ -362,8 +368,11 @@ class Dashboard:
                     remaining=math.ceil(cadence.delay(time.monotonic()))
                     due=datetime.now(ZoneInfo('Asia/Seoul'))+timedelta(seconds=remaining)
                     label=f'다음 실행 {due:%H:%M:%S} KST · 약 {remaining}초 후'
-                self.schedule_status.set(label+f' · 지연으로 건너뛴 예약 {cadence.skipped}회')
-            else:self.schedule_status.set('자동 실행 중지 · 재개 시 새 계좌·주문 대조 · 밀린 예약 재실행 없음')
+                guard=getattr(self,'sleep_guard',None)
+                self.schedule_status.set(label+f' · 건너뛴 예약 {cadence.skipped}회'+(' · '+guard.label() if guard else ''))
+            else:
+                guard=getattr(self,'sleep_guard',None)
+                self.schedule_status.set('자동 실행 중지 · 밀린 예약 재실행 없음'+(' · '+guard.label() if guard else ''))
         if self.stop_failed:self.status.set('중단 기록 실패 · 이 창의 실행은 차단됨 · 다른 프로세스와 증권사 주문을 확인하세요.')
         elif (Path(self.config['state_dir'])/'STOP').exists():self.status.set('비상 중단 · 신규 주문 차단 확인 · 기존 주문 취소·보유종목 청산은 수행하지 않음')
 
@@ -471,13 +480,19 @@ class Dashboard:
         stop=Path(self.config['state_dir'])/'STOP'
         if stop.exists():
             if not messagebox.askyesno('비상 중단 해제','계좌·미체결·미확인 주문 점검을 통과했습니다.\n기존 주문 취소나 청산을 의미하지 않습니다. STOP을 해제하고 모의매매를 재개할까요?'):return
-            if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:
-                self.order_notice.set('재개 차단 · 계좌 조회 후 60초 경과 · 다시 시작하여 점검하세요.');return
-            try:stop.unlink()
-            except OSError:
-                self.status.set('STOP 해제 실패 · 재개 차단');return
         if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:
             self.order_notice.set('재개 차단 · 오래된 계좌 조회 · 다시 점검하세요.');return
+        if not self.sleep_guard.acquire():
+            self.status.set('절전 방지 요청 실패 · 자동매매 시작 차단')
+            self.write('Windows 절전 방지 요청에 실패했습니다. 전원 상태를 확인한 뒤 다시 시작하세요.');return
+        if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:
+            self.sleep_guard.release()
+            self.order_notice.set('재개 차단 · 오래된 계좌 조회 · 다시 점검하세요.');return
+        if stop.exists():
+            try:stop.unlink()
+            except OSError:
+                self.sleep_guard.release()
+                self.status.set('STOP 해제 실패 · 재개 차단');return
         self.last_account_time=data.get('received_monotonic',time.monotonic());self.last_account_label=data['received_at'];self.account_error=False
         self.stop_event.clear();self.stop_failed=False
         self.cadence=Cadence(300,time.monotonic())
@@ -510,6 +525,8 @@ class Dashboard:
 
     def pause(self):
         self.running = False
+        guard=getattr(self,'sleep_guard',None)
+        if guard and not self.busy:guard.release()
         self.selector.configure(state='disabled' if self.busy else 'readonly')
         if self.timer is not None:
             self.root.after_cancel(self.timer)
@@ -608,6 +625,8 @@ class Dashboard:
             if self.busy:
                 messagebox.showinfo('종료 대기', '통신 완료 후 창을 다시 닫아 주세요. 주문 기록을 안전하게 마무리합니다.')
                 return
+        guard=getattr(self,'sleep_guard',None)
+        if guard:guard.release()
         self.closed = True
         self.root.destroy()
 

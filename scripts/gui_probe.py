@@ -40,6 +40,7 @@ class OfflineBroker(TrackingBroker):
     price_changed=False
     closed_flat=False
     late_schedule_injected=False
+    power_fail=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -73,6 +74,13 @@ socket.socket.connect = no_network
 socket.create_connection = no_network
 root = tk.Tk()
 app = gui.Dashboard(root, path)
+real_acquire=app.sleep_guard.acquire
+def controlled_acquire():
+    if OfflineBroker.power_fail:
+        app.sleep_guard.error='acquire'
+        return False
+    return real_acquire()
+app.sleep_guard.acquire=controlled_acquire
 
 def snapshot():
     windows = []
@@ -107,7 +115,7 @@ def snapshot():
         x,y=coords[len(coords)//2]
         tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
-             'running': app.running, 'schedule_status':app.schedule_status.get(),
+             'running': app.running, 'power_active':app.sleep_guard.active,'power_supported':app.sleep_guard.supported,'power_error':app.sleep_guard.error, 'schedule_status':app.schedule_status.get(),
              'schedule_skipped':app.cadence.skipped if app.cadence else 0,
              'schedule_delay_seconds':app.cadence.delay(time.monotonic()) if app.cadence else None, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
@@ -134,6 +142,7 @@ def snapshot():
                 OfflineBroker.late_schedule_injected=True
                 app.cadence.next_due-=3600
                 app.schedule_trade()
+            OfflineBroker.power_fail=settings.get('power_fail',False)
             OfflineBroker.fail=settings.get('fail',False)
             OfflineBroker.partial=settings.get('partial',False)
             OfflineBroker.delay=settings.get('delay',0)
