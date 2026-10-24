@@ -9,12 +9,15 @@ from pathlib import Path
 import sqlite3
 import time
 from zoneinfo import ZoneInfo
-from . import brackets
+from . import brackets,health
 from . import review_cases as review
 from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
 class ReconciliationTimeout(RuntimeError):
+    pass
+
+class ReconciliationCancelled(RuntimeError):
     pass
 
 TERMINAL={'filled','canceled','rejected','expired','replaced'}
@@ -64,6 +67,7 @@ def initialize(db):
     ''')
     brackets.initialize(db)
     review.initialize(db)
+    health.initialize(db)
 
 def bind_account(db,identity):
     if not isinstance(identity,str) or len(identity)!=64:raise ValueError('Invalid account fingerprint')
@@ -150,7 +154,7 @@ def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
         if resolve_case is not None and not (root/'STOP').is_file():raise RuntimeError('STOP required for recovery')
         cancel=c.get('_reconcile_cancel')
         def interrupted():
-            if cancel is not None and cancel.is_set():raise RuntimeError('Reconciliation interrupted')
+            if cancel is not None and cancel.is_set():raise ReconciliationCancelled('Reconciliation interrupted')
             if time.monotonic()-started>=60:raise ReconciliationTimeout('Full reconciliation exceeded 60 seconds; explicit restart required')
         interrupted()
         data=reader(broker)
@@ -212,16 +216,19 @@ def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
             data['order_history'],data['order_events']=history(db)
             data['order_history']=sorted(data['order_history']+brackets.leg_history(db),key=lambda r:r['checked_at'] if r['checked_at']!='미확인' else '',reverse=True)[:200]
             data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}
+            health.result(db,data.get('can_trade') is True and data['inventory']['ready'] and not data['reconciliation']['unresolved'])
+            data['system_health']=health.history(db)
             interrupted()
             data['reconciliation']['elapsed_seconds']=math.ceil(time.monotonic()-started)
             db.commit()
             return data
-    except BaseException:
+    except BaseException as error:
         # A failed/aborted read must not leave an earlier successful entry gate reusable.
         try:
             with closing(sqlite3.connect(root/'orders.sqlite',timeout=5)) as db:
                 initialize(db)
                 db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps({'ready':False,'rows':[],'reason':'대조 실패 · 재점검 필요'}),))
+                health.record(db,'timeout' if isinstance(error,ReconciliationTimeout) else ('cancelled' if isinstance(error,(ReconciliationCancelled,KeyboardInterrupt)) else 'failed'))
                 db.commit()
         except (OSError,sqlite3.Error):pass # Caller still stops; persistence cannot be promised on disk failure.
         raise

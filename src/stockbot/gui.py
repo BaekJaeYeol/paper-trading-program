@@ -16,7 +16,7 @@ from .kis import KISPaper
 from .cli import load_config, cycle, read_csv
 from .core import backtest
 from .paper_journal import fingerprint,reconcile_snapshot,ReconciliationTimeout
-from . import diagnostics
+from . import diagnostics,health
 from .cadence import Cadence
 from .power import SleepGuard
 
@@ -135,6 +135,7 @@ class Dashboard:
                  ('보유 수량 대조','inventory',['종목','봇 기대 수량','계좌 실제 수량','대조 결과']),
                  ('주문 변경 기록', 'timeline', ['봇 주문 키','대조 결과','주문 상태','체결 수량','확인 시각 (KST)']),
                  ('차단 상세','review',['대상 주문/종목','확인된 변화','상태','마지막 확인 (KST)']),
+                 ('운영 상태','health',['마지막 확인 (KST)','운영 상태','반복 횟수']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
             panel = ttk.Frame(tabs, padding=6 if compact else 10)
@@ -144,6 +145,10 @@ class Dashboard:
                 ttk.Button(bar,text='진단 요약 저장',command=self.export_diagnostics).pack(side='left')
                 recovery=ttk.Button(bar,text='선택 기록 복구 점검',command=self.recover_review)
                 recovery.pack(side='left',padx=6);self.actions.append(recovery)
+            if key=='health':
+                self.health_notice=tk.StringVar(value='미국 Alpaca 모의 대조 이력 · 최대 최근 50개 상태 묶음 · 자동 재개 아님')
+                ttk.Label(panel,textvariable=self.health_notice,wraplength=850).pack(anchor='w')
+                ttk.Button(panel,text='운영 이력 새로고침',command=self.refresh_health).pack(anchor='w',pady=(0,4))
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
@@ -159,6 +164,11 @@ class Dashboard:
                 horizontal.pack(side='bottom',fill='x')
             table.pack(fill='both', expand=True)
             self.tables[key] = table
+            if key=='health':
+                self.health_items={}
+                table.column(0,width=260);table.column(1,width=330)
+                table.bind('<Return>',self.show_health_detail)
+                table.bind('<Double-1>',self.show_health_detail)
             if key=='review':
                 table.bind('<Return>',self.show_review_detail)
                 table.bind('<Double-1>',self.show_review_detail)
@@ -173,6 +183,7 @@ class Dashboard:
         ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 해당 증권사에서 확인하세요.',
                   foreground='#738099').pack(anchor='w', side='bottom')
         tabs.pack(fill='both', expand=True)
+        self.refresh_health()
         root.after(100, self.poll)
 
     def navigate_tabs(self,direction):
@@ -234,6 +245,7 @@ class Dashboard:
                         self.order_notice.set(f'재개 차단 · 미확인 주문 {count}건 · 증권사 대조 필요' if count else '재개 점검 실패 · 계좌 권한·잔고·미체결·잠금을 확인하세요.')
                     self.status.set('작업 실패 · 자동 실행 정지')
                     self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
+                    self.refresh_health()
                     if error=='reconciliation_timeout':
                         self.order_notice.set('전체 대조 60초 시간 제한 초과 · 자동 실행 중지 · 계좌·주문을 다시 대조한 뒤 명시적으로 재개하세요.')
                         self.status.set('대조 시간 초과 · 자동 실행 정지')
@@ -286,6 +298,7 @@ class Dashboard:
         self.root.after(100, self.poll)
 
     def render_journal(self,data):
+        if 'system_health' in data:self.render_health(data['system_health'])
         if 'order_history' not in data:return
         # Build the allowlisted summary immediately; never retain account IDs or raw payloads.
         self.diagnostic_snapshot=diagnostics.build(data,age_seconds=0,read_failed=False,stopped=False,running=False)
@@ -307,6 +320,27 @@ class Dashboard:
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
         if data.get('review_resolution',{}).get('resolved'):
             self.write('선택 기록의 복구 점검 통과 · 해소 이력 저장 · STOP 유지 · 자동매매는 재개하지 않았습니다.')
+
+    def refresh_health(self):
+        self.render_health(health.load(self.config['state_dir']))
+
+    def render_health(self,data):
+        if 'health' not in getattr(self,'tables',{}):return
+        if not data['available']:
+            self.health_notice.set('미국 모의 운영 이력 조회 실패 · 이전 표가 남아 있을 수 있습니다. DB 상태를 확인하세요.');return
+        self.health_notice.set('미국 Alpaca 모의 대조 이력 · 최근 최대 50개 상태 묶음 · 복구 기록은 자동 재개가 아닙니다.' if data['events'] else '미국 모의 대조 장애 이력 없음 · 정상 연결을 의미하지 않습니다.')
+        table=self.tables['health'];table.delete(*table.get_children());self.health_items={}
+        for event in data['events']:
+            item=table.insert('','end',values=(event['last_seen'],event['title'],event['occurrences']))
+            self.health_items[item]=event
+
+    def show_health_detail(self,event=None):
+        table=self.tables['health'];selected=table.selection()
+        record=self.health_items.get(selected[0]) if selected else None
+        if record:
+            messagebox.showinfo('운영 상태 · 읽기 전용',f"{record['title']}\n최초 확인: {record['first_seen']}\n마지막 확인: {record['last_seen']}\n같은 상태 반복: {record['occurrences']}회\n\n{record['next_action']}\n\n이 창을 닫아도 주문·STOP·차단·실행 상태는 바뀌지 않습니다.",parent=self.root)
+            table.focus_set()
+        return 'break'
 
     def recover_review(self):
         if self.busy or self.running:return
@@ -335,6 +369,7 @@ class Dashboard:
             messagebox.showerror('진단 요약', '설정 파일과 상태 폴더 밖의 JSON 파일을 선택하세요.',parent=self.root)
             return
         report=dict(self.diagnostic_snapshot)
+        report['system_health']=health.summary(health.load(self.config['state_dir']))
         guard=getattr(self,'sleep_guard',None)
         report['sleep_prevention']={'supported':bool(guard and guard.supported),'requested':bool(guard and guard.active),'error':guard.error if guard and guard.error in ('acquire','release') else None}
         report.update(generated_at=datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
