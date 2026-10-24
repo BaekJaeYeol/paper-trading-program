@@ -79,6 +79,7 @@ class MarketRoutingTests(unittest.TestCase):
         d.values={'cash':Mock()};d.card_titles={'cash':Mock()}
         d.tables={'positions':Mock(),'orders':Mock(),'plans':Mock(),'demo':Mock()}
         d.fill=Mock();d.demo_summary=Mock();d.status=Mock()
+        d.order_notice=type('V',(),{'set':lambda self,value:None})()
         d.change_market()
         d.values['cash'].set.assert_called_once_with('—')
         self.assertEqual(d.fill.call_count,4)
