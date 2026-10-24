@@ -55,7 +55,7 @@ class ResearchTests(unittest.TestCase):
     def test_loss_accounting_includes_initial_equity_and_stop_first(self):
         base=[Bar(date(2020,1,1)+timedelta(days=i),100,101,99,100,3000 if i==30 else 1000) for i in range(31)]
         bars=base+[Bar(date(2020,2,1),100,120,90,100,1000)]
-        self.c.update(stop_loss=.05,take_profit=.15)
+        self.c.update(stop_loss=.05,take_profit=.15,entry_strategy='baseline')
         r=backtest(bars,self.c,fee=0,slippage=0)
         self.assertEqual(r['closed_trades'],1);self.assertAlmostEqual(r['ending_equity'],9975)
         self.assertAlmostEqual(r['max_drawdown'],.0025);self.assertEqual(r['win_rate'],0)

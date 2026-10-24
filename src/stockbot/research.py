@@ -4,17 +4,10 @@ import json
 import math
 from .core import backtest,size
 
-def trend(history):
-    if len(history)<60:return False
-    closes=[b.close for b in history[-60:]]
-    return closes[-1]>=sum(closes[-20:])/20>sum(closes)/60 and closes[-1]/history[-22].close-1>=-.10
-
-def calm_trend(history):
-    if not trend(history):return False
-    ranges=[max(history[i].high-history[i].low,abs(history[i].high-history[i-1].close),abs(history[i].low-history[i-1].close)) for i in range(len(history)-14,len(history))]
-    return sum(ranges)/14/history[-1].close<=.05
+from .strategies import trend,calm_trend
 
 def candidates(config):
+    config=dict(config,entry_strategy='baseline')
     return [('baseline',dict(config),None),('trend_guard',dict(config),trend),
             ('trend_volume_2',dict(config,volume_ratio=2.0),trend),
             ('trend_volume_4',dict(config,volume_ratio=4.0),trend),
@@ -57,7 +50,7 @@ def compare(bars,config,*,cash=10000.,fee=.001,slippage=.001,sell_tax=0.):
         segment=bars[:end]
         benchmarks[label]={'cash_return':0.,'matched_allocation_hold':holding(segment,start,cash,fee,slippage,sell_tax,config['max_position_fraction']),
                            'full_allocation_hold':holding(segment,start,cash,fee,slippage,sell_tax,1.)}
-    return {'schema':'strategy-research-v1','data_provenance':'unverified_csv','data_sha256':identity,'bars':n,
+    return {'schema':'strategy-research-v1','data_provenance':'unverified_csv','active_entry_strategy':config.get('entry_strategy','baseline'),'data_sha256':identity,'bars':n,
             'capital_price_units':cash,'cost_assumptions':{'fee_each_side':fee,'slippage_each_side':slippage,'sell_tax':sell_tax},
             'periods':{label:{'from':str(bars[start].day),'to':str(bars[end-1].day),'bars':end-start} for label,start,end in boundaries},
             'selection_rule':'training net return minus drawdown; minimum 5 closed trades; ties preserve candidate order',

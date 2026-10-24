@@ -18,6 +18,7 @@ from .core import backtest
 from .paper_journal import fingerprint,reconcile_snapshot,ReconciliationTimeout
 from . import diagnostics,health
 from .cadence import Cadence
+from .strategies import LABELS
 from .power import SleepGuard
 
 BG = '#f3f5fa'
@@ -284,6 +285,9 @@ class Dashboard:
                     if kind=='trade' and data['status'] in ('halted','daily_loss_limit','reconciliation_required'):self.pause()
                     self.status.set(label + (' · 5분 기준 예약 실행 중' if self.running else ''))
                     self.write(f"{label} · 주문 계획 {len(data.get('orders', []))}건")
+                    if 'entry_filter' in data:
+                        info=data['entry_filter'];excluded=sum(info['excluded'].values())
+                        self.write(f"진입 필터: {LABELS[info['strategy']]} · 기본 신호 통과 후 제외 {excluded}종목 · 수익 우위 미검증")
                     if 'account_snapshot' in data:self.render_journal(data['account_snapshot'])
                     if self.running and kind == 'trade':
                         if data['status'] in ('halted', 'daily_loss_limit','reconciliation_required'):
@@ -404,7 +408,7 @@ class Dashboard:
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
         execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else ('대조 차단' if getattr(self,'entry_blocked',False) else '대기')))
-        self.context.set('실행: '+execution+' · 모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
+        self.context.set('실행: '+execution+' · 모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화'+('' if kr else ' · 진입: '+LABELS[self.config.get('entry_strategy','baseline')]))
         if self.last_account_time is None:self.freshness.set('계좌 데이터 미조회 · 시세 신선도는 엔진에서 별도 검증')
         else:
             age=max(0,int(time.monotonic()-self.last_account_time))
@@ -519,7 +523,7 @@ class Dashboard:
             return
         if self.running or self.busy:
             return
-        if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분 기준으로 반복합니다. 지연된 예약은 건너뜁니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
+        if not messagebox.askyesno('모의매매 시작', f"Alpaca 모의계좌에 주문을 제출하고 5분 기준으로 반복합니다. 지연된 예약은 건너뜁니다.\n진입 필터: {LABELS[self.config.get('entry_strategy','baseline')]} · 실제 수익 우위 미검증\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?"):
             return
         self.resume_pending=True
         self.work('resume',lambda:resume_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view))
@@ -651,6 +655,9 @@ class Dashboard:
         window.transient(self.root)
         window.grab_set()
         fields = {}
+        strategy=tk.StringVar(value=LABELS[self.config.get('entry_strategy','baseline')])
+        ttk.Label(window,text='미국 모의 진입 필터 · 실제 수익 우위 미검증').pack(anchor='w',padx=8)
+        ttk.Combobox(window,textvariable=strategy,values=list(LABELS.values()),state='readonly',width=44).pack(padx=8,pady=4)
         rows = [('symbols', '종목 (쉼표 구분)', ','.join(self.config['symbols'])),
                 ('volume_ratio', '평균 대비 거래량 배수', self.config['volume_ratio']),
                 ('max_return', '1개월 수익률 상한 (%)', self.config['max_return'] * 100),
@@ -670,6 +677,7 @@ class Dashboard:
         def save():
             try:
                 c = dict(self.config)
+                c['entry_strategy']=next(key for key,label in LABELS.items() if label==strategy.get())
                 c['symbols'] = [s.strip().upper() for s in fields['symbols'].get().split(',') if s.strip()]
                 c['max_positions'] = int(fields['max_positions'].get())
                 c['volume_ratio'] = float(fields['volume_ratio'].get())

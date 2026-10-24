@@ -22,7 +22,12 @@ class FakeBroker:
         raise AssertionError(path)
     def bars(self,*args):
         end=date(2026,10,2)
-        return [{'t':f'{end-timedelta(days=30-i)}T04:00:00Z','o':100,'h':101,'l':99,'c':100,'v':3000 if i==30 else 1000} for i in range(31)]
+        days=[];current=end
+        while len(days)<60:
+            if current.weekday()<5:days.append(current)
+            current-=timedelta(days=1)
+        days.reverse()
+        return [{'t':f'{day}T04:00:00Z','o':100-(59-i)*.02,'h':101,'l':98,'c':100-(59-i)*.02,'v':3000 if i==59 else 1000} for i,day in enumerate(days)]
     def quote(self,*args): return {'t':'2026-10-05T14:00:00Z','bp':99.99,'ap':100}
 
 class Tests(unittest.TestCase):
@@ -37,7 +42,7 @@ class Tests(unittest.TestCase):
     def test_invalid(self):
         with self.assertRaises(ValueError): Bar(date.today(),100,90,99,100,1)
     def test_next_open_and_stop_first(self):
-        c=load_config(ROOT/'config.json')
+        c=load_config(ROOT/'config.json');c['entry_strategy']='baseline'
         bars=self.bars()+[Bar(date(2026,2,1),100,120,90,100,1000)]
         r=backtest(bars,c)
         self.assertEqual(len(r['trades']),2)

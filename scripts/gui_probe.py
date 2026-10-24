@@ -52,11 +52,16 @@ class OfflineBroker(TrackingBroker):
     late_schedule_injected=False
     power_fail=False
     budget_timeout=False
+    flat_strategy=False
     budget_run_injected=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
         self.sent=OfflineBroker.saved_posts
+    def bars(self,*args):
+        rows=super().bars(*args)
+        if OfflineBroker.flat_strategy:return [dict(row,o=100,c=100,h=101,l=99) for row in rows]
+        return rows
     def request(self, path, params=None, body=None):
         if body is None:OfflineBroker.read_calls+=1
         if OfflineBroker.fail: raise RuntimeError('offline failure')
@@ -141,7 +146,7 @@ def snapshot():
         x,y=coords[len(coords)//2]
         tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
-             'running': app.running, 'power_active':app.sleep_guard.active,'power_supported':app.sleep_guard.supported,'power_error':app.sleep_guard.error, 'schedule_status':app.schedule_status.get(),
+             'running': app.running, 'log_text':app.log.get('1.0','end-1c'), 'power_active':app.sleep_guard.active,'power_supported':app.sleep_guard.supported,'power_error':app.sleep_guard.error, 'schedule_status':app.schedule_status.get(),
              'schedule_skipped':app.cadence.skipped if app.cadence else 0,
              'schedule_delay_seconds':app.cadence.delay(time.monotonic()) if app.cadence else None, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
@@ -170,6 +175,7 @@ def snapshot():
                 app.cadence.next_due-=3600
                 app.schedule_trade()
             OfflineBroker.budget_timeout=settings.get('budget_timeout',False)
+            OfflineBroker.flat_strategy=settings.get('flat_strategy',False)
             if settings.get('run_for_budget_test') and app.running and not app.busy and not OfflineBroker.budget_run_injected:
                 OfflineBroker.budget_run_injected=True
                 app.cadence.next_due=time.monotonic()-1
