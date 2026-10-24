@@ -139,7 +139,7 @@ def run():
         (OUT/'control.json').write_text('{"partial":true}')
         time.sleep(.3)
         click('계좌·주문 대조')
-        s=wait(lambda s:not s.get('busy',True) and bool(s.get('tables',{}).get('orders')))
+        s=wait(lambda s:not s.get('busy',True) and any(r[0]=='AAPL' and r[4]=='7' and r[-1]=='부분 체결' for r in s.get('tables',{}).get('orders',[])))
         assert s['tables']['orders'][0][4]=='7'
         assert s['tables']['orders'][0][-1]=='부분 체결'
         assert '비상 중단' in s['status']
