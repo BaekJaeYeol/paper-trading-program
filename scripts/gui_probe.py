@@ -18,6 +18,15 @@ OUT = ROOT / 'gui-check'
 OUT.mkdir(exist_ok=True)
 import shutil
 shutil.copytree(ROOT / "examples", OUT / "examples", dirs_exist_ok=True)
+# Deterministic synthetic fixture; never a market-performance claim.
+from datetime import date,timedelta
+sample=['date,open,high,low,close,volume'];sample_day=date(2020,1,1)
+for i in range(360):
+    while sample_day.weekday()>4:sample_day+=timedelta(days=1)
+    price=100+i*.02
+    sample.append(f'{sample_day},{price},{price*1.025},{price*.998},{price},{10000 if i%15==0 else 1000}')
+    sample_day+=timedelta(days=1)
+(OUT/'examples'/'synthetic-strategy-research.csv').write_text('\n'.join(sample)+'\n',encoding='utf-8')
 config = json.loads((ROOT / 'config.json').read_text())
 config['symbols'] = ['AAPL']
 config['state_dir'] = str(OUT / 'state')
@@ -110,6 +119,7 @@ def snapshot():
                           'width': w.winfo_width(), 'height': w.winfo_height()}
                 if cls in ('TButton', 'TLabel', 'Label'): record['text'] = str(w.cget('text'))
                 if cls == 'TEntry': record['masked'] = bool(w.cget('show'))
+                if cls == 'Treeview':record['rows']=[list(w.item(item,'values')) for item in w.get_children()]
                 widgets.append(record)
             for child in w.winfo_children():
                 if not isinstance(child, tk.Toplevel): visit(child)

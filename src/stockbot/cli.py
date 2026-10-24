@@ -163,11 +163,15 @@ def wait_for_run(c,delay):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["demo","backtest","scan","paper","run","reconcile"])
+    ap.add_argument("command", choices=["demo","backtest","scan","paper","run","reconcile","research"])
     ap.add_argument("--config",default="config.json")
     ap.add_argument("--csv",default="examples/demo.csv")
     ap.add_argument("--interval",type=int,default=300)
     ap.add_argument("--execute-paper",action="store_true")
+    ap.add_argument('--fee-bps',type=float,default=10.)
+    ap.add_argument('--slippage-bps',type=float,default=10.)
+    ap.add_argument('--sell-tax-bps',type=float,default=0.)
+    ap.add_argument('--capital',type=float,default=10000.)
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO,format="%(asctime)s %(levelname)s %(message)s")
     c = load_config(args.config)
@@ -177,6 +181,11 @@ def main():
         if any(a.day >= b.day for a,b in zip(bars,bars[1:])):
             raise ValueError("CSV must be sorted with unique dates")
         print(json.dumps(backtest(bars,c),indent=2))
+        return
+    if args.command=='research':
+        if args.execute_paper:ap.error('research never accepts --execute-paper')
+        from .research import compare
+        print(json.dumps(compare(read_csv(args.csv),c,cash=args.capital,fee=args.fee_bps/10000,slippage=args.slippage_bps/10000,sell_tax=args.sell_tax_bps/10000),ensure_ascii=False,indent=2,allow_nan=False))
         return
     if args.command=='reconcile':
         if args.execute_paper:ap.error('reconcile never accepts --execute-paper')

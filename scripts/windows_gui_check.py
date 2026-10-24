@@ -92,6 +92,29 @@ def run():
         s=wait(lambda s:'백테스트 완료' in s.get('status',''))
         assert len(s['tables']['demo'])==1
         record('cancel-file-default-demo')
+        s=state();target=next(t for t in s['notebook_tabs'] if t['text']=='백테스트')
+        mouse.click(coords=(target['x'],target['y']))
+        wait(lambda s:s.get('visible_tables',{}).get('demo'))
+        click('전략 비교 (연구용)')
+        modal('전략 연구 일봉 CSV 선택 (300~5000개)').type_keys('{ESC}')
+        s=wait(lambda s:not s.get('busy',True) and len(s.get('windows',[]))==1)
+        assert s['submitted']==0
+        record('research-file-cancel-no-orders')
+        before_reads=s['read_calls'];before_config=(OUT/'config.json').read_text()
+        click('전략 비교 (연구용)')
+        dialog=modal('전략 연구 일봉 CSV 선택 (300~5000개)')
+        keyboard.send_keys('%n');keyboard.send_keys('^a')
+        keyboard.send_keys(str(OUT/'examples'/'synthetic-strategy-research.csv'),with_spaces=True)
+        keyboard.send_keys('{ENTER}')
+        s=wait(lambda s:not s.get('busy',True) and any(w['title']=='전략 비교 · 연구용' for w in s.get('windows',[])))
+        report_window=next(w for w in s['windows'] if w['title']=='전략 비교 · 연구용')
+        rows=next(w['rows'] for w in report_window['widgets'] if w['class']=='Treeview')
+        assert len(rows)==5 and rows[0][0]=='기존 전략'
+        assert any('자동 적용 없음' in w.get('text','') for w in report_window['widgets'])
+        assert s['submitted']==0 and s['read_calls']==before_reads and not s['power_active']
+        assert (OUT/'config.json').read_text()==before_config
+        record('offline-strategy-comparison-no-broker-or-auto-apply')
+        click('닫기','전략 비교 · 연구용');wait(lambda s:len(s.get('windows',[]))==1)
         click('설정')
         es=entries('전략 설정')
         assert len(es)==8
