@@ -109,7 +109,7 @@ def run():
         s=wait(lambda s:not s.get('busy',True) and any(w['title']=='전략 비교 · 연구용' for w in s.get('windows',[])))
         report_window=next(w for w in s['windows'] if w['title']=='전략 비교 · 연구용')
         rows=next(w['rows'] for w in report_window['widgets'] if w['class']=='Treeview')
-        assert len(rows)==5 and rows[0][0]=='baseline'
+        assert len(rows)==5 and rows[0][0]=='기존 전략'
         assert any('자동 적용 없음' in w.get('text','') for w in report_window['widgets'])
         assert s['submitted']==0 and s['read_calls']==before_reads and not s['power_active']
         assert (OUT/'config.json').read_text()==before_config

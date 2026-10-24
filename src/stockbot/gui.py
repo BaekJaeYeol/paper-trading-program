@@ -610,15 +610,18 @@ class Dashboard:
         self.work('research',lambda:compare(read_csv(Path(selected)),c))
 
     def show_research(self,data):
-        window=tk.Toplevel(self.root);window.title('전략 비교 · 연구용');window.geometry('900x400+24+40');window.transient(self.root)
+        window=tk.Toplevel(self.root);window.title('전략 비교 · 연구용');window.geometry('900x460+24+40');window.transient(self.root)
         ttk.Label(window,text='실제 시장 수익 개선 미검증 · 입력 CSV 출처/기업행위 미검증 · 자동 적용 없음',wraplength=860,padding=10).pack(anchor='w')
-        selected=data['selected_on_training'] or '없음 (학습 거래 표본 부족)'
-        ttk.Label(window,text=f"학습 기간만으로 선택: {selected} · 상태: {data['evidence_status']}\n임의 연구 원금 10,000 (입력 가격 단위) · 비용 가정: 양쪽 수수료 0.10% + 슬리피지 0.10% · 매도세 가정 0%",wraplength=860,padding=10).pack(anchor='w')
+        names={'baseline':'기존 전략','trend_guard':'추세·급락 제한','trend_volume_2':'추세 + 거래량 2배','trend_volume_4':'추세 + 거래량 4배','trend_volatility_guard':'추세 + 변동성 제한'}
+        selected=names.get(data['selected_on_training'],'없음 (학습 거래 표본 부족)')
+        evidence={'insufficient_training_trades':'학습 거래 표본 부족','insufficient_holdout_trades':'검증·최종 거래 표본 부족','research_only_unverified_market_data':'연구용 · 실제 시장 개선 미검증'}[data['evidence_status']]
+        ttk.Label(window,text=f"학습 기간만으로 선택: {selected} · {evidence}\n임의 연구 원금 10,000 (입력 가격 단위) · 비용 가정: 양쪽 수수료 0.10% + 슬리피지 0.10% · 매도세 가정 0%",wraplength=860,padding=10).pack(anchor='w')
+        ttk.Label(window,text=f"일봉 {data['bars']}개 · 시간순 학습 60% / 검증 20% / 최종 20% · 공통 워밍업 60봉",padding=(10,0)).pack(anchor='w')
         table=ttk.Treeview(window,columns=list(range(6)),show='headings',height=6)
         for i,title in enumerate(('후보','학습 순수익률','검증 순수익률','최종 순수익률','최종 최대낙폭','최종 청산 거래 수')):
             table.heading(i,text=title);table.column(i,width=180 if i==0 else 135,anchor='center')
         for row in data['rows']:
-            table.insert('','end',values=(row['name'],f"{row['train']['total_return']:.2%}",f"{row['validation']['total_return']:.2%}",f"{row['test']['total_return']:.2%}",f"{row['test']['max_drawdown']:.2%}",row['test']['closed_trades']))
+            table.insert('','end',values=(names[row['name']],f"{row['train']['total_return']:.2%}",f"{row['validation']['total_return']:.2%}",f"{row['test']['total_return']:.2%}",f"{row['test']['max_drawdown']:.2%}",row['test']['closed_trades']))
         table.pack(fill='both',expand=True,padx=10)
         b=data['benchmarks']['test']
         ttk.Label(window,text=f"최종 비교: 현금 {b['cash_return']:.2%} / 같은 비중 단순 보유 {b['matched_allocation_hold']['total_return']:.2%} / 전액 단순 보유 {b['full_allocation_hold']['total_return']:.2%}\n기간별 독립 원금·무보유 시작 및 끝날 강제 청산 가정입니다. 실시간 지정가·브래킷 체결을 재현하지 않습니다.",wraplength=860,padding=10).pack(anchor='w')
