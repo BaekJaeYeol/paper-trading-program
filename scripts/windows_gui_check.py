@@ -217,6 +217,21 @@ def run():
         s=wait(lambda s:s.get('account_error') and not s.get('busy',True))
         assert s['stop'] and not s['running'] and s['submitted']==1
         record('sticky-review-survives-normal-read-and-blocks-resume')
+        click('진단 요약 저장')
+        dialog=modal('진단 요약 저장')
+        report_path=OUT/'diagnostics-export.json'
+        keyboard.send_keys('%n')
+        keyboard.send_keys('^a')
+        keyboard.send_keys(str(report_path),with_spaces=True)
+        keyboard.send_keys('{ENTER}')
+        notice('진단 요약')
+        report=json.loads(report_path.read_text(encoding='utf-8'))
+        assert report['stop_requested'] and not report['live_orders_enabled']
+        assert report['read_failed_since_snapshot'] and report['stale']
+        assert any(r['code']=='order_replaced' for r in report['review']['reasons'])
+        assert 'gui-response-lost-MSFT' not in report_path.read_text(encoding='utf-8')
+        s=state();assert s['stop'] and s['submitted']==1 and not s['running']
+        record('diagnostic-save-dialog-redacted-read-only-report')
         main.close();process.wait(timeout=20)
         assert process.returncode==0
         checks.append({'name':'window-close','passed':True})
