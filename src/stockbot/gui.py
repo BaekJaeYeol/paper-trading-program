@@ -145,6 +145,9 @@ class Dashboard:
                 ttk.Button(bar,text='진단 요약 저장',command=self.export_diagnostics).pack(side='left')
                 recovery=ttk.Button(bar,text='선택 기록 복구 점검',command=self.recover_review)
                 recovery.pack(side='left',padx=6);self.actions.append(recovery)
+            if key=='demo':
+                research=ttk.Button(panel,text='전략 비교 (연구용)',command=self.research)
+                research.pack(anchor='w',pady=(0,4));self.actions.append(research)
             if key=='health':
                 self.health_notice=tk.StringVar(value='미국 Alpaca 모의 대조 이력 · 최대 최근 50개 상태 묶음 · 자동 재개 아님')
                 ttk.Label(panel,textvariable=self.health_notice,wraplength=850).pack(anchor='w')
@@ -235,7 +238,10 @@ class Dashboard:
                 for button in self.actions:
                     button.state(['!disabled'])
                 self.selector.configure(state='disabled' if self.running else 'readonly')
-                if error:
+                if error and kind=='research':
+                    self.status.set('전략 연구 실패 · CSV와 비용·데이터 범위를 확인하세요.')
+                    self.write('연구 입력은 날짜가 증가하는 일봉 300~5000개가 필요합니다. 계좌·주문·설정은 변경하지 않았습니다.')
+                elif error:
                     self.resume_pending=False
                     self.account_error=True
                     self.pause()
@@ -285,6 +291,9 @@ class Dashboard:
                         else:
                             self.cadence.complete(time.monotonic())
                             self.schedule_trade()
+                elif kind=='research':
+                    self.show_research(data)
+                    self.status.set('전략 연구 완료 · 실제 시장 개선 미검증 · 자동 적용 없음')
                 elif kind == 'demo':
                     self.fill('demo', [[r['date'], r['side'], r['qty'], f"${r['price']:,.2f}"] for r in data['trades']])
                     self.demo_summary.set(f"백테스트 최종자산 ${data['ending_equity']:,.2f} · 최대 낙폭 {data['max_drawdown']:.2%} · 미청산 {data['open_qty']}주 · 실제 성과 아님")
@@ -589,6 +598,31 @@ class Dashboard:
             self.stop_failed=True
             self.status.set('중단 기록 실패 · 이 창의 실행은 차단됨 · 다른 프로세스와 증권사 주문을 확인하세요.')
             self.write('STOP 기록 실패. 이 창은 중단했지만 다른 실행 프로세스의 차단은 확인하지 못했습니다.')
+
+    def research(self):
+        if self.busy:return
+        if self.running:
+            messagebox.showinfo('전략 연구','비상 중단 후 연구를 진행하세요. 연구 결과는 자동 적용하지 않습니다.',parent=self.root);return
+        selected=filedialog.askopenfilename(parent=self.root,title='전략 연구 일봉 CSV 선택 (300~5000개)',initialdir=self.path.parent/'examples',filetypes=[('일봉 CSV','*.csv')])
+        if not selected:return
+        from .research import compare
+        c=dict(self.config)
+        self.work('research',lambda:compare(read_csv(Path(selected)),c))
+
+    def show_research(self,data):
+        window=tk.Toplevel(self.root);window.title('전략 비교 · 연구용');window.geometry('900x400+24+40');window.transient(self.root)
+        ttk.Label(window,text='실제 시장 수익 개선 미검증 · 입력 CSV 출처/기업행위 미검증 · 자동 적용 없음',wraplength=860,padding=10).pack(anchor='w')
+        selected=data['selected_on_training'] or '없음 (학습 거래 표본 부족)'
+        ttk.Label(window,text=f"학습 기간만으로 선택: {selected} · 상태: {data['evidence_status']}\n임의 연구 원금 10,000 (입력 가격 단위) · 비용 가정: 양쪽 수수료 0.10% + 슬리피지 0.10% · 매도세 가정 0%",wraplength=860,padding=10).pack(anchor='w')
+        table=ttk.Treeview(window,columns=list(range(6)),show='headings',height=6)
+        for i,title in enumerate(('후보','학습 순수익률','검증 순수익률','최종 순수익률','최종 최대낙폭','최종 청산 거래 수')):
+            table.heading(i,text=title);table.column(i,width=180 if i==0 else 135,anchor='center')
+        for row in data['rows']:
+            table.insert('','end',values=(row['name'],f"{row['train']['total_return']:.2%}",f"{row['validation']['total_return']:.2%}",f"{row['test']['total_return']:.2%}",f"{row['test']['max_drawdown']:.2%}",row['test']['closed_trades']))
+        table.pack(fill='both',expand=True,padx=10)
+        b=data['benchmarks']['test']
+        ttk.Label(window,text=f"최종 비교: 현금 {b['cash_return']:.2%} / 같은 비중 단순 보유 {b['matched_allocation_hold']['total_return']:.2%} / 전액 단순 보유 {b['full_allocation_hold']['total_return']:.2%}\n기간별 독립 원금·무보유 시작 및 끝날 강제 청산 가정입니다. 실시간 지정가·브래킷 체결을 재현하지 않습니다.",wraplength=860,padding=10).pack(anchor='w')
+        ttk.Button(window,text='닫기',command=window.destroy).pack(pady=8)
 
     def demo(self):
         if self.korean_read_only():
