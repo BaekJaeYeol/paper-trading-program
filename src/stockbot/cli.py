@@ -12,6 +12,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from .broker import AlpacaPaper
 from .core import Bar, signal, size, backtest
+from .ui_safety import unresolved_attempts
 
 NY = ZoneInfo("America/New_York")
 
@@ -33,11 +34,16 @@ def read_csv(path):
 def now_parse(value):
     return datetime.fromisoformat(value.replace("Z","+00:00"))
 
+def _halted(c, root):
+    return (root/'STOP').exists() or bool(c.get('_stop_event') and c['_stop_event'].is_set())
+
 def _cycle(c, execute=False, broker=None):
     root = Path(c["state_dir"])
     root.mkdir(parents=True, exist_ok=True)
-    if (root/"STOP").exists():
+    if _halted(c,root):
         return {"status":"halted"}
+    if execute and unresolved_attempts(root):
+        raise RuntimeError("Unresolved orders block new submissions; reconcile in broker dashboard")
     b = broker or AlpacaPaper()
     clock = b.request("/v2/clock")
     now = now_parse(clock["timestamp"])
@@ -104,7 +110,7 @@ def _cycle(c, execute=False, broker=None):
             if db.execute("SELECT 1 FROM attempts WHERE id=?",(cid,)).fetchone():
                 continue
             if execute:
-                if (root/"STOP").exists():
+                if _halted(c,root):
                     break
                 # Commit intent BEFORE network I/O: crashes/timeouts never trigger blind resubmission.
                 db.execute("INSERT INTO attempts VALUES (?, 'pending')",(cid,))

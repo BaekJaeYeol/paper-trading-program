@@ -3,6 +3,11 @@ import json
 import os
 import queue
 import threading
+import time
+import math
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from .ui_safety import order_row, resume_snapshot
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, messagebox, filedialog
@@ -20,13 +25,19 @@ STATUS = {'ok': '조회 완료', 'market_closed': '미국 정규장 마감',
 
 def account_view(broker):
     """Read-only snapshot. Never return credentials or account identifiers."""
+    started=time.monotonic()
     account = broker.request('/v2/account')
     clock = broker.request('/v2/clock')
     positions = broker.request('/v2/positions')
     orders = broker.request('/v2/orders', {'status': 'open', 'limit': 500, 'nested': 'false'})
     if len(orders) >= 500:
         raise ValueError('Order snapshot may be truncated')
-    return {'equity': float(account['equity']), 'cash': float(account['cash']),
+    for order in orders:order_row(order)
+    if any(not math.isfinite(float(account[k])) for k in ('equity','cash','buying_power','last_equity')):raise ValueError('Invalid account amounts')
+    return {'received_at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+            'request_seconds':time.monotonic()-started,
+            'can_trade':account.get('status')=='ACTIVE' and not account.get('trading_blocked') and not account.get('account_blocked'),
+            'equity': float(account['equity']), 'cash': float(account['cash']),
             'buying_power': float(account['buying_power']),
             'daily_pnl': float(account['equity']) - float(account['last_equity']),
             'market_open': clock['is_open'],
@@ -49,6 +60,12 @@ class Dashboard:
         self.running = False
         self.timer = None
         self.closed = False
+        self.stop_event=threading.Event()
+        self.resume_pending=False
+        self.last_account_time=None
+        self.last_account_label="미조회"
+        self.account_error=False
+        self.stop_failed=False
         self.market = tk.StringVar(value="미국 · Alpaca")
         self.kis = None
         root.title('모의매매 프로그램 · Paper Trading')
@@ -80,7 +97,11 @@ class Dashboard:
         selector.bind('<<ComboboxSelected>>', self.change_market)
         self.selector = selector
         self.status = tk.StringVar(value='API 연결 전 · 데모로 먼저 둘러보세요')
-        ttk.Label(outer, textvariable=self.status, padding=(0, 12)).pack(anchor='w')
+        ttk.Label(outer, textvariable=self.status, padding=(0, 12),wraplength=880).pack(anchor='w')
+        self.context=tk.StringVar(value='모의투자 · Alpaca Paper · 미국 모의계좌 · USD · 실계좌 주문 비활성화')
+        ttk.Label(outer,textvariable=self.context,foreground='#2545ba',wraplength=880).pack(anchor='w')
+        self.freshness=tk.StringVar(value='계좌 데이터 미조회 · 수신 시각과 시세 기준 시각은 다릅니다.')
+        ttk.Label(outer,textvariable=self.freshness,foreground='#526079',wraplength=880).pack(anchor='w',pady=(2,6))
         cards = ttk.Frame(outer)
         cards.pack(fill='x', pady=(4, 16))
         self.values = {}
@@ -112,7 +133,7 @@ class Dashboard:
         # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),
-                 ('미체결 주문', 'orders', ['종목', '방향', '수량', '체결 수량', '지정가', '상태']),
+                 ('미체결 주문', 'orders', ['종목', '방향', '주문 수량', '체결 수량', '잔여 수량', '지정가', '상태']),
                  ('주문 계획', 'plans', ['종목', '수량', '진입가', '손절가', '익절가', '제출 여부']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
@@ -121,12 +142,14 @@ class Dashboard:
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
-                table.column(i, width=140, anchor='center')
+                table.column(i, width=min(140,860//len(columns)), minwidth=70, anchor='center')
             scroll = ttk.Scrollbar(panel, orient='vertical', command=table.yview)
             table.configure(yscrollcommand=scroll.set)
             scroll.pack(side='right', fill='y')
             table.pack(fill='both', expand=True)
             self.tables[key] = table
+        self.order_notice=tk.StringVar(value='미체결 주문 미조회 · 빈 표는 조회 성공을 의미하지 않습니다.')
+        ttk.Label(outer,textvariable=self.order_notice,foreground='#526079').pack(anchor='w',side='bottom')
         self.demo_summary = tk.StringVar(value='백테스트는 합성 데이터 예제입니다. 실제 계좌 성과와 다릅니다.')
         ttk.Label(outer, textvariable=self.demo_summary, padding=(0, 8)).pack(anchor='w', side='bottom')
         # Log is below the notebook and above the footer.
@@ -141,6 +164,7 @@ class Dashboard:
     def write(self, text):
         self.log.configure(state='normal')
         self.log.insert('end', text + '\n')
+        if int(self.log.index('end-1c').split('.')[0])>1000:self.log.delete('1.0','201.0')
         self.log.see('end')
         self.log.configure(state='disabled')
 
@@ -178,16 +202,24 @@ class Dashboard:
                     button.state(['!disabled'])
                 self.selector.configure(state='disabled' if self.running else 'readonly')
                 if error:
+                    self.resume_pending=False
+                    self.account_error=True
                     self.pause()
                     self.status.set('작업 실패 · 자동 실행 정지')
                     self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
+                elif kind == 'resume':
+                    self.finish_resume(data)
                 elif kind == 'account':
+                    self.account_error=False
+                    self.last_account_time=time.monotonic()
+                    self.last_account_label=data.get('received_at',datetime.now(ZoneInfo('Asia/Seoul')).isoformat())
                     kr = self.market.get().startswith('한국')
                     for key, value in self.values.items():
                         number = data[key]
                         value.set('미조회' if number is None else (f"₩{number:,.0f}" if kr else f"${number:,.2f}"))
                     self.fill('positions', [[p[k] for k in ('symbol', 'qty', 'avg_entry_price', 'current_price', 'unrealized_pl')] for p in data['positions']])
-                    self.fill('orders', [[o[k] for k in ('symbol', 'side', 'qty', 'filled_qty', 'limit_price', 'status')] for o in data['orders']])
+                    self.fill('orders', [order_row(o) for o in data['orders']])
+                    self.order_notice.set('미체결 주문 미조회 · 한국 잔고 조회 전용' if kr else f"브로커 조회 완료 · 미체결 {len(data['orders'])}건 · 취소 기능은 수행하지 않음")
                     self.status.set('한국 모의계좌 연결됨 · 잔고 조회 전용 · 미체결 주문 미조회' if kr else
                                     '모의계좌 연결됨 · ' + ('미국 정규장 개장' if data['market_open'] else '미국 정규장 마감'))
                     self.write('모의계좌 정보를 새로고침했습니다.')
@@ -212,7 +244,19 @@ class Dashboard:
                     self.write('CSV 백테스트를 완료했습니다. 기본 파일은 합성 데이터입니다.')
         except queue.Empty:
             pass
+        self.update_safety_display()
         self.root.after(100, self.poll)
+
+    def update_safety_display(self):
+        kr=self.market.get().startswith('한국')
+        self.context.set('모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
+        if self.last_account_time is None:self.freshness.set('계좌 데이터 미조회 · 시세 신선도는 엔진에서 별도 검증')
+        else:
+            age=max(0,int(time.monotonic()-self.last_account_time))
+            state='조회 실패 · 이전 데이터' if self.account_error else ('오래된 계좌 정보' if age>=60 else '정상 수신')
+            self.freshness.set(f'{state} · 마지막 정상 수신 {self.last_account_label} · {age}초 경과 / KST')
+        if self.stop_failed:self.status.set('중단 기록 실패 · 이 창의 실행은 차단됨 · 다른 프로세스와 증권사 주문을 확인하세요.')
+        elif (Path(self.config['state_dir'])/'STOP').exists():self.status.set('비상 중단 · 신규 주문 차단 확인 · 기존 주문 취소·보유종목 청산은 수행하지 않음')
 
     def credentials(self):
         if self.running or self.busy:
@@ -241,6 +285,9 @@ class Dashboard:
         ttk.Button(window, text='연결 확인', command=apply, style='Primary.TButton').pack(pady=18)
 
     def change_market(self, event=None):
+        self.last_account_time=None
+        self.account_error=False
+        self.order_notice.set('미체결 주문 미조회')
         for value in self.values.values():
             value.set('—')
         for key in self.tables:
@@ -304,19 +351,27 @@ class Dashboard:
             return
         if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분마다 반복합니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
             return
-        stop = Path(self.config['state_dir']) / 'STOP'
+        self.resume_pending=True
+        self.work('resume',lambda:resume_snapshot(dict(self.config),AlpacaPaper(),account_view))
+
+    def finish_resume(self,data):
+        if not self.resume_pending:return
+        self.resume_pending=False
+        stop=Path(self.config['state_dir'])/'STOP'
         if stop.exists():
-            if not messagebox.askyesno('비상 중단 해제', 'STOP 파일이 있습니다. 비상 중단을 해제하고 재개할까요?'):
-                return
-            stop.unlink()
-        self.running = True
-        self.selector.configure(state='disabled')
-        self.write('모의매매를 시작합니다. 실계좌 주문은 실행하지 않습니다.')
+            if not messagebox.askyesno('비상 중단 해제','계좌·미체결·미확인 주문 점검을 통과했습니다.\n기존 주문 취소나 청산을 의미하지 않습니다. STOP을 해제하고 모의매매를 재개할까요?'):return
+            try:stop.unlink()
+            except OSError:
+                self.status.set('STOP 해제 실패 · 재개 차단');return
+        self.last_account_time=time.monotonic();self.last_account_label=data['received_at'];self.account_error=False
+        self.stop_event.clear();self.stop_failed=False
+        self.running=True;self.selector.configure(state='disabled')
+        self.write('재개 전 읽기 점검 통과. 모의매매 시작 · 실계좌 주문 비활성화.')
         self.trade()
 
     def trade(self):
         self.timer = None
-        if self.running and not self.work('trade', lambda: cycle(dict(self.config), True)):
+        if self.running and not self.work('trade', lambda: cycle({**self.config,'_stop_event':self.stop_event}, True)):
             self.timer = self.root.after(1000, self.trade)
 
     def pause(self):
@@ -328,11 +383,19 @@ class Dashboard:
 
     def stop(self):
         self.pause()
+        self.resume_pending=False
+        if hasattr(self,'stop_event'):self.stop_event.set()
         root = Path(self.config['state_dir'])
-        root.mkdir(parents=True, exist_ok=True)
-        (root / 'STOP').touch()
-        self.status.set('비상 중단 · 신규 주문 차단')
-        self.write('STOP 파일 생성. 이미 통신 중인 주문과 기존 주문은 Alpaca에서 확인하세요.')
+        try:
+            root.mkdir(parents=True, exist_ok=True);(root/'STOP').touch()
+            if not (root/'STOP').exists():raise OSError('STOP not found')
+            self.stop_failed=False
+            self.status.set('비상 중단 · 신규 주문 차단 확인 · 기존 주문 취소·보유종목 청산은 수행하지 않음')
+            self.write('STOP 파일 확인. 이미 통신 중인 주문의 결과와 기존 주문은 증권사에서 확인하세요.')
+        except OSError:
+            self.stop_failed=True
+            self.status.set('중단 기록 실패 · 이 창의 실행은 차단됨 · 다른 프로세스와 증권사 주문을 확인하세요.')
+            self.write('STOP 기록 실패. 이 창은 중단했지만 다른 실행 프로세스의 차단은 확인하지 못했습니다.')
 
     def demo(self):
         if self.korean_read_only():

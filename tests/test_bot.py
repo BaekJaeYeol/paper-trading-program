@@ -53,7 +53,9 @@ class Tests(unittest.TestCase):
                 if fail:
                     with self.assertRaises(RuntimeError): cycle(c,True,b)
                 else: cycle(c,True,b)
-                cycle(c,True,b)
+                if fail:
+                    with self.assertRaises(RuntimeError):cycle(c,True,b)
+                else:cycle(c,True,b)
                 self.assertEqual(len(b.sent),1)
     def test_daily_loss_and_stale_quote(self):
         with tempfile.TemporaryDirectory() as temp:

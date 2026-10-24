@@ -131,11 +131,27 @@ def run():
         click('비상 중단');wait(lambda s:s.get('stop') and not s.get('running',True))
         (OUT/'control.json').write_text('{"fail":true}')
         time.sleep(.3)
-        click('계좌 새로고침');wait(lambda s:'작업 실패' in s.get('status',''))
+        click('계좌 새로고침');wait(lambda s:s.get('account_error') and not s.get('busy',True))
         (OUT/'control.json').write_text('{"fail":false}')
         time.sleep(.3)
-        click('계좌 새로고침');wait(lambda s:'모의계좌 연결됨' in s.get('status','') and not s.get('busy',True))
+        click('계좌 새로고침');wait(lambda s:not s.get('account_error',True) and not s.get('busy',True))
         record('network-error-recovery-offline')
+        (OUT/'control.json').write_text('{"partial":true}')
+        time.sleep(.3)
+        click('계좌 새로고침')
+        s=wait(lambda s:not s.get('busy',True) and bool(s.get('tables',{}).get('orders')))
+        assert s['tables']['orders'][0][4]=='7'
+        assert s['tables']['orders'][0][-1]=='부분 체결'
+        assert '비상 중단' in s['status']
+        record('partial-fill-and-stop-persistence')
+        (OUT/'control.json').write_text('{"delay":1}')
+        time.sleep(.3)
+        click('계좌 새로고침');wait(lambda s:s.get('busy'))
+        click('비상 중단')
+        s=wait(lambda s:not s.get('busy',True))
+        assert '비상 중단' in s['status'] and not s['running']
+        assert '실계좌 주문 비활성화' in s['context']
+        record('late-response-cannot-clear-stop')
         main.close();process.wait(timeout=20)
         assert process.returncode==0
         checks.append({'name':'window-close','passed':True})
