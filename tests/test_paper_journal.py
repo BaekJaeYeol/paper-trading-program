@@ -1,4 +1,6 @@
 import copy
+from contextlib import redirect_stdout,redirect_stderr,closing
+import sys
 import io
 import json
 import os
@@ -110,8 +112,8 @@ class JournalTests(unittest.TestCase):
         self.assertEqual(len(one['order_events']),len(two['order_events']))
     def test_legacy_unknown_cannot_be_auto_resolved(self):
         path=Path(self.temp.name,'orders.sqlite')
-        with sqlite3.connect(path) as db:
-            db.execute('CREATE TABLE attempts(id TEXT PRIMARY KEY,status TEXT NOT NULL)');db.execute("INSERT INTO attempts VALUES ('legacy','unknown')")
+        with closing(sqlite3.connect(path)) as db:
+            db.execute('CREATE TABLE attempts(id TEXT PRIMARY KEY,status TEXT NOT NULL)');db.execute("INSERT INTO attempts VALUES ('legacy','unknown')");db.commit()
         data=self.check();self.assertEqual(data['reconciliation']['legacy'],1)
         self.assertEqual(data['reconciliation']['unresolved'],1);self.assertEqual(self.b.lookups,[])
     def test_lock_prevents_parallel_reconciliation(self):
@@ -123,7 +125,7 @@ class JournalTests(unittest.TestCase):
     def test_atomic_payload_precedes_network(self):
         self.b.fail_after_accept=True
         with self.assertRaises(RuntimeError):cycle(self.c,True,self.b)
-        with sqlite3.connect(Path(self.temp.name,'orders.sqlite')) as db:
+        with closing(sqlite3.connect(Path(self.temp.name,'orders.sqlite'))) as db:
             rows=db.execute('SELECT a.status,r.payload FROM attempts a JOIN paper_requests r ON a.id=r.client_id').fetchall()
         self.assertEqual(len(rows),1);self.assertEqual(rows[0][0],'unknown')
         self.assertEqual(json.loads(rows[0][1])['symbol'],'AAPL')
@@ -143,6 +145,21 @@ class JournalTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):reconcile_snapshot(self.c,self.b,reader)
         self.assertEqual(len(unresolved_attempts(self.temp.name)),1);self.assertEqual(self.b.lookups,[])
         self.assertFalse(Path(self.temp.name,'cycle.lock').exists())
+
+    def test_cli_reconcile_never_submits(self):
+        from stockbot.cli import main
+        self.submit()
+        config_path=Path(self.temp.name)/'config.json';config_path.write_text(json.dumps(self.c))
+        output=io.StringIO()
+        with patch('stockbot.cli.AlpacaPaper',return_value=self.b),patch.object(sys,'argv',['stockbot','reconcile','--config',str(config_path)]),redirect_stdout(output):main()
+        data=json.loads(output.getvalue())
+        self.assertTrue(data['reconciliation']['read_only']);self.assertEqual(len(self.b.sent),1)
+    def test_cli_reconcile_rejects_execute_flag(self):
+        from stockbot.cli import main
+        config_path=Path(self.temp.name)/'config.json';config_path.write_text(json.dumps(self.c))
+        with patch('stockbot.cli.AlpacaPaper',side_effect=AssertionError('must not create adapter')),patch.object(sys,'argv',['stockbot','reconcile','--config',str(config_path),'--execute-paper']),redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as result:main()
+        self.assertEqual(result.exception.code,2)
 
 class LookupTests(unittest.TestCase):
     def test_lookup_404_and_other_failures_are_distinct(self):

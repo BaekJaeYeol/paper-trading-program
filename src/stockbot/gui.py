@@ -110,6 +110,7 @@ class Dashboard:
             self.actions.append(button)
         ttk.Button(toolbar, text='비상 중단', command=self.stop, style='Danger.TButton').pack(side='right')
         tabs = ttk.Notebook(outer)
+        tabs.enable_traversal()
         # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),

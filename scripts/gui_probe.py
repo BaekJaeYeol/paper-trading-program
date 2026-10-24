@@ -1,5 +1,6 @@
 """Launch real Tk widgets with an offline broker and export state for external UI tests."""
 import json
+from contextlib import closing
 import os
 import socket
 import sys
@@ -83,6 +84,7 @@ def snapshot():
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
              'running': app.running, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
+             'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}
     target = OUT / 'state.json'
@@ -105,9 +107,10 @@ def snapshot():
                 import sqlite3
                 from stockbot.paper_journal import intent,submission_uncertain
                 payload={'symbol':'MSFT','qty':'2','side':'buy','type':'limit','limit_price':'100','time_in_force':'day','order_class':'bracket','client_order_id':'gui-response-lost-MSFT','take_profit':{'limit_price':'110'},'stop_loss':{'stop_price':'90'}}
-                with sqlite3.connect(Path(app.config['state_dir'])/'orders.sqlite') as db:
+                with closing(sqlite3.connect(Path(app.config['state_dir'])/'orders.sqlite')) as db:
                     intent(db,payload['client_order_id'],payload)
                     submission_uncertain(db,payload['client_order_id'])
+                    db.commit()
                 OfflineBroker.saved_orders[payload['client_order_id']]={**payload,'id':'gui-broker-uncertain','filled_qty':'1','status':'partially_filled'}
                 OfflineBroker.injected=True
         except (ValueError, OSError): pass

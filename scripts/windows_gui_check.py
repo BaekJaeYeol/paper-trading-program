@@ -167,6 +167,16 @@ def run():
         assert any(r[0]=='MSFT' and r[2]=='1' and r[3]=='1' and r[4]=='부분 체결' for r in s['tables']['history'])
         assert len(s['tables']['timeline'])>=3
         record('unknown-found-partial-read-only-recovery')
+        main.set_focus()
+        for _ in range(6):
+            if state().get('visible_tables',{}).get('history'):break
+            keyboard.send_keys('^{TAB}')
+            time.sleep(.2)
+        wait(lambda s:s.get('visible_tables',{}).get('history'))
+        record('history-tab-keyboard-navigation')
+        keyboard.send_keys('^{TAB}')
+        wait(lambda s:s.get('visible_tables',{}).get('timeline'))
+        record('timeline-tab-keyboard-navigation')
         main.close();process.wait(timeout=20)
         assert process.returncode==0
         checks.append({'name':'window-close','passed':True})
