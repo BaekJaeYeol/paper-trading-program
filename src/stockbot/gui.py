@@ -21,7 +21,7 @@ BG = '#f3f5fa'
 INK = '#17233b'
 BLUE = '#315bea'
 STATUS = {'ok': '조회 완료', 'market_closed': '미국 정규장 마감',
-          'halted': '비상 중단 중', 'daily_loss_limit': '일일 손실 한도 도달'}
+          'reconciliation_required':'주문·보유 수량 대조 필요','halted': '비상 중단 중', 'daily_loss_limit': '일일 손실 한도 도달'}
 
 
 def account_view(broker):
@@ -46,6 +46,7 @@ class Dashboard:
         self.last_account_label="미조회"
         self.account_error=False
         self.stop_failed=False
+        self.entry_blocked=False
         self.market = tk.StringVar(value="미국 · Alpaca")
         self.kis = None
         root.title('모의매매 프로그램 · Paper Trading')
@@ -121,6 +122,7 @@ class Dashboard:
                  ('미체결 주문', 'orders', ['종목', '방향', '주문 수량', '체결 수량', '잔여 수량', '지정가', '상태']),
                  ('주문 계획', 'plans', ['종목', '수량', '진입가', '손절가', '익절가', '제출 여부']),
                  ('봇 주문 추적', 'history', ['종목','주문 수량','체결 수량','잔여 수량','대조 상태','봇 주문 키','확인 시각 (KST)']),
+                 ('보유 수량 대조','inventory',['종목','봇 기대 수량','계좌 실제 수량','대조 결과']),
                  ('주문 변경 기록', 'timeline', ['봇 주문 키','대조 결과','주문 상태','체결 수량','확인 시각 (KST)']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
@@ -236,10 +238,12 @@ class Dashboard:
                     label = STATUS.get(data['status'], data['status'])
                     if (Path(self.config['state_dir']) / 'STOP').exists():
                         label = '비상 중단 · 신규 주문 차단'
+                    if kind=='trade' and data['status'] in ('halted','daily_loss_limit','reconciliation_required'):self.pause()
                     self.status.set(label + (' · 5분마다 실행 중' if self.running else ''))
                     self.write(f"{label} · 주문 계획 {len(data.get('orders', []))}건")
+                    if 'account_snapshot' in data:self.render_journal(data['account_snapshot'])
                     if self.running and kind == 'trade':
-                        if data['status'] in ('halted', 'daily_loss_limit'):
+                        if data['status'] in ('halted', 'daily_loss_limit','reconciliation_required'):
                             self.pause()
                         else:
                             self.timer = self.root.after(300000, self.trade)
@@ -259,11 +263,16 @@ class Dashboard:
         self.fill('timeline',[[r[k] for k in ('client_id','kind','status','filled_qty','checked_at')] for r in data['order_events']])
         r=data['reconciliation']
         self.order_notice.set(f"읽기 대조: 확인 {r['checked']}건 / 미확인 {r['unresolved']}건 / 이전 형식 {r['legacy']}건 · 중단 상태 변경 없음 · 주문 재전송/취소 없음")
+        inv=data.get('inventory')
+        if inv:
+            self.entry_blocked=not inv['ready']
+            self.fill('inventory',[[r['symbol'],r['expected'],r['actual'],'일치' if r['matched'] else '불일치 · 재개 차단'] for r in inv['rows']])
+            self.order_notice.set(self.order_notice.get()+' / 수량 대조: '+inv['reason'])
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
 
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
-        execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else '대기'))
+        execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else ('대조 차단' if getattr(self,'entry_blocked',False) else '대기')))
         self.context.set('실행: '+execution+' · 모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
         if self.last_account_time is None:self.freshness.set('계좌 데이터 미조회 · 시세 신선도는 엔진에서 별도 검증')
         else:
@@ -388,9 +397,18 @@ class Dashboard:
         self.write('재개 전 읽기 점검 통과. 모의매매 시작 · 실계좌 주문 비활성화.')
         self.trade()
 
+    def checked_trade(self):
+        b=AlpacaPaper()
+        c={**self.config,'_stop_event':self.stop_event,'_reconcile_cancel':self.read_cancel}
+        snapshot=reconcile_snapshot(c,b,account_view)
+        if snapshot['reconciliation']['unresolved'] or not snapshot['inventory']['ready']:
+            return {'status':'reconciliation_required','orders':[],'account_snapshot':snapshot}
+        result=cycle(c,True,b);result['account_snapshot']=snapshot
+        return result
+
     def trade(self):
         self.timer = None
-        if self.running and not self.work('trade', lambda: cycle({**self.config,'_stop_event':self.stop_event}, True)):
+        if self.running and not self.work('trade', self.checked_trade):
             self.timer = self.root.after(1000, self.trade)
 
     def pause(self):

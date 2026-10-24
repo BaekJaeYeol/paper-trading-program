@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 from .broker import AlpacaPaper
 from .core import Bar, signal, size, backtest
 from .ui_safety import unresolved_attempts
+from .brackets import enforce_entry
 from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain
 
 NY = ZoneInfo("America/New_York")
@@ -115,6 +116,7 @@ def _cycle(c, execute=False, broker=None):
                 if _halted(c,root):
                     break
                 # Commit intent BEFORE network I/O: crashes/timeouts never trigger blind resubmission.
+                enforce_entry(db,positions)
                 intent(db,cid,body)
                 db.commit()
                 db.execute("BEGIN IMMEDIATE")
@@ -173,7 +175,13 @@ def main():
         ap.error("interval must be >= 30 seconds")
     while True:
         try:
-            print(json.dumps(cycle(c,args.command in ("paper","run")),indent=2),flush=True)
+            if args.command in ('paper','run'):
+                from .paper_journal import reconcile_snapshot,account_snapshot
+                b=AlpacaPaper();snapshot=reconcile_snapshot(c,b,account_snapshot)
+                if snapshot['reconciliation']['unresolved'] or not snapshot['inventory']['ready']:raise SystemExit('Reconciliation blocked entry; inspect orders/holdings before restarting')
+                result=cycle(c,True,b)
+            else:result=cycle(c,False)
+            print(json.dumps(result,indent=2),flush=True)
         except Exception as exc:
             logging.error("Cycle stopped: %s",exc)
             if args.command != "run":

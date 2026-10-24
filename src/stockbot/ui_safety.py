@@ -5,7 +5,7 @@ from decimal import Decimal
 from pathlib import Path
 import sqlite3
 
-ORDER_STATES={'new':'접수','accepted':'접수','pending_new':'접수 대기','partially_filled':'부분 체결','filled':'체결 완료','pending_cancel':'취소 요청 중','canceled':'취소 완료','rejected':'거부','expired':'만료','done_for_day':'당일 종료','pending_replace':'정정 요청 중','replaced':'정정 완료','accepted_for_bidding':'접수','stopped':'중지','suspended':'일시 중지','calculated':'정산 중'}
+ORDER_STATES={'held':'조건 대기','new':'접수','accepted':'접수','pending_new':'접수 대기','partially_filled':'부분 체결','filled':'체결 완료','pending_cancel':'취소 요청 중','canceled':'취소 완료','rejected':'거부','expired':'만료','done_for_day':'당일 종료','pending_replace':'정정 요청 중','replaced':'정정 완료','accepted_for_bidding':'접수','stopped':'중지','suspended':'일시 중지','calculated':'정산 중'}
 
 def order_row(order):
     qty=Decimal(str(order.get('qty','')));filled=Decimal(str(order.get('filled_qty','')))
@@ -24,6 +24,7 @@ def resume_snapshot(c,broker,reader):
     from .paper_journal import reconcile_snapshot
     data=reconcile_snapshot(c,broker,reader)
     if data['reconciliation']['unresolved']:raise RuntimeError('Unresolved orders require broker reconciliation')
+    if not data.get('inventory',{}).get('ready',True):raise RuntimeError('Managed holdings require reconciliation')
     if not data.get('can_trade'):raise ValueError('Account unavailable')
     for order in data['orders']:
         order_row(order)

@@ -49,7 +49,7 @@ class SafetyTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):cycle(c,True,b)
             self.assertEqual(len(b.sent),1)
             from stockbot.paper_journal import fingerprint
-            snapshot={'can_trade':True,'request_seconds':1,'account_fingerprint':fingerprint({'id':'offline-paper'}),'orders':[]}
+            snapshot={'can_trade':True,'request_seconds':1,'account_fingerprint':fingerprint({'id':'offline-paper'}),'orders':[],'positions':[]}
             with self.assertRaises(RuntimeError):resume_snapshot(c,b,lambda b:snapshot)
             self.assertEqual(len(unresolved_attempts(tmp)),1)
             self.assertFalse(Path(tmp,'cycle.lock').exists())
@@ -115,3 +115,10 @@ class SafetyTests(unittest.TestCase):
         d=Dashboard.__new__(Dashboard);d.notebook=Notebook()
         self.assertEqual(d.navigate_tabs(-1),'break');self.assertEqual(d.notebook.current,5)
         d.navigate_tabs(1);self.assertEqual(d.notebook.current,0);self.assertTrue(d.notebook.focused)
+
+    def test_reconciliation_halt_does_not_claim_auto_running(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=self.fake_dashboard(tmp);d.running=True
+            d.events.put(('trade',{'status':'reconciliation_required','orders':[]},None));d.poll()
+            self.assertFalse(d.running);self.assertNotIn('실행 중',d.status.get())
+            self.assertIn('대조 필요',d.status.get())

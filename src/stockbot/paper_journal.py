@@ -9,10 +9,12 @@ from pathlib import Path
 import sqlite3
 import time
 from zoneinfo import ZoneInfo
+from . import brackets
+from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
 TERMINAL={'filled','canceled','rejected','expired','replaced'}
-PROBLEMS={'missing':'조회 결과 없음','lookup_failed':'조회 실패','mismatch':'주문 정보 불일치','legacy':'이전 형식 · 수동 대조 필요','awaiting_check':'브로커 상태 확인 전','pending':'주문 요청 기록','response_lost':'주문 응답 미확인'}
+PROBLEMS={'missing':'조회 결과 없음','lookup_failed':'조회 실패','mismatch':'주문 정보 불일치','legacy':'이전 형식 · 수동 대조 필요','awaiting_check':'브로커 상태 확인 전','take_profit':'익절 자식 주문','stop_loss':'손절 자식 주문','pending':'주문 요청 기록','response_lost':'주문 응답 미확인'}
 
 def fingerprint(account):
     identity=account.get('id')
@@ -56,6 +58,7 @@ def initialize(db):
     CREATE TABLE IF NOT EXISTS paper_checks(client_id TEXT PRIMARY KEY,broker_id TEXT,status TEXT NOT NULL,filled TEXT NOT NULL,checked_at TEXT NOT NULL,outcome TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS paper_events(seq INTEGER PRIMARY KEY AUTOINCREMENT,client_id TEXT NOT NULL,kind TEXT NOT NULL,status TEXT NOT NULL,filled TEXT NOT NULL,checked_at TEXT NOT NULL);
     ''')
+    brackets.initialize(db)
 
 def bind_account(db,identity):
     if not isinstance(identity,str) or len(identity)!=64:raise ValueError('Invalid account fingerprint')
@@ -143,7 +146,8 @@ def reconcile_snapshot(c,broker,reader):
         interrupted()
         if data.get('request_seconds',float('inf'))>60:raise ValueError('Snapshot delayed')
         with closing(sqlite3.connect(root/'orders.sqlite',timeout=5)) as db:
-            initialize(db);db.execute('BEGIN IMMEDIATE');bind_account(db,data.get('account_fingerprint'));db.commit()
+            initialize(db);db.execute('BEGIN IMMEDIATE');bind_account(db,data.get('account_fingerprint'))
+            db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps({'ready':False,'rows':[],'reason':'대조 중'}),));db.commit()
             rows=db.execute('SELECT a.id,a.status,r.payload FROM attempts a LEFT JOIN paper_requests r ON r.client_id=a.id ORDER BY a.rowid').fetchall()
             checked=0;legacy=0
             for cid,state,raw in rows:
@@ -152,13 +156,20 @@ def reconcile_snapshot(c,broker,reader):
                     legacy+=1
                     continue
                 old=db.execute('SELECT broker_id,status,filled,outcome FROM paper_checks WHERE client_id=?',(cid,)).fetchone()
-                if old and old[1] in TERMINAL and old[3]=='confirmed':continue
                 try:order=broker.find_order(cid)
                 except Exception:
                     problem(db,cid,'lookup_failed',old);db.commit();continue
                 if order is None:
                     problem(db,cid,'missing',old);db.commit();continue
-                try:bid,status,filled=validate_order(cid,json.loads(raw),order,old)
+                try:
+                    payload=json.loads(raw)
+                    bid,status,filled=validate_order(cid,payload,order,old)
+                    order=broker.bracket_order(bid)
+                    if not isinstance(order,dict) or order.get('id')!=bid:raise ValueError('Nested parent identity mismatch')
+                    bid,status,filled=validate_order(cid,payload,order,old)
+                    brackets.save_legs(db,cid,payload,order)
+                except (OSError,AlpacaHTTPError):
+                    problem(db,cid,'lookup_failed',old);db.commit();continue
                 except Exception:
                     problem(db,cid,'mismatch',old);db.commit();continue
                 save_check(db,cid,bid,status,filled,'confirmed')
@@ -170,7 +181,9 @@ def reconcile_snapshot(c,broker,reader):
                 if final.get('account_fingerprint')!=data.get('account_fingerprint') or final.get('request_seconds',float('inf'))>60:raise ValueError('Snapshot changed account or delayed')
                 data=final
             if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:raise ValueError('Snapshot stale')
+            data['inventory']=brackets.inventory(db,data['positions'],legacy)
             data['order_history'],data['order_events']=history(db)
+            data['order_history']=sorted(data['order_history']+brackets.leg_history(db),key=lambda r:r['checked_at'] if r['checked_at']!='미확인' else '',reverse=True)[:200]
             data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}
             return data
     finally:lock.rmdir()
