@@ -192,6 +192,31 @@ def run():
         keyboard.send_keys('^{TAB}')
         wait(lambda s:s.get('visible_tables',{}).get('timeline'))
         record('timeline-tab-keyboard-navigation')
+        (OUT/'control.json').write_text('{"root_replaced":true}')
+        time.sleep(.3)
+        click('계좌·주문 대조')
+        s=wait(lambda s:not s.get('busy',True) and any(c['code']=='order_replaced' and c['active'] for c in s.get('review_cases',[])))
+        assert s['stop'] and s['submitted']==1
+        record('replacement-review-blocks-no-replay')
+        target=next(t for t in s['notebook_tabs'] if t['text']=='차단 상세')
+        mouse.click(coords=(target['x'],target['y']))
+        s=wait(lambda s:s.get('visible_tables',{}).get('review'))
+        widget=next(r for w in s['windows'] for r in w['widgets'] if r['class']=='Treeview')
+        mouse.click(coords=(widget['x'],widget['y']))
+        keyboard.send_keys('{HOME}{ENTER}')
+        notice('차단 상세 · 읽기 전용')
+        s=state();assert s['stop'] and s['submitted']==1
+        record('review-detail-keyboard-read-only')
+        (OUT/'control.json').write_text('{}')
+        time.sleep(.3)
+        click('계좌·주문 대조')
+        s=wait(lambda s:not s.get('busy',True) and '미확인 0건' in s.get('order_notice',''))
+        assert any(c['code']=='order_replaced' and c['active'] for c in s['review_cases'])
+        assert '수동 검토' in s['order_notice'] or '수동검토' in s['order_notice']
+        click('모의매매 시작');notice('모의매매 시작')
+        s=wait(lambda s:s.get('account_error') and not s.get('busy',True))
+        assert s['stop'] and not s['running'] and s['submitted']==1
+        record('sticky-review-survives-normal-read-and-blocks-resume')
         main.close();process.wait(timeout=20)
         assert process.returncode==0
         checks.append({'name':'window-close','passed':True})

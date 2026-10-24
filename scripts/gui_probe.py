@@ -35,6 +35,7 @@ class OfflineBroker(TrackingBroker):
     missing=False
     injected=False
     holding_extra=0
+    root_replaced=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -52,6 +53,8 @@ class OfflineBroker(TrackingBroker):
         if path=='/v2/positions' and OfflineBroker.holding_extra:
             for position in result:
                 if position['symbol']=='MSFT':position['qty']=str(float(position['qty'])+OfflineBroker.holding_extra)
+        if path=='/v2/orders:by_client_order_id' and OfflineBroker.root_replaced and params['client_order_id']=='gui-response-lost-MSFT':
+            result=dict(result,status='pending_replace',replaced_by='offline-replacement')
         if body: OfflineBroker.calls += 1
         return result
 
@@ -103,6 +106,7 @@ def snapshot():
              'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
              'table_heights':{k:t.winfo_height() for k,t in app.tables.items()},
              'notebook_tabs':tab_points,
+             'review_cases':list(app.review_items.values()),
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}
     target = OUT / 'state.json'
@@ -122,6 +126,7 @@ def snapshot():
             OfflineBroker.delay=settings.get('delay',0)
             OfflineBroker.missing=settings.get('missing',False)
             OfflineBroker.holding_extra=settings.get('holding_extra',0)
+            OfflineBroker.root_replaced=settings.get('root_replaced',False)
             if settings.get('inject_unknown') and not OfflineBroker.injected:
                 import sqlite3
                 from stockbot.paper_journal import intent,submission_uncertain
