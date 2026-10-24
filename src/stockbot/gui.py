@@ -134,7 +134,10 @@ class Dashboard:
             panel = ttk.Frame(tabs, padding=6 if compact else 10)
             tabs.add(panel, text=title)
             if key=='review':
-                ttk.Button(panel,text='진단 요약 저장',command=self.export_diagnostics).pack(anchor='w',pady=(0,4))
+                bar=ttk.Frame(panel);bar.pack(fill='x',pady=(0,4))
+                ttk.Button(bar,text='진단 요약 저장',command=self.export_diagnostics).pack(side='left')
+                recovery=ttk.Button(bar,text='선택 기록 복구 점검',command=self.recover_review)
+                recovery.pack(side='left',padx=6);self.actions.append(recovery)
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
@@ -287,6 +290,20 @@ class Dashboard:
             self.fill('inventory',[[r['symbol'],r['expected'],r['actual'],'일치' if r['matched'] else '불일치 · 재개 차단'] for r in inv['rows']])
             self.order_notice.set(self.order_notice.get()+' / 수량 대조: '+inv['reason'])
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
+        if data.get('review_resolution',{}).get('resolved'):
+            self.write('선택 기록의 복구 점검 통과 · 해소 이력 저장 · STOP 유지 · 자동매매는 재개하지 않았습니다.')
+
+    def recover_review(self):
+        if self.busy or self.running:return
+        if self.market.get().startswith('한국') or not (Path(self.config['state_dir'])/'STOP').is_file():
+            messagebox.showinfo('복구 점검', '미국 모의계좌에서 비상 중단을 적용한 뒤 진행하세요.',parent=self.root);return
+        selected=self.tables['review'].selection()
+        case=self.review_items.get(selected[0]) if selected else None
+        if not case or not case.get('recovery_supported'):
+            messagebox.showinfo('복구 점검', '복구 가능한 활성 가격·주문 조건 기록을 선택하세요. 정정·교체·ID·수량·체결 변경은 이 절차로 해제할 수 없습니다.',parent=self.root);return
+        if not messagebox.askyesno('선택 기록 복구 점검', '증권사에서 원래 주문 조건과 체결 내역을 직접 확인했습니까?\n모든 주문 종료·미체결 없음·관리 대상 보유 없음·원래 조건 일치를 새로 대조합니다.\n선택 기록만 해소하며 STOP은 유지하고 자동매매를 재개하지 않습니다.\n확인 후 복구 점검을 진행할까요?',parent=self.root):return
+        selection=(case['target'],case['code'],case['version'])
+        self.work('account',lambda:reconcile_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view,resolve_case=selection))
 
     def export_diagnostics(self):
         if self.busy:

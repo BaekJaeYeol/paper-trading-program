@@ -36,6 +36,8 @@ class OfflineBroker(TrackingBroker):
     injected=False
     holding_extra=0
     root_replaced=False
+    price_changed=False
+    closed_flat=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -55,6 +57,8 @@ class OfflineBroker(TrackingBroker):
                 if position['symbol']=='MSFT':position['qty']=str(float(position['qty'])+OfflineBroker.holding_extra)
         if path=='/v2/orders:by_client_order_id' and OfflineBroker.root_replaced and params['client_order_id']=='gui-response-lost-MSFT':
             result=dict(result,status='pending_replace',replaced_by='offline-replacement')
+        if path=='/v2/orders:by_client_order_id' and OfflineBroker.price_changed and result.get('symbol')=='AAPL':
+            result=dict(result,limit_price='999')
         if body: OfflineBroker.calls += 1
         return result
 
@@ -127,6 +131,15 @@ def snapshot():
             OfflineBroker.missing=settings.get('missing',False)
             OfflineBroker.holding_extra=settings.get('holding_extra',0)
             OfflineBroker.root_replaced=settings.get('root_replaced',False)
+            OfflineBroker.price_changed=settings.get('price_changed',False)
+            if settings.get('closed_flat') and not OfflineBroker.closed_flat:
+                # Offline fixture only: account and bracket histories agree that all exposure exited.
+                for order in OfflineBroker.saved_orders.values():
+                    order['status']='canceled'
+                    if not order.get('legs') and float(order['filled_qty'])>0:
+                        order['legs']=[{'id':order['id']+'-tp','symbol':order['symbol'],'side':'sell','type':'limit','time_in_force':'day','qty':order['qty'],'filled_qty':order['filled_qty'],'status':'canceled','limit_price':order['take_profit']['limit_price']},{'id':order['id']+'-sl','symbol':order['symbol'],'side':'sell','type':'stop','time_in_force':'day','qty':order['qty'],'filled_qty':'0','status':'canceled','stop_price':order['stop_loss']['stop_price']}]
+                    for leg in order.get('legs',[]):leg['status']='canceled'
+                OfflineBroker.closed_flat=True
             if settings.get('inject_unknown') and not OfflineBroker.injected:
                 import sqlite3
                 from stockbot.paper_journal import intent,submission_uncertain

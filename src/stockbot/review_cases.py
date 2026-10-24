@@ -1,6 +1,8 @@
 """Explicit review reasons. No order writes, corporate-action guesses or overrides."""
 from datetime import datetime
-from decimal import Decimal,InvalidOperation
+from decimal import Decimal
+import hashlib
+import json
 from zoneinfo import ZoneInfo
 
 GUIDANCE={
@@ -29,11 +31,19 @@ def display(value):
         return ''.join(ch for ch in str(value) if ch.isprintable())[:120]
     return '미확인'
 
+RECOVERABLE={'price_changed','fields_changed'}
+
+def version(row):
+    return hashlib.sha256(json.dumps(list(row),ensure_ascii=False).encode()).hexdigest()
+
 def initialize(db):
     db.execute('''CREATE TABLE IF NOT EXISTS paper_review_cases(
         target TEXT NOT NULL,code TEXT NOT NULL,expected TEXT NOT NULL,observed TEXT NOT NULL,
         first_seen TEXT NOT NULL,last_seen TEXT NOT NULL,occurrences INTEGER NOT NULL,
         active INTEGER NOT NULL,sticky INTEGER NOT NULL,PRIMARY KEY(target,code))''')
+    db.execute('''CREATE TABLE IF NOT EXISTS paper_review_resolutions(
+        seq INTEGER PRIMARY KEY AUTOINCREMENT,target TEXT NOT NULL,code TEXT NOT NULL,
+        case_version TEXT NOT NULL,resolved_at TEXT NOT NULL,basis TEXT NOT NULL)''')
 
 def note(db,target,code,expected='—',observed='—',sticky=False):
     code=code if code in GUIDANCE else 'mismatch';now=datetime.now(ZoneInfo('Asia/Seoul')).isoformat()
@@ -53,5 +63,28 @@ def snapshot(db):
     cases=[]
     for target,code,expected,observed,first,last,count,active,sticky in db.execute('SELECT * FROM paper_review_cases ORDER BY active DESC,last_seen DESC LIMIT 200'):
         title,action=GUIDANCE.get(code,GUIDANCE['mismatch'])
-        cases.append({'target':target,'code':code,'title':title,'expected':expected,'observed':observed,'first_seen':first,'last_seen':last,'occurrences':count,'active':bool(active),'manual_review_required':bool(sticky),'next_action':action})
+        cases.append({'target':target,'code':code,'title':title,'expected':expected,'observed':observed,'first_seen':first,'last_seen':last,'occurrences':count,'active':bool(active),'manual_review_required':bool(sticky),'next_action':action,'version':version((target,code,expected,observed,first,last,count,active,sticky)),'recovery_supported':bool(active and sticky and code in RECOVERABLE)})
     return {'cases':cases,'blocking':blocking(db),'scope':'read_only_guidance','override_available':False}
+
+
+def resolve_verified(db,selection,data,*,stopped):
+    """Called under cycle.lock after fresh full reconciliation. No broker/STOP writes."""
+    if not stopped or data.get('can_trade') is not True:raise RuntimeError('Recovery requires STOP and active paper account')
+    if data['reconciliation']['unresolved'] or data['reconciliation']['legacy'] or data['orders']:raise RuntimeError('Orders remain unverified or open')
+    inv=data['inventory']
+    if any(not r['matched'] or Decimal(r['expected'])!=0 or Decimal(r['actual'])!=0 for r in inv['rows']):raise RuntimeError('Managed holdings must be flat and matched')
+    # All saved roots and children must be terminal; no bracket protection is bypassed.
+    terminal={'filled','canceled','expired','rejected'}
+    roots=db.execute('SELECT client_id,status,outcome FROM paper_checks').fetchall()
+    if not roots or any(status not in terminal or outcome!='confirmed' for _,status,outcome in roots):raise RuntimeError('Root orders not closed')
+    if any(status not in terminal for (status,) in db.execute('SELECT status FROM paper_legs')):raise RuntimeError('Child orders not closed')
+    target,code,token=selection
+    row=db.execute('SELECT * FROM paper_review_cases WHERE target=? AND code=?',(target,code)).fetchone()
+    if not row or not row[7] or not row[8] or code not in RECOVERABLE or version(row)!=token:raise RuntimeError('Case changed or unsupported')
+    if target not in {r[0] for r in roots}:raise RuntimeError('Unknown target')
+    now=datetime.now(ZoneInfo('Asia/Seoul')).isoformat()
+    db.execute('INSERT INTO paper_review_resolutions(target,code,case_version,resolved_at,basis) VALUES (?,?,?,?,?)',(target,code,token,now,'original_conditions_verified_closed_flat'))
+    db.execute('UPDATE paper_review_cases SET active=0 WHERE target=? AND code=?',(target,code))
+    check=db.execute('SELECT status,filled FROM paper_checks WHERE client_id=?',(target,)).fetchone()
+    db.execute('INSERT INTO paper_events(client_id,kind,status,filled,checked_at) VALUES (?,?,?,?,?)',(target,'review_resolved',check[0],check[1],now))
+    return {'resolved':True,'code':code,'automatic_resume':False,'stop_unchanged':True}
