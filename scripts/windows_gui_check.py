@@ -167,13 +167,11 @@ def run():
         assert any(r[0]=='MSFT' and r[2]=='1' and r[3]=='1' and r[4]=='부분 체결' for r in s['tables']['history'])
         assert len(s['tables']['timeline'])>=3
         record('unknown-found-partial-read-only-recovery')
-        main.set_focus()
-        for _ in range(6):
-            if state().get('visible_tables',{}).get('history'):break
-            keyboard.send_keys('^{TAB}')
-            time.sleep(.2)
+        tabs=wait(lambda s:any(t['text']=='봇 주문 추적' for t in s.get('notebook_tabs',[])))['notebook_tabs']
+        target=next(t for t in tabs if t['text']=='봇 주문 추적')
+        mouse.click(coords=(target['x'],target['y']))
         wait(lambda s:s.get('visible_tables',{}).get('history'))
-        record('history-tab-keyboard-navigation')
+        record('history-tab-mouse-navigation')
         keyboard.send_keys('^{TAB}')
         wait(lambda s:s.get('visible_tables',{}).get('timeline'))
         record('timeline-tab-keyboard-navigation')

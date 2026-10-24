@@ -102,3 +102,16 @@ class SafetyTests(unittest.TestCase):
             d=self.fake_dashboard(tmp);d.resume_pending=True
             d.finish_resume({'received_at':'test','received_monotonic':time.monotonic()-61})
             self.assertFalse(d.running);self.assertIn('재개 차단',d.order_notice.get())
+
+    def test_tab_navigation_wraps_and_sets_keyboard_focus(self):
+        class Notebook:
+            current=0
+            focused=False
+            def select(self,index=None):
+                if index is not None:self.current=index
+                return str(self.current)
+            def index(self,value):return 6 if value=='end' else int(value)
+            def focus_set(self):self.focused=True
+        d=Dashboard.__new__(Dashboard);d.notebook=Notebook()
+        self.assertEqual(d.navigate_tabs(-1),'break');self.assertEqual(d.notebook.current,5)
+        d.navigate_tabs(1);self.assertEqual(d.notebook.current,0);self.assertTrue(d.notebook.focused)

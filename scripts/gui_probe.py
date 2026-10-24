@@ -81,10 +81,23 @@ def snapshot():
     inspect(root)
     for child in root.winfo_children():
         if isinstance(child, tk.Toplevel) and child.winfo_exists(): inspect(child)
+    notebook=app.notebook
+    points={}
+    for y in (12,20,8,28):
+        for x in range(2,notebook.winfo_width(),4):
+            try:index=notebook.index(f'@{x},{y}')
+            except tk.TclError:continue
+            points.setdefault(index,[]).append((x,y))
+        if len(points)==notebook.index('end'):break
+    tab_points=[]
+    for index,coords in points.items():
+        x,y=coords[len(coords)//2]
+        tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
              'running': app.running, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
              'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
+             'notebook_tabs':tab_points,
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}
     target = OUT / 'state.json'

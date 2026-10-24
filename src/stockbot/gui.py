@@ -111,6 +111,9 @@ class Dashboard:
         ttk.Button(toolbar, text='비상 중단', command=self.stop, style='Danger.TButton').pack(side='right')
         tabs = ttk.Notebook(outer)
         tabs.enable_traversal()
+        self.notebook=tabs
+        root.bind('<Control-Tab>',lambda event:self.navigate_tabs(1))
+        root.bind('<Control-Shift-Tab>',lambda event:self.navigate_tabs(-1))
         # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),
@@ -149,6 +152,12 @@ class Dashboard:
                   foreground='#738099').pack(anchor='w', side='bottom')
         tabs.pack(fill='both', expand=True)
         root.after(100, self.poll)
+
+    def navigate_tabs(self,direction):
+        current=self.notebook.index(self.notebook.select())
+        self.notebook.select((current+direction)%self.notebook.index('end'))
+        self.notebook.focus_set()
+        return 'break'
 
     def write(self, text):
         self.log.configure(state='normal')
