@@ -97,6 +97,7 @@ def snapshot():
              'running': app.running, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
              'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
+             'table_heights':{k:t.winfo_height() for k,t in app.tables.items()},
              'notebook_tabs':tab_points,
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}

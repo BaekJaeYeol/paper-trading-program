@@ -51,6 +51,7 @@ class Dashboard:
         root.title('모의매매 프로그램 · Paper Trading')
         width = min(1180, max(940, root.winfo_screenwidth() - 32))
         height = min(820, max(620, root.winfo_screenheight() - 100))
+        compact=height<760
         root.geometry(f'{width}x{height}+8+8')
         root.minsize(940, 620)
         root.configure(bg=BG)
@@ -60,41 +61,41 @@ class Dashboard:
         style.configure('.', font=('맑은 고딕', 10))
         style.configure('TFrame', background=BG)
         style.configure('TLabel', background=BG, foreground=INK)
-        style.configure('TButton', padding=(14, 10), background='white', foreground=INK)
+        style.configure('TButton', padding=(10, 8) if compact else (14, 10), background='white', foreground=INK)
         style.configure('Primary.TButton', background=BLUE, foreground='white')
         style.map('Primary.TButton', background=[('active', '#2545ba')])
         style.configure('Danger.TButton', background='#fce5e8', foreground='#b8223c')
-        style.configure('Treeview', rowheight=34, background='white', fieldbackground='white')
-        style.configure('Treeview.Heading', background='#e8edf6', padding=9)
-        outer = ttk.Frame(root, padding=16)
+        style.configure('Treeview', rowheight=28 if compact else 34, background='white', fieldbackground='white')
+        style.configure('Treeview.Heading', background='#e8edf6', padding=6 if compact else 9)
+        outer = ttk.Frame(root, padding=12 if compact else 16)
         outer.pack(fill='both', expand=True)
         header = ttk.Frame(outer)
         header.pack(fill='x')
-        ttk.Label(header, text='모의매매 프로그램', font=('맑은 고딕', 23, 'bold')).pack(side='left')
+        ttk.Label(header, text='모의매매 프로그램', font=('맑은 고딕', 20 if compact else 23, 'bold')).pack(side='left')
         selector = ttk.Combobox(header, textvariable=self.market,
                                 values=('미국 · Alpaca', '한국 · KIS'), state='readonly', width=18)
         selector.pack(side='right')
         selector.bind('<<ComboboxSelected>>', self.change_market)
         self.selector = selector
         self.status = tk.StringVar(value='API 연결 전 · 데모로 먼저 둘러보세요')
-        ttk.Label(outer, textvariable=self.status, padding=(0, 12),wraplength=880).pack(anchor='w')
+        ttk.Label(outer, textvariable=self.status, padding=(0, 6 if compact else 12),wraplength=880).pack(anchor='w')
         self.context=tk.StringVar(value='모의투자 · Alpaca Paper · 미국 모의계좌 · USD · 실계좌 주문 비활성화')
         ttk.Label(outer,textvariable=self.context,foreground='#2545ba',wraplength=880).pack(anchor='w')
         self.freshness=tk.StringVar(value='계좌 데이터 미조회 · 수신 시각과 시세 기준 시각은 다릅니다.')
         ttk.Label(outer,textvariable=self.freshness,foreground='#526079',wraplength=880).pack(anchor='w',pady=(2,6))
         cards = ttk.Frame(outer)
-        cards.pack(fill='x', pady=(4, 16))
+        cards.pack(fill='x', pady=(4, 8 if compact else 16))
         self.values = {}
         self.card_titles = {}
         for title, key in [('총 자산 (USD)', 'equity'), ('현금 (USD)', 'cash'),
                            ('매수 가능 금액 (USD)', 'buying_power'), ('전일 대비 손익 (USD)', 'daily_pnl')]:
-            box = tk.Frame(cards, bg='white', padx=20, pady=17, highlightbackground='#e1e6ef', highlightthickness=1)
+            box = tk.Frame(cards, bg='white', padx=14 if compact else 20, pady=10 if compact else 17, highlightbackground='#e1e6ef', highlightthickness=1)
             box.pack(side='left', fill='both', expand=True, padx=(0, 8))
             label = tk.Label(box, text=title, bg='white', fg='#718099', font=('맑은 고딕', 10))
             label.pack(anchor='w')
             self.card_titles[key] = label
             value = tk.StringVar(value='—')
-            tk.Label(box, textvariable=value, bg='white', fg=INK, font=('맑은 고딕', 22, 'bold')).pack(anchor='w', pady=(9, 0))
+            tk.Label(box, textvariable=value, bg='white', fg=INK, font=('맑은 고딕', 18 if compact else 22, 'bold')).pack(anchor='w', pady=(9, 0))
             self.values[key] = value
         toolbar = ttk.Frame(outer)
         toolbar.pack(fill='x', pady=(0, 12))
@@ -123,7 +124,7 @@ class Dashboard:
                  ('주문 변경 기록', 'timeline', ['봇 주문 키','대조 결과','주문 상태','체결 수량','확인 시각 (KST)']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
-            panel = ttk.Frame(tabs, padding=10)
+            panel = ttk.Frame(tabs, padding=6 if compact else 10)
             tabs.add(panel, text=title)
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
@@ -145,7 +146,7 @@ class Dashboard:
         self.demo_summary = tk.StringVar(value='백테스트는 합성 데이터 예제입니다. 실제 계좌 성과와 다릅니다.')
         ttk.Label(outer, textvariable=self.demo_summary, padding=(0, 8)).pack(anchor='w', side='bottom')
         # Log is below the notebook and above the footer.
-        self.log = tk.Text(outer, height=5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
+        self.log = tk.Text(outer, height=3 if compact else 5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
                            font=('맑은 고딕', 10), state='disabled')
         self.log.pack(fill='x', pady=(7, 8), side='bottom')
         ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 해당 증권사에서 확인하세요.',

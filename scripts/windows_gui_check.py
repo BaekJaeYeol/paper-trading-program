@@ -170,7 +170,8 @@ def run():
         tabs=wait(lambda s:any(t['text']=='봇 주문 추적' for t in s.get('notebook_tabs',[])))['notebook_tabs']
         target=next(t for t in tabs if t['text']=='봇 주문 추적')
         mouse.click(coords=(target['x'],target['y']))
-        wait(lambda s:s.get('visible_tables',{}).get('history'))
+        s=wait(lambda s:s.get('visible_tables',{}).get('history'))
+        assert s['table_heights']['history']>=100,s['table_heights']
         record('history-tab-mouse-navigation')
         keyboard.send_keys('^{TAB}')
         wait(lambda s:s.get('visible_tables',{}).get('timeline'))
