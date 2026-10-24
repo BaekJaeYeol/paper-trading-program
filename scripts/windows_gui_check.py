@@ -138,6 +138,16 @@ def run():
         s=wait(lambda s:s.get('schedule_skipped',0)>=10 and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
         assert s['submitted']==1 and s['schedule_delay_seconds']>=30
         record('late-callback-skips-slots-no-order-replay')
+        (OUT/'control.json').write_text('{"budget_timeout":true,"run_for_budget_test":true}')
+        s=wait(lambda s:not s.get('running',True) and not s.get('busy',True) and '전체 대조 60초' in s.get('order_notice',''))
+        assert s['submitted']==1 and not s['power_active']
+        record('full-reconciliation-timeout-stops-without-order-or-sleep-request')
+        (OUT/'control.json').write_text('{}')
+        time.sleep(.3)
+        click('모의매매 시작');notice('모의매매 시작')
+        s=wait(lambda s:s.get('running') and not s.get('busy',True))
+        assert s['submitted']==1 and s['power_active']
+        record('explicit-restart-rechecks-after-full-timeout')
         (OUT/'control.json').write_text('{}')
         click('비상 중단')
         wait(lambda s:s.get('stop') and not s.get('running',True))

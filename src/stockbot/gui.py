@@ -15,7 +15,7 @@ from .broker import AlpacaPaper
 from .kis import KISPaper
 from .cli import load_config, cycle, read_csv
 from .core import backtest
-from .paper_journal import fingerprint,reconcile_snapshot
+from .paper_journal import fingerprint,reconcile_snapshot,ReconciliationTimeout
 from . import diagnostics
 from .cadence import Cadence
 from .power import SleepGuard
@@ -200,6 +200,8 @@ class Dashboard:
         def worker():
             try:
                 self.events.put((kind, fn(), None))
+            except ReconciliationTimeout:
+                self.events.put((kind,None,'reconciliation_timeout'))
             except Exception:
                 # Do not log arbitrary exception strings: third-party errors may contain secrets.
                 self.events.put((kind, None, True))
@@ -232,6 +234,10 @@ class Dashboard:
                         self.order_notice.set(f'재개 차단 · 미확인 주문 {count}건 · 증권사 대조 필요' if count else '재개 점검 실패 · 계좌 권한·잔고·미체결·잠금을 확인하세요.')
                     self.status.set('작업 실패 · 자동 실행 정지')
                     self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
+                    if error=='reconciliation_timeout':
+                        self.order_notice.set('전체 대조 60초 시간 제한 초과 · 자동 실행 중지 · 계좌·주문을 다시 대조한 뒤 명시적으로 재개하세요.')
+                        self.status.set('대조 시간 초과 · 자동 실행 정지')
+                        self.write('오래된 대조 결과로 주문하지 않았습니다. 밀린 예약은 재실행하지 않습니다.')
                 elif kind == 'resume':
                     self.render_journal(data)
                     self.finish_resume(data)

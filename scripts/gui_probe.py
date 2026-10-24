@@ -41,6 +41,8 @@ class OfflineBroker(TrackingBroker):
     closed_flat=False
     late_schedule_injected=False
     power_fail=False
+    budget_timeout=False
+    budget_run_injected=False
     def __init__(self):
         super().__init__()
         self.orders=OfflineBroker.saved_orders
@@ -48,6 +50,7 @@ class OfflineBroker(TrackingBroker):
     def request(self, path, params=None, body=None):
         if OfflineBroker.fail: raise RuntimeError('offline failure')
         if path=='/v2/orders:by_client_order_id' and OfflineBroker.missing and params['client_order_id']=='gui-response-lost-MSFT':raise AlpacaHTTPError(404)
+        if path=='/v2/account' and OfflineBroker.budget_timeout:virtual_budget['offset']=65
         if path=='/v2/account' and OfflineBroker.delay:
             import time
             time.sleep(OfflineBroker.delay)
@@ -65,6 +68,17 @@ class OfflineBroker(TrackingBroker):
         if body: OfflineBroker.calls += 1
         return result
 
+# The virtual reconciliation clock affects only the journal, not Tk or scheduling.
+from types import SimpleNamespace
+import stockbot.paper_journal as journal
+virtual_budget={'offset':0}
+journal.time=SimpleNamespace(monotonic=lambda:time.monotonic()+virtual_budget['offset'])
+real_reconcile=gui.reconcile_snapshot
+def controlled_reconcile(*args,**kwargs):
+    virtual_budget['offset']=0
+    try:return real_reconcile(*args,**kwargs)
+    finally:virtual_budget['offset']=0
+gui.reconcile_snapshot=controlled_reconcile
 gui.AlpacaPaper = OfflineBroker
 import stockbot.cli as cli
 cli.AlpacaPaper = OfflineBroker
@@ -141,6 +155,11 @@ def snapshot():
                 # Simulate a delayed callback, not actual OS suspension or real trading.
                 OfflineBroker.late_schedule_injected=True
                 app.cadence.next_due-=3600
+                app.schedule_trade()
+            OfflineBroker.budget_timeout=settings.get('budget_timeout',False)
+            if settings.get('run_for_budget_test') and app.running and not app.busy and not OfflineBroker.budget_run_injected:
+                OfflineBroker.budget_run_injected=True
+                app.cadence.next_due=time.monotonic()-1
                 app.schedule_trade()
             OfflineBroker.power_fail=settings.get('power_fail',False)
             OfflineBroker.fail=settings.get('fail',False)

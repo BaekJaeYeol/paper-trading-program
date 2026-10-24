@@ -11,7 +11,7 @@
 
 ## 데이터 계약과 개인정보
 
-스키마: `paper-diagnostics-v1`. 생성 시각은 KST이며, 마지막 대조 수신 이후 경과 초를 포함한다.
+스키마: `paper-diagnostics-v1`. 성공한 전체 대조 소요 시간은 `reconciliation.elapsed_seconds` 정수로 제공한다. 생성 시각은 KST이며, 마지막 대조 수신 이후 경과 초를 포함한다.
 60초 이상 경과했거나 이후 작업/조회가 실패하면 `stale=true`로 표시한다.
 `inventory.ready_at_snapshot`은 당시 결과이며 현재 주문 권한/재개 승인이 아니다.
 현재 GUI의 실행 여부와 STOP 요청 상태를 별도로 기록한다. Windows 절전 방지의 지원/요청 여부와 고정된 실패 코드도 포함한다.

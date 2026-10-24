@@ -23,7 +23,7 @@ def build(snapshot,*,age_seconds,read_failed,stopped,running):
             'read_failed_since_snapshot':bool(read_failed),'snapshot_age_seconds':age,
             'stale':bool(read_failed) or age is None or age>=60,
             'stop_requested':bool(stopped),'automatic_paper_running':bool(running),
-            'reconciliation':{k:count(reconciliation.get(k)) for k in ('checked','unresolved','legacy')},
+            'reconciliation':{k:count(reconciliation.get(k)) for k in ('checked','unresolved','legacy','elapsed_seconds')},
             'inventory':{'ready_at_snapshot':inventory.get('ready') is True,'displayed_symbols':len(inventory.get('rows',[])),
                          'mismatched_displayed_symbols':sum(r.get('matched') is not True for r in inventory.get('rows',[]))},
             'review':{'active_total':count(snapshot.get('review',{}).get('blocking')),'display_limit':200,'reasons':reasons},

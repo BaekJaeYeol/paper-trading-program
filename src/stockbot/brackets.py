@@ -65,7 +65,7 @@ def save_legs(db,cid,payload,root):
             db.execute('INSERT INTO paper_events(client_id,kind,status,filled,checked_at) VALUES (?,?,?,?,?)',(cid+'/'+role,role,status,filled,now))
         db.execute('INSERT OR REPLACE INTO paper_legs VALUES (?,?,?,?,?,?,?,?,?)',(cid,role,bid,payload['symbol'],qty,filled,status,price,now))
 
-def inventory(db,positions,legacy=0):
+def inventory(db,positions,legacy=0,*,commit=True):
     expected={};verified=True
     for cid,raw,status,filled,outcome in db.execute('''SELECT r.client_id,r.payload,c.status,c.filled,c.outcome FROM paper_requests r LEFT JOIN paper_checks c ON r.client_id=c.client_id'''):
         p=json.loads(raw);symbol=p['symbol']
@@ -91,7 +91,8 @@ def inventory(db,positions,legacy=0):
     result={'ready':ready,'rows':rows,'scope':'verified_bot_symbols','legacy_unverified':legacy,
             'reason':'일치' if ready else ('주문 기록 미확인' if not verified or legacy else ('보유 수량 불일치' if any(not r['matched'] for r in rows) else '수동 검토 필요')),
             'checked_at':datetime.now(timezone.utc).isoformat()}
-    db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps(result),));db.commit()
+    db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps(result),))
+    if commit:db.commit()
     return result
 
 def enforce_entry(db,positions):
