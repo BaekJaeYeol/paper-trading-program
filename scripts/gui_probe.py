@@ -29,6 +29,7 @@ for key in ('APCA_API_KEY_ID', 'APCA_API_SECRET_KEY'):
 class OfflineBroker(TrackingBroker):
     fail = False
     calls = 0
+    read_calls=0
     partial = False
     delay = 0
     saved_orders={}
@@ -48,6 +49,7 @@ class OfflineBroker(TrackingBroker):
         self.orders=OfflineBroker.saved_orders
         self.sent=OfflineBroker.saved_posts
     def request(self, path, params=None, body=None):
+        if body is None:OfflineBroker.read_calls+=1
         if OfflineBroker.fail: raise RuntimeError('offline failure')
         if path=='/v2/orders:by_client_order_id' and OfflineBroker.missing and params['client_order_id']=='gui-response-lost-MSFT':raise AlpacaHTTPError(404)
         if path=='/v2/account' and OfflineBroker.budget_timeout:virtual_budget['offset']=65
@@ -138,6 +140,7 @@ def snapshot():
              'notebook_tabs':tab_points,
              'review_cases':list(app.review_items.values()),
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
+             'read_calls':OfflineBroker.read_calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}
     target = OUT / 'state.json'
     tmp = OUT / 'state.tmp'

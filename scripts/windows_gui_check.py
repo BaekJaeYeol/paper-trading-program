@@ -281,9 +281,31 @@ def run():
         assert s['stop'] and not s['running'] and s['submitted']==1
         assert any(c['code']=='order_replaced' and c['active'] for c in s['review_cases'])
         record('verified-closed-flat-recovery-keeps-stop-and-other-block')
+        s=state();target=next(t for t in s['notebook_tabs'] if t['text']=='운영 상태')
+        mouse.click(coords=(target['x'],target['y']))
+        s=wait(lambda s:s.get('visible_tables',{}).get('health'))
+        assert any('전체 대조 시간 초과' in row[1] for row in s['tables']['health'])
+        widget=next(r for w in s['windows'] for r in w['widgets'] if r['class']=='Treeview')
+        mouse.click(coords=(widget['x'],widget['y']));keyboard.send_keys('{HOME}{ENTER}')
+        notice('운영 상태 · 읽기 전용')
+        s=state();assert s['stop'] and not s['running'] and s['submitted']==1
+        record('operational-history-detail-read-only')
         main.close();process.wait(timeout=20)
         assert process.returncode==0
         checks.append({'name':'window-close','passed':True})
+        (OUT/'control.json').unlink(missing_ok=True)
+        (OUT/'state.json').unlink(missing_ok=True)
+        process=subprocess.Popen([sys.executable,str(ROOT/'scripts/gui_probe.py')],cwd=ROOT)
+        s=wait(lambda s:s.get('submitted')==0 and bool(s.get('tables',{}).get('health')) and len(s.get('windows',[]))==1)
+        assert not s['running'] and not s['power_active'] and s['read_calls']==0 and s['stop']
+        assert any('전체 대조 시간 초과' in row[1] for row in s['tables']['health'])
+        assert any('대조 복구' in row[1] for row in s['tables']['health'])
+        main=desktop.window(title='모의매매 프로그램 · Paper Trading').wrapper_object();main.set_focus()
+        target=next(t for t in s['notebook_tabs'] if t['text']=='운영 상태')
+        mouse.click(coords=(target['x'],target['y']))
+        wait(lambda s:s.get('visible_tables',{}).get('health'))
+        record('restart-restores-incident-history-without-broker-or-auto-start')
+        main.close();process.wait(timeout=20);assert process.returncode==0
     finally:
         if process.poll() is None: process.terminate();process.wait(timeout=10)
 
