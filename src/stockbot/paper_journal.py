@@ -14,6 +14,9 @@ from . import review_cases as review
 from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
+class ReconciliationTimeout(RuntimeError):
+    pass
+
 TERMINAL={'filled','canceled','rejected','expired','replaced'}
 PROBLEMS={'review_resolved':'수동 검토 해소 · 재개 아님','missing':'조회 결과 없음','lookup_failed':'조회 실패','mismatch':'주문 정보 불일치','legacy':'이전 형식 · 수동 대조 필요','awaiting_check':'브로커 상태 확인 전','take_profit':'익절 자식 주문','stop_loss':'손절 자식 주문','pending':'주문 요청 기록','response_lost':'주문 응답 미확인'}
 
@@ -148,6 +151,7 @@ def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
         cancel=c.get('_reconcile_cancel')
         def interrupted():
             if cancel is not None and cancel.is_set():raise RuntimeError('Reconciliation interrupted')
+            if time.monotonic()-started>=60:raise ReconciliationTimeout('Full reconciliation exceeded 60 seconds; explicit restart required')
         interrupted()
         data=reader(broker)
         interrupted()
@@ -166,6 +170,7 @@ def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
                 try:order=broker.find_order(cid)
                 except Exception:
                     problem(db,cid,'lookup_failed',old);db.commit();continue
+                interrupted()
                 if order is None:
                     problem(db,cid,'missing',old);db.commit();continue
                 try:
@@ -181,29 +186,43 @@ def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
                     problem(db,cid,'mismatch',old,issue);db.commit();continue
                 except Exception:
                     problem(db,cid,'mismatch',old);db.commit();continue
+                interrupted()
                 review.resolve_transient(db,cid)
                 save_check(db,cid,bid,status,filled,'confirmed')
                 db.execute("UPDATE attempts SET status='confirmed' WHERE id=?",(cid,));db.commit();checked+=1
             # Refresh balances/open orders AFTER order lookups; do not derive balances from fills.
             if rows:
+                interrupted()
                 final=reader(broker)
                 interrupted()
                 if final.get('account_fingerprint')!=data.get('account_fingerprint') or final.get('request_seconds',float('inf'))>60:raise ValueError('Snapshot changed account or delayed')
                 data=final
             if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:raise ValueError('Snapshot stale')
-            data['inventory']=brackets.inventory(db,data['positions'],legacy)
+            interrupted()
+            db.execute('BEGIN IMMEDIATE')
+            data['inventory']=brackets.inventory(db,data['positions'],legacy,commit=False)
             data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}
             if resolve_case is not None:
                 interrupted()
-                if time.monotonic()-started>=60:raise RuntimeError('Recovery reconciliation exceeded 60 seconds')
-                db.execute('BEGIN IMMEDIATE')
                 data['review_resolution']=review.resolve_verified(db,resolve_case,data,stopped=(root/'STOP').is_file())
                 interrupted()
                 if not (root/'STOP').is_file():raise RuntimeError('STOP changed during recovery')
-                data['inventory']=brackets.inventory(db,data['positions'],legacy)
+                data['inventory']=brackets.inventory(db,data['positions'],legacy,commit=False)
             data['review']=review.snapshot(db)
             data['order_history'],data['order_events']=history(db)
             data['order_history']=sorted(data['order_history']+brackets.leg_history(db),key=lambda r:r['checked_at'] if r['checked_at']!='미확인' else '',reverse=True)[:200]
             data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}
+            interrupted()
+            data['reconciliation']['elapsed_seconds']=math.ceil(time.monotonic()-started)
+            db.commit()
             return data
+    except BaseException:
+        # A failed/aborted read must not leave an earlier successful entry gate reusable.
+        try:
+            with closing(sqlite3.connect(root/'orders.sqlite',timeout=5)) as db:
+                initialize(db)
+                db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps({'ready':False,'rows':[],'reason':'대조 실패 · 재점검 필요'}),))
+                db.commit()
+        except (OSError,sqlite3.Error):pass # Caller still stops; persistence cannot be promised on disk failure.
+        raise
     finally:lock.rmdir()

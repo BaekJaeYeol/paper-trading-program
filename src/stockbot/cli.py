@@ -16,7 +16,7 @@ from .power import SleepGuard
 from .core import Bar, signal, size, backtest
 from .ui_safety import unresolved_attempts
 from .brackets import enforce_entry
-from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain
+from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain,ReconciliationTimeout
 
 NY = ZoneInfo("America/New_York")
 
@@ -204,6 +204,8 @@ def main():
                     result=cycle(c,True,b)
                 else:result=cycle(c,False)
                 print(json.dumps(result,indent=2),flush=True)
+            except ReconciliationTimeout:
+                raise SystemExit('Full reconciliation timed out; inspect account/orders and restart explicitly') from None
             except Exception as exc:
                 logging.error("Cycle stopped: %s",exc)
                 if args.command != "run":
