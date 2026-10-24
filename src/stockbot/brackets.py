@@ -4,6 +4,7 @@ from decimal import Decimal
 import json
 from zoneinfo import ZoneInfo
 from .ui_safety import ORDER_STATES
+from . import review_cases as review
 
 FINAL={'filled','canceled','rejected','expired'}
 
@@ -38,7 +39,8 @@ def save_legs(db,cid,payload,root):
         if owner and owner[0]!=cid:raise ValueError('Child belongs to another parent')
         ids.add(bid)
         if leg.get('symbol')!=payload['symbol'] or leg.get('side')!='sell':raise ValueError('Child symbol/side mismatch')
-        if leg.get('time_in_force')!=payload['time_in_force'] or status not in ORDER_STATES or status=='replaced' or leg.get('replaced_by'):raise ValueError('Unsupported child change')
+        if status in ('replaced','pending_replace') or leg.get('replaced_by') or leg.get('replaces'):raise review.ReviewRequired('order_replaced','원래 자식 주문',status)
+        if leg.get('time_in_force')!=payload['time_in_force'] or status not in ORDER_STATES:raise ValueError('Unsupported child change')
         if leg.get('legs'):raise ValueError('Unexpected descendant orders')
         qty=number(leg.get('qty'));filled=number(leg.get('filled_qty'))
         if not 0<qty<=parent_qty or filled>qty:raise ValueError('Child quantity mismatch')
@@ -46,11 +48,12 @@ def save_legs(db,cid,payload,root):
         if status=='partially_filled' and not 0<filled<qty:raise ValueError('Invalid partial child')
         key='limit_price' if role=='take_profit' else 'stop_price'
         price=number(leg.get(key))
-        if price!=number(payload[role][key]):raise ValueError('Child price changed')
+        if price!=number(payload[role][key]):raise review.ReviewRequired('price_changed',payload[role][key],leg.get(key))
         if role in old:
             before=old[role]
-            if before[0]!=bid or filled<number(before[2]):raise ValueError('Child identity/fill regressed')
-            if before[3] in FINAL and status!=before[3]:raise ValueError('Terminal child changed')
+            if before[0]!=bid:raise review.ReviewRequired('identity_changed',before[0],bid)
+            if filled<number(before[2]):raise review.ReviewRequired('fill_regressed',before[2],str(filled))
+            if before[3] in FINAL and status!=before[3]:raise review.ReviewRequired('fill_regressed',before[3],status)
         parsed[role]=(bid,str(qty),str(filled),status,str(price))
     if set(parsed)!={'take_profit','stop_loss'}:raise ValueError('Incomplete bracket pair')
     if sum(number(r[2]) for r in parsed.values())>parent_filled:raise ValueError('Exit fills exceed entry fills')
@@ -79,14 +82,20 @@ def inventory(db,positions,legacy=0):
         if not n.is_finite():raise ValueError('Invalid position quantity')
         actual[symbol]=n
     rows=[{'symbol':s,'expected':str(q),'actual':str(actual.get(s,Decimal(0))),'matched':q==actual.get(s,Decimal(0))} for s,q in sorted(expected.items())]
-    ready=verified and not legacy and all(r['matched'] for r in rows)
+    for row in rows:
+        target='position:'+row['symbol']
+        if row['matched']:review.resolve_transient(db,target)
+        else:review.note(db,target,'position_mismatch',row['expected'],row['actual'])
+    review_blocked=review.blocking(db)
+    ready=verified and not legacy and all(r['matched'] for r in rows) and not review_blocked
     result={'ready':ready,'rows':rows,'scope':'verified_bot_symbols','legacy_unverified':legacy,
-            'reason':'일치' if ready else ('주문 기록 미확인' if not verified or legacy else '보유 수량 불일치'),
+            'reason':'일치' if ready else ('주문 기록 미확인' if not verified or legacy else ('보유 수량 불일치' if any(not r['matched'] for r in rows) else '수동 검토 필요')),
             'checked_at':datetime.now(timezone.utc).isoformat()}
     db.execute("INSERT OR REPLACE INTO paper_meta VALUES ('inventory_gate',?)",(json.dumps(result),));db.commit()
     return result
 
 def enforce_entry(db,positions):
+    if review.blocking(db):raise RuntimeError('Active review cases block entry')
     row=db.execute("SELECT value FROM paper_meta WHERE key='inventory_gate'").fetchone()
     if not row:return # No historical managed orders before the first entry.
     gate=json.loads(row[0])

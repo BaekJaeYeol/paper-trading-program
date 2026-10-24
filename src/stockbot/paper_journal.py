@@ -10,6 +10,7 @@ import sqlite3
 import time
 from zoneinfo import ZoneInfo
 from . import brackets
+from . import review_cases as review
 from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
@@ -59,6 +60,7 @@ def initialize(db):
     CREATE TABLE IF NOT EXISTS paper_events(seq INTEGER PRIMARY KEY AUTOINCREMENT,client_id TEXT NOT NULL,kind TEXT NOT NULL,status TEXT NOT NULL,filled TEXT NOT NULL,checked_at TEXT NOT NULL);
     ''')
     brackets.initialize(db)
+    review.initialize(db)
 
 def bind_account(db,identity):
     if not isinstance(identity,str) or len(identity)!=64:raise ValueError('Invalid account fingerprint')
@@ -93,24 +95,27 @@ def amount(value):
 
 def validate_order(cid,payload,order,old):
     if not isinstance(order,dict) or order.get('client_order_id')!=cid:raise ValueError('Client identity mismatch')
+    if order.get('status') in ('replaced','pending_replace') or order.get('replaced_by') or order.get('replaces'):raise review.ReviewRequired('order_replaced','원래 주문',order.get('status'))
     bid=order.get('id')
     if not isinstance(bid,str) or not bid or len(bid)>128:raise ValueError('Broker identity missing')
     for key in ('symbol','side','type','order_class','time_in_force'):
-        if order.get(key)!=payload.get(key):raise ValueError('Order fields changed')
+        if order.get(key)!=payload.get(key):raise review.ReviewRequired('fields_changed',key+':'+str(payload.get(key)),key+':'+str(order.get(key)))
     qty=amount(order.get('qty'));filled=amount(order.get('filled_qty'))
-    if qty<=0 or qty!=amount(payload['qty']) or filled>qty:raise ValueError('Order size mismatch')
-    if amount(order.get('limit_price'))!=amount(payload['limit_price']):raise ValueError('Limit changed')
+    if qty<=0 or qty!=amount(payload['qty']) or filled>qty:raise review.ReviewRequired('quantity_changed',payload['qty'],order.get('qty'))
+    if amount(order.get('limit_price'))!=amount(payload['limit_price']):raise review.ReviewRequired('price_changed',payload['limit_price'],order.get('limit_price'))
     status=order.get('status')
     if status not in ORDER_STATES:raise ValueError('Unknown broker state')
     if status=='filled' and filled!=qty:raise ValueError('Incomplete filled order')
     if status=='partially_filled' and not 0<filled<qty:raise ValueError('Invalid partial fill')
     if old:
-        if old[0] and bid!=old[0]:raise ValueError('Broker identity changed')
-        if filled<amount(old[2]):raise ValueError('Cumulative fill decreased')
-        if old[1] in TERMINAL and status!=old[1]:raise ValueError('Terminal status changed')
+        if old[0] and bid!=old[0]:raise review.ReviewRequired('identity_changed',old[0],bid)
+        if filled<amount(old[2]):raise review.ReviewRequired('fill_regressed',old[2],str(filled))
+        if old[1] in TERMINAL and status!=old[1]:raise review.ReviewRequired('fill_regressed',old[1],status)
     return bid,status,str(filled)
 
-def problem(db,cid,reason,old):
+def problem(db,cid,reason,old,issue=None):
+    if isinstance(issue,review.ReviewRequired):review.note(db,cid,issue.code,issue.expected,issue.observed,sticky=True)
+    else:review.note(db,cid,reason)
     db.execute("UPDATE attempts SET status='unknown' WHERE id=?",(cid,))
     save_check(db,cid,old[0] if old else None,old[1] if old else 'unknown',old[2] if old else '0',reason)
 
@@ -170,8 +175,11 @@ def reconcile_snapshot(c,broker,reader):
                     brackets.save_legs(db,cid,payload,order)
                 except (OSError,AlpacaHTTPError):
                     problem(db,cid,'lookup_failed',old);db.commit();continue
+                except review.ReviewRequired as issue:
+                    problem(db,cid,'mismatch',old,issue);db.commit();continue
                 except Exception:
                     problem(db,cid,'mismatch',old);db.commit();continue
+                review.resolve_transient(db,cid)
                 save_check(db,cid,bid,status,filled,'confirmed')
                 db.execute("UPDATE attempts SET status='confirmed' WHERE id=?",(cid,));db.commit();checked+=1
             # Refresh balances/open orders AFTER order lookups; do not derive balances from fills.
@@ -182,6 +190,7 @@ def reconcile_snapshot(c,broker,reader):
                 data=final
             if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:raise ValueError('Snapshot stale')
             data['inventory']=brackets.inventory(db,data['positions'],legacy)
+            data['review']=review.snapshot(db)
             data['order_history'],data['order_events']=history(db)
             data['order_history']=sorted(data['order_history']+brackets.leg_history(db),key=lambda r:r['checked_at'] if r['checked_at']!='미확인' else '',reverse=True)[:200]
             data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}

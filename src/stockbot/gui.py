@@ -118,12 +118,14 @@ class Dashboard:
         root.bind('<Control-Shift-Tab>',lambda event:self.navigate_tabs(-1))
         # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
+        self.review_items={}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),
                  ('미체결 주문', 'orders', ['종목', '방향', '주문 수량', '체결 수량', '잔여 수량', '지정가', '상태']),
                  ('주문 계획', 'plans', ['종목', '수량', '진입가', '손절가', '익절가', '제출 여부']),
                  ('봇 주문 추적', 'history', ['종목','주문 수량','체결 수량','잔여 수량','대조 상태','봇 주문 키','확인 시각 (KST)']),
                  ('보유 수량 대조','inventory',['종목','봇 기대 수량','계좌 실제 수량','대조 결과']),
                  ('주문 변경 기록', 'timeline', ['봇 주문 키','대조 결과','주문 상태','체결 수량','확인 시각 (KST)']),
+                 ('차단 상세','review',['대상 주문/종목','확인된 변화','상태','마지막 확인 (KST)']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
             panel = ttk.Frame(tabs, padding=6 if compact else 10)
@@ -143,6 +145,9 @@ class Dashboard:
                 horizontal.pack(side='bottom',fill='x')
             table.pack(fill='both', expand=True)
             self.tables[key] = table
+            if key=='review':
+                table.bind('<Return>',self.show_review_detail)
+                table.bind('<Double-1>',self.show_review_detail)
         self.order_notice=tk.StringVar(value='미체결 주문 미조회 · 빈 표는 조회 성공을 의미하지 않습니다.')
         ttk.Label(outer,textvariable=self.order_notice,foreground='#526079',wraplength=880).pack(anchor='w',side='bottom')
         self.demo_summary = tk.StringVar(value='백테스트는 합성 데이터 예제입니다. 실제 계좌 성과와 다릅니다.')
@@ -263,12 +268,25 @@ class Dashboard:
         self.fill('timeline',[[r[k] for k in ('client_id','kind','status','filled_qty','checked_at')] for r in data['order_events']])
         r=data['reconciliation']
         self.order_notice.set(f"읽기 대조: 확인 {r['checked']}건 / 미확인 {r['unresolved']}건 / 이전 형식 {r['legacy']}건 · 중단 상태 변경 없음 · 주문 재전송/취소 없음")
+        if 'review' in data:
+            table=self.tables['review'];table.delete(*table.get_children());self.review_items={}
+            for case in data['review']['cases']:
+                item=table.insert('','end',values=(case['target'],case['title'],'검토 필요 · 차단 유지' if case['active'] else '해소 이력',case['last_seen']))
+                self.review_items[item]=case
         inv=data.get('inventory')
         if inv:
             self.entry_blocked=not inv['ready']
             self.fill('inventory',[[r['symbol'],r['expected'],r['actual'],'일치' if r['matched'] else '불일치 · 재개 차단'] for r in inv['rows']])
             self.order_notice.set(self.order_notice.get()+' / 수량 대조: '+inv['reason'])
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
+
+    def show_review_detail(self,event=None):
+        table=self.tables['review'];selection=table.selection()
+        if not selection:return 'break'
+        case=self.review_items.get(selection[0])
+        if not case:return 'break'
+        messagebox.showinfo('차단 상세 · 읽기 전용',f"{case['title']}\n대상: {case['target']}\n저장값: {case['expected']}\n조회값: {case['observed']}\n최초 확인: {case['first_seen']}\n마지막 확인: {case['last_seen']}\n변경 기록: {case['occurrences']}회\n\n{case['next_action']}\n\n이 창을 닫아도 차단은 해제되지 않습니다. 기업행위 원인 확정·자동 보정·재전송은 수행하지 않습니다.",parent=self.root)
+        table.focus_set();return 'break'
 
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
