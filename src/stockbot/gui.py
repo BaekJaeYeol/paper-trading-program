@@ -46,6 +46,7 @@ class Dashboard:
         self.last_account_label="미조회"
         self.account_error=False
         self.stop_failed=False
+        self.entry_blocked=False
         self.market = tk.StringVar(value="미국 · Alpaca")
         self.kis = None
         root.title('모의매매 프로그램 · Paper Trading')
@@ -237,6 +238,7 @@ class Dashboard:
                     label = STATUS.get(data['status'], data['status'])
                     if (Path(self.config['state_dir']) / 'STOP').exists():
                         label = '비상 중단 · 신규 주문 차단'
+                    if kind=='trade' and data['status'] in ('halted','daily_loss_limit','reconciliation_required'):self.pause()
                     self.status.set(label + (' · 5분마다 실행 중' if self.running else ''))
                     self.write(f"{label} · 주문 계획 {len(data.get('orders', []))}건")
                     if 'account_snapshot' in data:self.render_journal(data['account_snapshot'])
@@ -263,13 +265,14 @@ class Dashboard:
         self.order_notice.set(f"읽기 대조: 확인 {r['checked']}건 / 미확인 {r['unresolved']}건 / 이전 형식 {r['legacy']}건 · 중단 상태 변경 없음 · 주문 재전송/취소 없음")
         inv=data.get('inventory')
         if inv:
+            self.entry_blocked=not inv['ready']
             self.fill('inventory',[[r['symbol'],r['expected'],r['actual'],'일치' if r['matched'] else '불일치 · 재개 차단'] for r in inv['rows']])
             self.order_notice.set(self.order_notice.get()+' / 수량 대조: '+inv['reason'])
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
 
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
-        execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else '대기'))
+        execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else ('대조 차단' if getattr(self,'entry_blocked',False) else '대기')))
         self.context.set('실행: '+execution+' · 모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
         if self.last_account_time is None:self.freshness.set('계좌 데이터 미조회 · 시세 신선도는 엔진에서 별도 검증')
         else:
