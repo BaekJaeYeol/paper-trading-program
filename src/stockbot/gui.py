@@ -7,7 +7,7 @@ import time
 import math
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from .ui_safety import order_row, resume_snapshot
+from .ui_safety import order_row, resume_snapshot, unresolved_attempts
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, messagebox, filedialog
@@ -36,6 +36,7 @@ def account_view(broker):
     if any(not math.isfinite(float(account[k])) for k in ('equity','cash','buying_power','last_equity')):raise ValueError('Invalid account amounts')
     return {'received_at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
             'request_seconds':time.monotonic()-started,
+            'received_monotonic':time.monotonic(),
             'can_trade':account.get('status')=='ACTIVE' and not account.get('trading_blocked') and not account.get('account_blocked'),
             'equity': float(account['equity']), 'cash': float(account['cash']),
             'buying_power': float(account['buying_power']),
@@ -205,13 +206,17 @@ class Dashboard:
                     self.resume_pending=False
                     self.account_error=True
                     self.pause()
+                    if kind=='resume':
+                        try:count=len(unresolved_attempts(self.config['state_dir']))
+                        except Exception:count=None
+                        self.order_notice.set(f'재개 차단 · 미확인 주문 {count}건 · 증권사 대조 필요' if count else '재개 점검 실패 · 계좌 권한·잔고·미체결·잠금을 확인하세요.')
                     self.status.set('작업 실패 · 자동 실행 정지')
                     self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
                 elif kind == 'resume':
                     self.finish_resume(data)
                 elif kind == 'account':
                     self.account_error=False
-                    self.last_account_time=time.monotonic()
+                    self.last_account_time=data.get('received_monotonic',time.monotonic())
                     self.last_account_label=data.get('received_at',datetime.now(ZoneInfo('Asia/Seoul')).isoformat())
                     kr = self.market.get().startswith('한국')
                     for key, value in self.values.items():
@@ -249,7 +254,8 @@ class Dashboard:
 
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
-        self.context.set('모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
+        execution='중단' if self.stop_event.is_set() or (Path(self.config['state_dir'])/'STOP').exists() else ('재개 점검 중' if self.resume_pending else ('자동 모의매매' if self.running else '대기'))
+        self.context.set('실행: '+execution+' · 모의투자 · '+('KIS · 한국 모의계좌 · KRW · 잔고 조회 전용' if kr else 'Alpaca Paper · 미국 모의계좌 · USD')+' · 실계좌 주문 비활성화')
         if self.last_account_time is None:self.freshness.set('계좌 데이터 미조회 · 시세 신선도는 엔진에서 별도 검증')
         else:
             age=max(0,int(time.monotonic()-self.last_account_time))
@@ -360,10 +366,14 @@ class Dashboard:
         stop=Path(self.config['state_dir'])/'STOP'
         if stop.exists():
             if not messagebox.askyesno('비상 중단 해제','계좌·미체결·미확인 주문 점검을 통과했습니다.\n기존 주문 취소나 청산을 의미하지 않습니다. STOP을 해제하고 모의매매를 재개할까요?'):return
+            if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:
+                self.order_notice.set('재개 차단 · 계좌 조회 후 60초 경과 · 다시 시작하여 점검하세요.');return
             try:stop.unlink()
             except OSError:
                 self.status.set('STOP 해제 실패 · 재개 차단');return
-        self.last_account_time=time.monotonic();self.last_account_label=data['received_at'];self.account_error=False
+        if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:
+            self.order_notice.set('재개 차단 · 오래된 계좌 조회 · 다시 점검하세요.');return
+        self.last_account_time=data.get('received_monotonic',time.monotonic());self.last_account_label=data['received_at'];self.account_error=False
         self.stop_event.clear();self.stop_failed=False
         self.running=True;self.selector.configure(state='disabled')
         self.write('재개 전 읽기 점검 통과. 모의매매 시작 · 실계좌 주문 비활성화.')

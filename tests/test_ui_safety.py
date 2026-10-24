@@ -94,3 +94,9 @@ class SafetyTests(unittest.TestCase):
             d=self.fake_dashboard(tmp);d.resume_pending=True;d.stop()
             d.finish_resume({'received_at':'test'})
             self.assertFalse(d.running);self.assertTrue(Path(tmp,'STOP').exists())
+
+    def test_delayed_resume_response_is_not_used(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=self.fake_dashboard(tmp);d.resume_pending=True
+            d.finish_resume({'received_at':'test','received_monotonic':time.monotonic()-61})
+            self.assertFalse(d.running);self.assertIn('재개 차단',d.order_notice.get())
