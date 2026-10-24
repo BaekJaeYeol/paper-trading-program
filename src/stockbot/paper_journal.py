@@ -15,7 +15,7 @@ from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
 TERMINAL={'filled','canceled','rejected','expired','replaced'}
-PROBLEMS={'missing':'조회 결과 없음','lookup_failed':'조회 실패','mismatch':'주문 정보 불일치','legacy':'이전 형식 · 수동 대조 필요','awaiting_check':'브로커 상태 확인 전','take_profit':'익절 자식 주문','stop_loss':'손절 자식 주문','pending':'주문 요청 기록','response_lost':'주문 응답 미확인'}
+PROBLEMS={'review_resolved':'수동 검토 해소 · 재개 아님','missing':'조회 결과 없음','lookup_failed':'조회 실패','mismatch':'주문 정보 불일치','legacy':'이전 형식 · 수동 대조 필요','awaiting_check':'브로커 상태 확인 전','take_profit':'익절 자식 주문','stop_loss':'손절 자식 주문','pending':'주문 요청 기록','response_lost':'주문 응답 미확인'}
 
 def fingerprint(account):
     identity=account.get('id')
@@ -137,12 +137,14 @@ def submission_uncertain(db,cid):
     old=db.execute('SELECT broker_id,status,filled,outcome FROM paper_checks WHERE client_id=?',(cid,)).fetchone()
     problem(db,cid,'response_lost',old)
 
-def reconcile_snapshot(c,broker,reader):
+def reconcile_snapshot(c,broker,reader,*,resolve_case=None):
     """No submit/cancel/STOP removal; unknown absence never authorizes replay."""
     root=Path(c['state_dir']);root.mkdir(parents=True,exist_ok=True);lock=root/'cycle.lock'
     try:lock.mkdir()
     except FileExistsError:raise RuntimeError('Another cycle or stale lock requires review') from None
     try:
+        started=time.monotonic()
+        if resolve_case is not None and not (root/'STOP').is_file():raise RuntimeError('STOP required for recovery')
         cancel=c.get('_reconcile_cancel')
         def interrupted():
             if cancel is not None and cancel.is_set():raise RuntimeError('Reconciliation interrupted')
@@ -190,6 +192,15 @@ def reconcile_snapshot(c,broker,reader):
                 data=final
             if time.monotonic()-data.get('received_monotonic',time.monotonic())>60:raise ValueError('Snapshot stale')
             data['inventory']=brackets.inventory(db,data['positions'],legacy)
+            data['reconciliation']={'checked':checked,'unresolved':len(unresolved_attempts(root)),'legacy':legacy,'read_only':True}
+            if resolve_case is not None:
+                interrupted()
+                if time.monotonic()-started>=60:raise RuntimeError('Recovery reconciliation exceeded 60 seconds')
+                db.execute('BEGIN IMMEDIATE')
+                data['review_resolution']=review.resolve_verified(db,resolve_case,data,stopped=(root/'STOP').is_file())
+                interrupted()
+                if not (root/'STOP').is_file():raise RuntimeError('STOP changed during recovery')
+                data['inventory']=brackets.inventory(db,data['positions'],legacy)
             data['review']=review.snapshot(db)
             data['order_history'],data['order_events']=history(db)
             data['order_history']=sorted(data['order_history']+brackets.leg_history(db),key=lambda r:r['checked_at'] if r['checked_at']!='미확인' else '',reverse=True)[:200]
