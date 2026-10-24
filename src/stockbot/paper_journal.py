@@ -10,6 +10,7 @@ import sqlite3
 import time
 from zoneinfo import ZoneInfo
 from . import brackets
+from .broker import AlpacaHTTPError
 from .ui_safety import ORDER_STATES,order_row,unresolved_attempts
 
 TERMINAL={'filled','canceled','rejected','expired','replaced'}
@@ -167,6 +168,8 @@ def reconcile_snapshot(c,broker,reader):
                     if not isinstance(order,dict) or order.get('id')!=bid:raise ValueError('Nested parent identity mismatch')
                     bid,status,filled=validate_order(cid,payload,order,old)
                     brackets.save_legs(db,cid,payload,order)
+                except (OSError,AlpacaHTTPError):
+                    problem(db,cid,'lookup_failed',old);db.commit();continue
                 except Exception:
                     problem(db,cid,'mismatch',old);db.commit();continue
                 save_check(db,cid,bid,status,filled,'confirmed')

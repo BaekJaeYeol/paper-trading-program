@@ -81,3 +81,11 @@ class BracketTests(unittest.TestCase):
         Path(self.temp.name,'STOP').touch();self.fill_parent();self.check()
         self.root['legs']=[];self.check()
         self.assertTrue(Path(self.temp.name,'STOP').exists());self.assertEqual(len(self.b.sent),1)
+
+    def test_nested_lookup_timeout_is_reported_as_lookup_failure(self):
+        self.fill_parent()
+        def fail(bid):raise TimeoutError('private transport detail')
+        self.b.bracket_order=fail
+        data=self.check();self.assertEqual(data['reconciliation']['unresolved'],1)
+        self.assertIn('조회 실패',[r['status'] for r in data['order_history']])
+        self.assertNotIn('private transport detail',str(data));self.assertFalse(data['inventory']['ready'])

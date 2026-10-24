@@ -182,3 +182,12 @@ class LookupTests(unittest.TestCase):
             AlpacaPaper().find_order('client & id')
         self.assertEqual(seen[0].get_method(),'GET');self.assertIsNone(seen[0].data)
         self.assertIn('client_order_id=client+%26+id',seen[0].full_url)
+
+    def test_nested_order_lookup_is_get_and_escapes_id(self):
+        seen=[]
+        def open_request(req,timeout):
+            seen.append(req);return io.BytesIO(b'{"id":"fake","legs":[]}')
+        with patch.dict(os.environ,{'APCA_API_KEY_ID':'fake','APCA_API_SECRET_KEY':'fake'}),patch('stockbot.broker.urlopen',side_effect=open_request):
+            AlpacaPaper().bracket_order('id / x')
+        self.assertEqual(seen[0].get_method(),'GET');self.assertIsNone(seen[0].data)
+        self.assertIn('/v2/orders/id%20%2F%20x?nested=true',seen[0].full_url)
