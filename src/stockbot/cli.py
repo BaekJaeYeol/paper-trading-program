@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 from .broker import AlpacaPaper
 from .core import Bar, signal, size, backtest
 from .ui_safety import unresolved_attempts
+from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain
 
 NY = ZoneInfo("America/New_York")
 
@@ -77,9 +78,10 @@ def _cycle(c, execute=False, broker=None):
     bp = max(0,bp-reserve)
     result = []
     with closing(sqlite3.connect(root/"orders.sqlite", timeout=30)) as db:
-        db.execute("CREATE TABLE IF NOT EXISTS attempts (id TEXT PRIMARY KEY, status TEXT NOT NULL)")
+        initialize(db)
         # Serialize all bot processes across decision and submission, including unknown results.
         db.execute("BEGIN IMMEDIATE")
+        if execute:bind_account(db,fingerprint(account))
         for symbol in c["symbols"]:
             if symbol in occupied or len(occupied) >= c["max_positions"]:
                 continue
@@ -113,14 +115,14 @@ def _cycle(c, execute=False, broker=None):
                 if _halted(c,root):
                     break
                 # Commit intent BEFORE network I/O: crashes/timeouts never trigger blind resubmission.
-                db.execute("INSERT INTO attempts VALUES (?, 'pending')",(cid,))
+                intent(db,cid,body)
                 db.commit()
                 db.execute("BEGIN IMMEDIATE")
                 try:
-                    b.request("/v2/orders",body=body)
-                    db.execute("UPDATE attempts SET status='submitted' WHERE id=?",(cid,))
+                    response=b.request("/v2/orders",body=body)
+                    submitted(db,cid,response)
                 except Exception:
-                    db.execute("UPDATE attempts SET status='unknown' WHERE id=?",(cid,))
+                    submission_uncertain(db,cid)
                     db.commit()
                     raise RuntimeError(f"Submission uncertain for {cid}; reconcile in broker dashboard") from None
             result.append({"signal":s,"order":body,"submitted":execute})
@@ -145,7 +147,7 @@ def cycle(c, execute=False, broker=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["demo","backtest","scan","paper","run"])
+    ap.add_argument("command", choices=["demo","backtest","scan","paper","run","reconcile"])
     ap.add_argument("--config",default="config.json")
     ap.add_argument("--csv",default="examples/demo.csv")
     ap.add_argument("--interval",type=int,default=300)
@@ -159,6 +161,11 @@ def main():
         if any(a.day >= b.day for a,b in zip(bars,bars[1:])):
             raise ValueError("CSV must be sorted with unique dates")
         print(json.dumps(backtest(bars,c),indent=2))
+        return
+    if args.command=='reconcile':
+        if args.execute_paper:ap.error('reconcile never accepts --execute-paper')
+        from .paper_journal import reconcile_snapshot,account_snapshot
+        print(json.dumps(reconcile_snapshot(c,AlpacaPaper(),account_snapshot),ensure_ascii=False,indent=2))
         return
     if args.command in ("paper","run") and not args.execute_paper:
         ap.error("paper/run requires --execute-paper (simulated orders only)")

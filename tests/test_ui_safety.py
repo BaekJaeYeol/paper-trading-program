@@ -48,7 +48,9 @@ class SafetyTests(unittest.TestCase):
             c['symbols']=['MSFT']
             with self.assertRaises(RuntimeError):cycle(c,True,b)
             self.assertEqual(len(b.sent),1)
-            with self.assertRaises(RuntimeError):resume_snapshot(c,b,lambda b:{'can_trade':True})
+            from stockbot.paper_journal import fingerprint
+            snapshot={'can_trade':True,'request_seconds':1,'account_fingerprint':fingerprint({'id':'offline-paper'}),'orders':[]}
+            with self.assertRaises(RuntimeError):resume_snapshot(c,b,lambda b:snapshot)
             self.assertEqual(len(unresolved_attempts(tmp)),1)
             self.assertFalse(Path(tmp,'cycle.lock').exists())
     def test_memory_stop_blocks_even_without_stop_file(self):
