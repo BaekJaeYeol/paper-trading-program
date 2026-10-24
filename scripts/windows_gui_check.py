@@ -94,14 +94,16 @@ def run():
         record('applied-trend-filter-rejects-flat-volume-spike')
         click('설정');entries('전략 설정')
         combo=next(r for w in state()['windows'] if w['title']=='전략 설정' for r in w['widgets'] if r['class']=='TCombobox')
-        mouse.click(coords=(combo['x'],combo['y']));keyboard.send_keys('%{DOWN}{HOME}{ENTER}')
+        mouse.click(coords=(combo['x']+combo['width']//2-10,combo['y']));keyboard.send_keys('{HOME}{ENTER}')
+        wait(lambda s:any(r.get('value')=='기존 거래량 신호' for w in s.get('windows',[]) if w['title']=='전략 설정' for r in w['widgets'] if r['class']=='TCombobox'))
         click('설정 저장','전략 설정');wait(lambda s:len(s.get('windows',[]))==1)
         assert json.loads((OUT/'config.json').read_text())['entry_strategy']=='baseline'
         click('후보 조회');s=wait(lambda s:not s.get('busy',True) and len(s.get('tables',{}).get('plans',[]))==1)
         assert s['submitted']==0
         click('설정');entries('전략 설정')
         combo=next(r for w in state()['windows'] if w['title']=='전략 설정' for r in w['widgets'] if r['class']=='TCombobox')
-        mouse.click(coords=(combo['x'],combo['y']));keyboard.send_keys('%{DOWN}{HOME}{DOWN}{ENTER}')
+        mouse.click(coords=(combo['x']+combo['width']//2-10,combo['y']));keyboard.send_keys('{HOME}{DOWN}{ENTER}')
+        wait(lambda s:any(r.get('value')=='추세·급락 제한' for w in s.get('windows',[]) if w['title']=='전략 설정' for r in w['widgets'] if r['class']=='TCombobox'))
         click('설정 저장','전략 설정');wait(lambda s:len(s.get('windows',[]))==1)
         assert json.loads((OUT/'config.json').read_text())['entry_strategy']=='trend_guard'
         (OUT/'control.json').write_text('{}');time.sleep(.3)
