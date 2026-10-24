@@ -21,15 +21,11 @@ def unresolved_attempts(directory):
         return [r[0] for r in db.execute("SELECT id FROM attempts WHERE status IN ('pending','unknown')")]
 
 def resume_snapshot(c,broker,reader):
-    root=Path(c['state_dir']);root.mkdir(parents=True,exist_ok=True);lock=root/'cycle.lock'
-    try:lock.mkdir()
-    except FileExistsError:raise RuntimeError('Another cycle or stale lock requires review') from None
-    try:
-        if unresolved_attempts(root):raise RuntimeError('Unresolved orders require broker reconciliation')
-        data=reader(broker)
-        if not data.get('can_trade') or data.get('request_seconds',float('inf'))>60:raise ValueError('Account unavailable or snapshot delayed')
-        for order in data['orders']:
-            order_row(order)
-            if order.get('status') not in ORDER_STATES:raise ValueError('Unknown broker order status')
-        return data
-    finally:lock.rmdir()
+    from .paper_journal import reconcile_snapshot
+    data=reconcile_snapshot(c,broker,reader)
+    if data['reconciliation']['unresolved']:raise RuntimeError('Unresolved orders require broker reconciliation')
+    if not data.get('can_trade'):raise ValueError('Account unavailable')
+    for order in data['orders']:
+        order_row(order)
+        if order.get('status') not in ORDER_STATES:raise ValueError('Unknown broker order status')
+    return data

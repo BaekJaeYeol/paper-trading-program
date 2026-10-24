@@ -15,6 +15,7 @@ from .broker import AlpacaPaper
 from .kis import KISPaper
 from .cli import load_config, cycle, read_csv
 from .core import backtest
+from .paper_journal import fingerprint,reconcile_snapshot
 
 BG = '#f3f5fa'
 INK = '#17233b'
@@ -24,30 +25,8 @@ STATUS = {'ok': '조회 완료', 'market_closed': '미국 정규장 마감',
 
 
 def account_view(broker):
-    """Read-only snapshot. Never return credentials or account identifiers."""
-    started=time.monotonic()
-    account = broker.request('/v2/account')
-    clock = broker.request('/v2/clock')
-    positions = broker.request('/v2/positions')
-    orders = broker.request('/v2/orders', {'status': 'open', 'limit': 500, 'nested': 'false'})
-    if len(orders) >= 500:
-        raise ValueError('Order snapshot may be truncated')
-    for order in orders:order_row(order)
-    if any(not math.isfinite(float(account[k])) for k in ('equity','cash','buying_power','last_equity')):raise ValueError('Invalid account amounts')
-    return {'received_at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
-            'request_seconds':time.monotonic()-started,
-            'received_monotonic':time.monotonic(),
-            'can_trade':account.get('status')=='ACTIVE' and not account.get('trading_blocked') and not account.get('account_blocked'),
-            'equity': float(account['equity']), 'cash': float(account['cash']),
-            'buying_power': float(account['buying_power']),
-            'daily_pnl': float(account['equity']) - float(account['last_equity']),
-            'market_open': clock['is_open'],
-            'positions': [{k: p.get(k, '') for k in
-                           ('symbol', 'qty', 'avg_entry_price', 'current_price', 'unrealized_pl')}
-                          for p in positions],
-            'orders': [{k: o.get(k, '') for k in
-                        ('symbol', 'side', 'qty', 'filled_qty', 'limit_price', 'status')}
-                       for o in orders]}
+    from .paper_journal import account_snapshot
+    return account_snapshot(broker)
 
 
 class Dashboard:
@@ -72,6 +51,7 @@ class Dashboard:
         root.title('모의매매 프로그램 · Paper Trading')
         width = min(1180, max(940, root.winfo_screenwidth() - 32))
         height = min(820, max(620, root.winfo_screenheight() - 100))
+        compact=height<760
         root.geometry(f'{width}x{height}+8+8')
         root.minsize(940, 620)
         root.configure(bg=BG)
@@ -81,47 +61,47 @@ class Dashboard:
         style.configure('.', font=('맑은 고딕', 10))
         style.configure('TFrame', background=BG)
         style.configure('TLabel', background=BG, foreground=INK)
-        style.configure('TButton', padding=(14, 10), background='white', foreground=INK)
+        style.configure('TButton', padding=(10, 8) if compact else (14, 10), background='white', foreground=INK)
         style.configure('Primary.TButton', background=BLUE, foreground='white')
         style.map('Primary.TButton', background=[('active', '#2545ba')])
         style.configure('Danger.TButton', background='#fce5e8', foreground='#b8223c')
-        style.configure('Treeview', rowheight=34, background='white', fieldbackground='white')
-        style.configure('Treeview.Heading', background='#e8edf6', padding=9)
-        outer = ttk.Frame(root, padding=16)
+        style.configure('Treeview', rowheight=28 if compact else 34, background='white', fieldbackground='white')
+        style.configure('Treeview.Heading', background='#e8edf6', padding=6 if compact else 9)
+        outer = ttk.Frame(root, padding=12 if compact else 16)
         outer.pack(fill='both', expand=True)
         header = ttk.Frame(outer)
         header.pack(fill='x')
-        ttk.Label(header, text='모의매매 프로그램', font=('맑은 고딕', 23, 'bold')).pack(side='left')
+        ttk.Label(header, text='모의매매 프로그램', font=('맑은 고딕', 20 if compact else 23, 'bold')).pack(side='left')
         selector = ttk.Combobox(header, textvariable=self.market,
                                 values=('미국 · Alpaca', '한국 · KIS'), state='readonly', width=18)
         selector.pack(side='right')
         selector.bind('<<ComboboxSelected>>', self.change_market)
         self.selector = selector
         self.status = tk.StringVar(value='API 연결 전 · 데모로 먼저 둘러보세요')
-        ttk.Label(outer, textvariable=self.status, padding=(0, 12),wraplength=880).pack(anchor='w')
+        ttk.Label(outer, textvariable=self.status, padding=(0, 6 if compact else 12),wraplength=880).pack(anchor='w')
         self.context=tk.StringVar(value='모의투자 · Alpaca Paper · 미국 모의계좌 · USD · 실계좌 주문 비활성화')
         ttk.Label(outer,textvariable=self.context,foreground='#2545ba',wraplength=880).pack(anchor='w')
         self.freshness=tk.StringVar(value='계좌 데이터 미조회 · 수신 시각과 시세 기준 시각은 다릅니다.')
         ttk.Label(outer,textvariable=self.freshness,foreground='#526079',wraplength=880).pack(anchor='w',pady=(2,6))
         cards = ttk.Frame(outer)
-        cards.pack(fill='x', pady=(4, 16))
+        cards.pack(fill='x', pady=(4, 8 if compact else 16))
         self.values = {}
         self.card_titles = {}
         for title, key in [('총 자산 (USD)', 'equity'), ('현금 (USD)', 'cash'),
                            ('매수 가능 금액 (USD)', 'buying_power'), ('전일 대비 손익 (USD)', 'daily_pnl')]:
-            box = tk.Frame(cards, bg='white', padx=20, pady=17, highlightbackground='#e1e6ef', highlightthickness=1)
+            box = tk.Frame(cards, bg='white', padx=14 if compact else 20, pady=10 if compact else 17, highlightbackground='#e1e6ef', highlightthickness=1)
             box.pack(side='left', fill='both', expand=True, padx=(0, 8))
             label = tk.Label(box, text=title, bg='white', fg='#718099', font=('맑은 고딕', 10))
             label.pack(anchor='w')
             self.card_titles[key] = label
             value = tk.StringVar(value='—')
-            tk.Label(box, textvariable=value, bg='white', fg=INK, font=('맑은 고딕', 22, 'bold')).pack(anchor='w', pady=(9, 0))
+            tk.Label(box, textvariable=value, bg='white', fg=INK, font=('맑은 고딕', 18 if compact else 22, 'bold')).pack(anchor='w', pady=(9, 0))
             self.values[key] = value
         toolbar = ttk.Frame(outer)
         toolbar.pack(fill='x', pady=(0, 12))
         self.actions = []
         for title, fn, sty in [('API 연결', self.credentials, 'TButton'),
-                               ('계좌 새로고침', self.refresh, 'TButton'),
+                               ('계좌·주문 대조', self.refresh, 'TButton'),
                                ('후보 조회', self.scan, 'TButton'),
                                ('모의매매 시작', self.start, 'Primary.TButton'),
                                ('데모 / 백테스트', self.demo, 'TButton'),
@@ -131,14 +111,20 @@ class Dashboard:
             self.actions.append(button)
         ttk.Button(toolbar, text='비상 중단', command=self.stop, style='Danger.TButton').pack(side='right')
         tabs = ttk.Notebook(outer)
+        tabs.enable_traversal()
+        self.notebook=tabs
+        root.bind('<Control-Tab>',lambda event:self.navigate_tabs(1))
+        root.bind('<Control-Shift-Tab>',lambda event:self.navigate_tabs(-1))
         # Pack the expanding notebook last so the log/footer always reserve space.
         self.tables = {}
         specs = [('보유종목', 'positions', ['종목', '수량', '평균 매수가', '현재가', '평가손익']),
                  ('미체결 주문', 'orders', ['종목', '방향', '주문 수량', '체결 수량', '잔여 수량', '지정가', '상태']),
                  ('주문 계획', 'plans', ['종목', '수량', '진입가', '손절가', '익절가', '제출 여부']),
+                 ('봇 주문 추적', 'history', ['종목','주문 수량','체결 수량','잔여 수량','대조 상태','봇 주문 키','확인 시각 (KST)']),
+                 ('주문 변경 기록', 'timeline', ['봇 주문 키','대조 결과','주문 상태','체결 수량','확인 시각 (KST)']),
                  ('백테스트', 'demo', ['날짜', '방향', '수량', '가격'])]
         for title, key, columns in specs:
-            panel = ttk.Frame(tabs, padding=10)
+            panel = ttk.Frame(tabs, padding=6 if compact else 10)
             tabs.add(panel, text=title)
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
@@ -147,20 +133,32 @@ class Dashboard:
             scroll = ttk.Scrollbar(panel, orient='vertical', command=table.yview)
             table.configure(yscrollcommand=scroll.set)
             scroll.pack(side='right', fill='y')
+            if key in ('history','timeline'):
+                table.column(5 if key=='history' else 0,width=220,minwidth=120)
+                table.column(6 if key=='history' else 4,width=220,minwidth=120)
+                horizontal=ttk.Scrollbar(panel,orient='horizontal',command=table.xview)
+                table.configure(xscrollcommand=horizontal.set)
+                horizontal.pack(side='bottom',fill='x')
             table.pack(fill='both', expand=True)
             self.tables[key] = table
         self.order_notice=tk.StringVar(value='미체결 주문 미조회 · 빈 표는 조회 성공을 의미하지 않습니다.')
-        ttk.Label(outer,textvariable=self.order_notice,foreground='#526079').pack(anchor='w',side='bottom')
+        ttk.Label(outer,textvariable=self.order_notice,foreground='#526079',wraplength=880).pack(anchor='w',side='bottom')
         self.demo_summary = tk.StringVar(value='백테스트는 합성 데이터 예제입니다. 실제 계좌 성과와 다릅니다.')
         ttk.Label(outer, textvariable=self.demo_summary, padding=(0, 8)).pack(anchor='w', side='bottom')
         # Log is below the notebook and above the footer.
-        self.log = tk.Text(outer, height=5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
+        self.log = tk.Text(outer, height=3 if compact else 5, bg='white', fg=INK, relief='flat', padx=12, pady=9,
                            font=('맑은 고딕', 10), state='disabled')
         self.log.pack(fill='x', pady=(7, 8), side='bottom')
         ttk.Label(outer, text='비상 중단은 신규 주문을 멈춥니다. 이미 제출한 주문·보유종목은 해당 증권사에서 확인하세요.',
                   foreground='#738099').pack(anchor='w', side='bottom')
         tabs.pack(fill='both', expand=True)
         root.after(100, self.poll)
+
+    def navigate_tabs(self,direction):
+        current=self.notebook.index(self.notebook.select())
+        self.notebook.select((current+direction)%self.notebook.index('end'))
+        self.notebook.focus_set()
+        return 'break'
 
     def write(self, text):
         self.log.configure(state='normal')
@@ -173,6 +171,7 @@ class Dashboard:
         if self.busy:
             return False
         self.busy = True
+        self.read_cancel=threading.Event()
         for button in self.actions:
             button.state(['disabled'])
         self.selector.configure(state='disabled')
@@ -213,6 +212,7 @@ class Dashboard:
                     self.status.set('작업 실패 · 자동 실행 정지')
                     self.write('연결 실패: 선택 시장의 모의투자 키·계좌번호·네트워크를 확인하세요. 주문 실패 시 증권사에서 주문 상태를 먼저 확인하세요.')
                 elif kind == 'resume':
+                    self.render_journal(data)
                     self.finish_resume(data)
                 elif kind == 'account':
                     self.account_error=False
@@ -227,6 +227,7 @@ class Dashboard:
                     self.order_notice.set('미체결 주문 미조회 · 한국 잔고 조회 전용' if kr else f"브로커 조회 완료 · 미체결 {len(data['orders'])}건 · 취소 기능은 수행하지 않음")
                     self.status.set('한국 모의계좌 연결됨 · 잔고 조회 전용 · 미체결 주문 미조회' if kr else
                                     '모의계좌 연결됨 · ' + ('미국 정규장 개장' if data['market_open'] else '미국 정규장 마감'))
+                    self.render_journal(data)
                     self.write('모의계좌 정보를 새로고침했습니다.')
                 elif kind in ('scan', 'trade'):
                     self.fill('plans', [[r['order']['symbol'], r['order']['qty'], r['order']['limit_price'],
@@ -251,6 +252,14 @@ class Dashboard:
             pass
         self.update_safety_display()
         self.root.after(100, self.poll)
+
+    def render_journal(self,data):
+        if 'order_history' not in data:return
+        self.fill('history',[[r[k] for k in ('symbol','qty','filled_qty','remaining_qty','status','client_id','checked_at')] for r in data['order_history']])
+        self.fill('timeline',[[r[k] for k in ('client_id','kind','status','filled_qty','checked_at')] for r in data['order_events']])
+        r=data['reconciliation']
+        self.order_notice.set(f"읽기 대조: 확인 {r['checked']}건 / 미확인 {r['unresolved']}건 / 이전 형식 {r['legacy']}건 · 중단 상태 변경 없음 · 주문 재전송/취소 없음")
+        self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
 
     def update_safety_display(self):
         kr=self.market.get().startswith('한국')
@@ -343,7 +352,7 @@ class Dashboard:
                 return
             self.work('account', self.kis.snapshot)
         else:
-            self.work('account', lambda: account_view(AlpacaPaper()))
+            self.work('account', lambda: reconcile_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view))
 
     def scan(self):
         if self.korean_read_only():
@@ -358,7 +367,7 @@ class Dashboard:
         if not messagebox.askyesno('모의매매 시작', 'Alpaca 모의계좌에 주문을 제출하고 5분마다 반복합니다.\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?'):
             return
         self.resume_pending=True
-        self.work('resume',lambda:resume_snapshot(dict(self.config),AlpacaPaper(),account_view))
+        self.work('resume',lambda:resume_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view))
 
     def finish_resume(self,data):
         if not self.resume_pending:return
@@ -395,6 +404,7 @@ class Dashboard:
         self.pause()
         self.resume_pending=False
         if hasattr(self,'stop_event'):self.stop_event.set()
+        if hasattr(self,'read_cancel'):self.read_cancel.set()
         root = Path(self.config['state_dir'])
         try:
             root.mkdir(parents=True, exist_ok=True);(root/'STOP').touch()

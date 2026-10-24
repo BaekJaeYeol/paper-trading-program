@@ -13,7 +13,7 @@ class FakeBroker:
     def request(self,path,params=None,body=None):
         if path=='/v2/clock': return {'is_open':True,'timestamp':'2026-10-05T14:00:00Z'}
         if path=='/v2/calendar': return [{'date':'2026-10-02'}]
-        if path=='/v2/account': return {'status':'ACTIVE','equity':'10000','last_equity':'10000','buying_power':'10000'}
+        if path=='/v2/account': return {'id':'offline-paper','status':'ACTIVE','equity':'10000','last_equity':'10000','buying_power':'10000'}
         if path in ('/v2/positions','/v2/orders') and body is None: return []
         if body:
             self.sent.append(body)

@@ -1,5 +1,6 @@
 """Launch real Tk widgets with an offline broker and export state for external UI tests."""
 import json
+from contextlib import closing
 import os
 import socket
 import sys
@@ -8,7 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tests'))
-from test_bot import FakeBroker
+from test_paper_journal import TrackingBroker
+from stockbot.broker import AlpacaHTTPError
 import stockbot.gui as gui
 
 OUT = ROOT / 'gui-check'
@@ -23,14 +25,22 @@ path.write_text(json.dumps(config), encoding='utf-8')
 for key in ('APCA_API_KEY_ID', 'APCA_API_SECRET_KEY'):
     os.environ.pop(key, None)
 
-class OfflineBroker(FakeBroker):
+class OfflineBroker(TrackingBroker):
     fail = False
     calls = 0
     partial = False
     delay = 0
-    def __init__(self): super().__init__()
+    saved_orders={}
+    saved_posts=[]
+    missing=False
+    injected=False
+    def __init__(self):
+        super().__init__()
+        self.orders=OfflineBroker.saved_orders
+        self.sent=OfflineBroker.saved_posts
     def request(self, path, params=None, body=None):
         if OfflineBroker.fail: raise RuntimeError('offline failure')
+        if path=='/v2/orders:by_client_order_id' and OfflineBroker.missing and params['client_order_id']=='gui-response-lost-MSFT':raise AlpacaHTTPError(404)
         if path=='/v2/account' and OfflineBroker.delay:
             import time
             time.sleep(OfflineBroker.delay)
@@ -71,9 +81,24 @@ def snapshot():
     inspect(root)
     for child in root.winfo_children():
         if isinstance(child, tk.Toplevel) and child.winfo_exists(): inspect(child)
+    notebook=app.notebook
+    points={}
+    for y in (12,20,8,28):
+        for x in range(2,notebook.winfo_width(),4):
+            try:index=notebook.index(f'@{x},{y}')
+            except tk.TclError:continue
+            points.setdefault(index,[]).append((x,y))
+        if len(points)==notebook.index('end'):break
+    tab_points=[]
+    for index,coords in points.items():
+        x,y=coords[len(coords)//2]
+        tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
-             'running': app.running, 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
+             'running': app.running, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
+             'visible_tables':{k:bool(t.winfo_ismapped()) for k,t in app.tables.items()},
+             'table_heights':{k:t.winfo_height() for k,t in app.tables.items()},
+             'notebook_tabs':tab_points,
              'demo_summary': app.demo_summary.get(), 'submitted': OfflineBroker.calls,
              'stop': (Path(app.config['state_dir'])/'STOP').exists()}
     target = OUT / 'state.json'
@@ -91,6 +116,17 @@ def snapshot():
             OfflineBroker.fail=settings.get('fail',False)
             OfflineBroker.partial=settings.get('partial',False)
             OfflineBroker.delay=settings.get('delay',0)
+            OfflineBroker.missing=settings.get('missing',False)
+            if settings.get('inject_unknown') and not OfflineBroker.injected:
+                import sqlite3
+                from stockbot.paper_journal import intent,submission_uncertain
+                payload={'symbol':'MSFT','qty':'2','side':'buy','type':'limit','limit_price':'100','time_in_force':'day','order_class':'bracket','client_order_id':'gui-response-lost-MSFT','take_profit':{'limit_price':'110'},'stop_loss':{'stop_price':'90'}}
+                with closing(sqlite3.connect(Path(app.config['state_dir'])/'orders.sqlite')) as db:
+                    intent(db,payload['client_order_id'],payload)
+                    submission_uncertain(db,payload['client_order_id'])
+                    db.commit()
+                OfflineBroker.saved_orders[payload['client_order_id']]={**payload,'id':'gui-broker-uncertain','filled_qty':'1','status':'partially_filled'}
+                OfflineBroker.injected=True
         except (ValueError, OSError): pass
     root.after(100, snapshot)
 root.after(100, snapshot)

@@ -4,6 +4,11 @@ from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 from urllib.error import HTTPError
 
+class AlpacaHTTPError(RuntimeError):
+    def __init__(self,status):
+        self.status=status
+        super().__init__(f'Alpaca HTTP {status}')
+
 class AlpacaPaper:
     # No configurable live URL: this release can only submit paper orders.
     trading = "https://paper-api.alpaca.markets"
@@ -30,7 +35,7 @@ class AlpacaPaper:
                 return json.load(response)
         except HTTPError as exc:
             # Do not print response bodies, headers, or credentials.
-            raise RuntimeError(f"Alpaca HTTP {exc.code}") from None
+            raise AlpacaHTTPError(exc.code) from None
 
     def bars(self, symbol, start, end, feed):
         rows, token = [], None
@@ -46,3 +51,9 @@ class AlpacaPaper:
 
     def quote(self, symbol, feed):
         return self.request(f"/v2/stocks/{symbol}/quotes/latest", {"feed":feed}, data=True)["quote"]
+
+    def find_order(self,client_id):
+        try:return self.request('/v2/orders:by_client_order_id',{'client_order_id':client_id})
+        except AlpacaHTTPError as exc:
+            if exc.status==404:return None
+            raise
