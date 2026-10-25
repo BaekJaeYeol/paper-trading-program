@@ -352,6 +352,9 @@ def run():
         mouse.click(coords=(target['x'],target['y']))
         s=wait(lambda s:s.get('visible_tables',{}).get('health'))
         assert any('전체 대조 시간 초과' in row[1] for row in s['tables']['health'])
+        click('세션 상세');notice('세션 상세 · 읽기 전용')
+        s=state();assert s['stop'] and not s['running'] and s['submitted']==1
+        record('session-details-read-only')
         widget=next(r for w in s['windows'] for r in w['widgets'] if r['class']=='Treeview')
         mouse.click(coords=(widget['x'],widget['y']));keyboard.send_keys('{HOME}{ENTER}')
         notice('운영 상태 · 읽기 전용')

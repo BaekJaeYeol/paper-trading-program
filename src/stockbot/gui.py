@@ -153,10 +153,11 @@ class Dashboard:
                     research.pack(side='left',padx=(0,6));self.actions.append(research)
             if key=='health':
                 self.session_status=tk.StringVar(value='세션 미조회 · 시간외 신규 주문 미활성')
-                ttk.Label(panel,textvariable=self.session_status,wraplength=850).pack(anchor='w')
                 self.health_notice=tk.StringVar(value='미국 Alpaca 모의 대조 이력 · 최대 최근 50개 상태 묶음 · 자동 재개 아님')
                 ttk.Label(panel,textvariable=self.health_notice,wraplength=850).pack(anchor='w')
-                ttk.Button(panel,text='운영 이력 새로고침',command=self.refresh_health).pack(anchor='w',pady=(0,4))
+                bar=ttk.Frame(panel);bar.pack(fill='x',pady=(0,4))
+                ttk.Button(bar,text='운영 이력 새로고침',command=self.refresh_health).pack(side='left')
+                ttk.Button(bar,text='세션 상세',command=self.show_session_detail).pack(side='left',padx=6)
             table = ttk.Treeview(panel, columns=list(range(len(columns))), show='headings', height=4)
             for i, heading in enumerate(columns):
                 table.heading(i, text=heading)
@@ -344,6 +345,9 @@ class Dashboard:
         self.write('계좌·주문 대조 결과를 갱신했습니다. 대조 완료는 자동매매 재개가 아닙니다.')
         if data.get('review_resolution',{}).get('resolved'):
             self.write('선택 기록의 복구 점검 통과 · 해소 이력 저장 · STOP 유지 · 자동매매는 재개하지 않았습니다.')
+
+    def show_session_detail(self):
+        messagebox.showinfo('세션 상세 · 읽기 전용',self.session_status.get()+'\n\n정규장 외에는 세션을 감시하며 신규 주문을 보내지 않습니다. Alpaca 브래킷 시간외 미지원으로 별도 주문 엔진이 필요합니다.\n이 창은 주문·STOP·실행 상태를 변경하지 않습니다.',parent=self.root)
 
     def refresh_health(self):
         self.render_health(health.load(self.config['state_dir']))
