@@ -122,7 +122,8 @@ def snapshot():
                 record = {'class': cls, 'x': w.winfo_rootx() + w.winfo_width() // 2,
                           'y': w.winfo_rooty() + w.winfo_height() // 2,
                           'width': w.winfo_width(), 'height': w.winfo_height()}
-                if cls in ('TButton', 'TLabel', 'Label'): record['text'] = str(w.cget('text'))
+                if cls in ('TButton', 'TRadiobutton', 'TLabel', 'Label'): record['text'] = str(w.cget('text'))
+                if cls == 'TRadiobutton':record['selected']=w.instate(['selected'])
                 if cls == 'TCombobox':record['value']=w.get()
                 if cls == 'TEntry': record['masked'] = bool(w.cget('show'))
                 if cls == 'Treeview':record['rows']=[list(w.item(item,'values')) for item in w.get_children()]

@@ -655,9 +655,10 @@ class Dashboard:
         window.transient(self.root)
         window.grab_set()
         fields = {}
-        strategy=tk.StringVar(value=LABELS[self.config.get('entry_strategy','baseline')])
+        strategy=tk.StringVar(value=self.config.get('entry_strategy','baseline'))
         ttk.Label(window,text='미국 모의 진입 필터 · 실제 수익 우위 미검증').pack(anchor='w',padx=8)
-        ttk.Combobox(window,textvariable=strategy,values=list(LABELS.values()),state='readonly',width=44).pack(padx=8,pady=4)
+        for key,label in LABELS.items():
+            ttk.Radiobutton(window,text=label,variable=strategy,value=key).pack(anchor='w',padx=12)
         rows = [('symbols', '종목 (쉼표 구분)', ','.join(self.config['symbols'])),
                 ('volume_ratio', '평균 대비 거래량 배수', self.config['volume_ratio']),
                 ('max_return', '1개월 수익률 상한 (%)', self.config['max_return'] * 100),
@@ -677,7 +678,7 @@ class Dashboard:
         def save():
             try:
                 c = dict(self.config)
-                c['entry_strategy']=next(key for key,label in LABELS.items() if label==strategy.get())
+                c['entry_strategy']=strategy.get()
                 c['symbols'] = [s.strip().upper() for s in fields['symbols'].get().split(',') if s.strip()]
                 c['max_positions'] = int(fields['max_positions'].get())
                 c['volume_ratio'] = float(fields['volume_ratio'].get())
