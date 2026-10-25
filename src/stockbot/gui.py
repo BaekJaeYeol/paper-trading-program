@@ -147,8 +147,10 @@ class Dashboard:
                 recovery=ttk.Button(bar,text='선택 기록 복구 점검',command=self.recover_review)
                 recovery.pack(side='left',padx=6);self.actions.append(recovery)
             if key=='demo':
-                research=ttk.Button(panel,text='전략 비교 (연구용)',command=self.research)
-                research.pack(anchor='w',pady=(0,4));self.actions.append(research)
+                bar=ttk.Frame(panel);bar.pack(fill='x',pady=(0,4))
+                for text,command in [('전략 비교 (연구용)',self.research),('Alpaca 일봉 비교',self.research_history)]:
+                    research=ttk.Button(bar,text=text,command=command)
+                    research.pack(side='left',padx=(0,6));self.actions.append(research)
             if key=='health':
                 self.health_notice=tk.StringVar(value='미국 Alpaca 모의 대조 이력 · 최대 최근 50개 상태 묶음 · 자동 재개 아님')
                 ttk.Label(panel,textvariable=self.health_notice,wraplength=850).pack(anchor='w')
@@ -240,8 +242,8 @@ class Dashboard:
                     button.state(['!disabled'])
                 self.selector.configure(state='disabled' if self.running else 'readonly')
                 if error and kind=='research':
-                    self.status.set('전략 연구 실패 · CSV와 비용·데이터 범위를 확인하세요.')
-                    self.write('연구 입력은 날짜가 증가하는 일봉 300~5000개가 필요합니다. 계좌·주문·설정은 변경하지 않았습니다.')
+                    self.status.set('전략 연구 실패 · 데이터·API 권한·비용 입력을 확인하세요.')
+                    self.write('연구에는 일봉 300~5000개가 필요합니다. CSV 또는 Alpaca 키·권한·거래일 누락을 확인하세요. 계좌·주문·설정은 변경하지 않았습니다.')
                 elif error:
                     self.resume_pending=False
                     self.account_error=True
@@ -613,9 +615,31 @@ class Dashboard:
         c=dict(self.config)
         self.work('research',lambda:compare(read_csv(Path(selected)),c))
 
+    def research_history(self):
+        if self.busy:return
+        if self.korean_read_only():return
+        if self.running:
+            messagebox.showinfo('Alpaca 일봉 연구','비상 중단 후 연구를 진행하세요. 조회는 주문이나 설정을 변경하지 않습니다.',parent=self.root);return
+        window=tk.Toplevel(self.root);window.title('Alpaca 일봉 연구');window.transient(self.root);window.grab_set()
+        ttk.Label(window,text='선택한 미국 종목의 최근 약 3년 일봉을 조회합니다.\n전날까지 완료된 거래일만 사용 · IEX · 분할 조정 · 배당 미반영\n모의 API 키가 필요하며 주문·자동 적용은 하지 않습니다.',padding=12).pack()
+        entry=ttk.Entry(window,width=32);entry.insert(0,self.config['symbols'][0]);entry.pack(padx=12,pady=6);entry.focus_set()
+        def run(event=None):
+            from .historical import fetch_compare,symbol_value
+            try:symbol=symbol_value(entry.get().strip().upper())
+            except ValueError:
+                messagebox.showerror('종목 확인','미국 종목 코드를 확인하세요.',parent=window);return
+            c=dict(self.config);window.destroy()
+            self.work('research',lambda:fetch_compare(AlpacaPaper(),symbol,c,cancel=self.read_cancel))
+        ttk.Button(window,text='조회·비교',command=run).pack(pady=6)
+        ttk.Button(window,text='취소',command=window.destroy).pack(pady=(0,10))
+        window.bind('<Return>',run);window.bind('<Escape>',lambda event:window.destroy())
+
     def show_research(self,data):
         window=tk.Toplevel(self.root);window.title('전략 비교 · 연구용');window.geometry('900x460+24+40');window.transient(self.root)
-        ttk.Label(window,text='실제 시장 수익 개선 미검증 · 입력 CSV 출처/기업행위 미검증 · 자동 적용 없음',wraplength=860,padding=10).pack(anchor='w')
+        source=data.get('source_data')
+        source_label=f"Alpaca {source['symbol']} · IEX · 분할 조정 · 배당 미반영 · 완료 {source['last_completed_session']}" if source else '입력 CSV 출처/기업행위 미검증'
+        if source and source.get('test_fixture'):source_label='합성 API 테스트 자료 · '+source_label
+        ttk.Label(window,text='실제 시장 수익 개선 미검증 · '+source_label+' · 자동 적용 없음',wraplength=860,padding=10).pack(anchor='w')
         names={'baseline':'기존 전략','trend_guard':'추세·급락 제한','trend_volume_2':'추세 + 거래량 2배','trend_volume_4':'추세 + 거래량 4배','trend_volatility_guard':'추세 + 변동성 제한'}
         selected=names.get(data['selected_on_training'],'없음 (학습 거래 표본 부족)')
         evidence={'insufficient_training_trades':'학습 거래 표본 부족','insufficient_holdout_trades':'검증·최종 거래 표본 부족','research_only_unverified_market_data':'연구용 · 실제 시장 개선 미검증'}[data['evidence_status']]

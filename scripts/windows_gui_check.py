@@ -33,12 +33,13 @@ def record(name):
     capture(f'{len(checks):02}-{name}')
 
 def click(text,title=None):
-    s=wait(lambda s: bool(s.get('windows')))
-    windows=[w for w in s['windows'] if title is None or w['title']==title]
-    matches=[r for w in windows for r in w['widgets'] if r['class'] in ('TButton','TRadiobutton') and r.get('text')==text]
-    assert len(matches)==1,(text,matches)
-    p=matches[0]
+    def matches(s):
+        windows=[w for w in s.get('windows',[]) if title is None or w['title']==title]
+        return [r for w in windows for r in w['widgets'] if r['class'] in ('TButton','TRadiobutton') and r.get('text')==text]
+    s=wait(lambda s:len(matches(s))==1)
+    p=matches(s)[0]
     mouse.click(coords=(p['x'],p['y']))
+
 
 def modal(title):
     w=desktop.window(title=title,class_name='#32770')
@@ -134,6 +135,20 @@ def run():
         assert s['submitted']==0 and s['read_calls']==before_reads and not s['power_active']
         assert (OUT/'config.json').read_text()==before_config
         record('offline-strategy-comparison-no-broker-or-auto-apply')
+        click('닫기','전략 비교 · 연구용');wait(lambda s:len(s.get('windows',[]))==1)
+        before_reads=state()['read_calls']
+        click('Alpaca 일봉 비교');click('취소','Alpaca 일봉 연구')
+        s=wait(lambda s:len(s.get('windows',[]))==1)
+        assert s['read_calls']==before_reads and s['submitted']==0
+        record('historical-api-research-cancel-no-network')
+        click('Alpaca 일봉 비교');click('조회·비교','Alpaca 일봉 연구')
+        s=wait(lambda s:not s.get('busy',True) and any(w['title']=='전략 비교 · 연구용' for w in s.get('windows',[])))
+        report_window=next(w for w in s['windows'] if w['title']=='전략 비교 · 연구용')
+        assert len(next(w['rows'] for w in report_window['widgets'] if w['class']=='Treeview'))==5
+        assert any('합성 API 테스트 자료' in w.get('text','') and 'Alpaca AAPL' in w.get('text','') for w in report_window['widgets'])
+        assert s['read_calls']==before_reads+4 and s['submitted']==0 and not s['power_active']
+        assert (OUT/'config.json').read_text()==before_config
+        record('historical-api-fixture-provenance-no-orders-or-settings-change')
         click('닫기','전략 비교 · 연구용');wait(lambda s:len(s.get('windows',[]))==1)
         click('설정')
         es=entries('전략 설정')

@@ -95,6 +95,20 @@ def controlled_reconcile(*args,**kwargs):
     try:return real_reconcile(*args,**kwargs)
     finally:virtual_budget['offset']=0
 gui.reconcile_snapshot=controlled_reconcile
+# API-history UI fixture runs the real reader with a bounded read-only fake adapter.
+import stockbot.historical as historical
+from test_historical import HistoryBroker
+real_fetch_compare=historical.fetch_compare
+def fixture_fetch_compare(broker,symbol,c,**kwargs):
+    fixture=HistoryBroker();original=fixture.request
+    def request(*args,**kw):
+        OfflineBroker.read_calls+=1
+        return original(*args,**kw)
+    fixture.request=request
+    result=real_fetch_compare(fixture,symbol,c,**kwargs)
+    result['source_data']['test_fixture']=True
+    return result
+historical.fetch_compare=fixture_fetch_compare
 gui.AlpacaPaper = OfflineBroker
 import stockbot.cli as cli
 cli.AlpacaPaper = OfflineBroker
