@@ -33,12 +33,13 @@ def record(name):
     capture(f'{len(checks):02}-{name}')
 
 def click(text,title=None):
-    s=wait(lambda s: bool(s.get('windows')))
-    windows=[w for w in s['windows'] if title is None or w['title']==title]
-    matches=[r for w in windows for r in w['widgets'] if r['class'] in ('TButton','TRadiobutton') and r.get('text')==text]
-    assert len(matches)==1,(text,matches)
-    p=matches[0]
+    def matches(s):
+        windows=[w for w in s.get('windows',[]) if title is None or w['title']==title]
+        return [r for w in windows for r in w['widgets'] if r['class'] in ('TButton','TRadiobutton') and r.get('text')==text]
+    s=wait(lambda s:len(matches(s))==1)
+    p=matches(s)[0]
     mouse.click(coords=(p['x'],p['y']))
+
 
 def modal(title):
     w=desktop.window(title=title,class_name='#32770')
