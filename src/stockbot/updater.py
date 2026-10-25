@@ -1,5 +1,6 @@
 """User-triggered immutable source updates from one fixed GitHub repository."""
 import ast
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import json
 import os
@@ -111,7 +112,7 @@ def state(root):
         raise UpdateError('설치 버전 정보가 손상되었습니다. 기존 폴더의 실행 파일을 사용하세요.') from None
 
 
-def install(candidate, *, root=None, fetch=download, monotonic=time.monotonic):
+def install(candidate, *, root=None, fetch=download, monotonic=time.monotonic, cancelled=None):
     candidate = channel(candidate)
     if version(candidate['version']) <= version(VERSION):
         raise UpdateError('동일하거나 이전 버전으로 업데이트하지 않습니다.')
@@ -121,11 +122,13 @@ def install(candidate, *, root=None, fetch=download, monotonic=time.monotonic):
     staging = None
     started = monotonic()
     try:
-        old = state(root)
+        state(root)  # Refuse a damaged pointer before preparing files.
         staging = Path(tempfile.mkdtemp(prefix='staging-', dir=root))
         package = staging / 'src' / 'stockbot'
         package.mkdir(parents=True)
         def read(url):
+            if cancelled and cancelled():
+                raise UpdateError('업데이트를 취소했습니다. 기존 버전은 유지됩니다.')
             if monotonic() - started > 120:
                 raise UpdateError('업데이트 시간이 초과되어 취소했습니다.')
             value = fetch(url)
@@ -145,16 +148,25 @@ def install(candidate, *, root=None, fetch=download, monotonic=time.monotonic):
                     or not re.fullmatch('[a-f0-9]{40}', item['sha'])
                     or type(item['size']) is not int or not 0 <= item['size'] <= MAX_FILE):
                 raise UpdateError('지원하지 않는 배포 파일입니다.')
-            data = read(RAW + '/' + commit + '/src/stockbot/' + name)
-            total += len(data)
-            if len(data) != item['size'] or len(data) > MAX_FILE or total > MAX_TOTAL:
-                raise UpdateError('배포 크기가 일치하지 않습니다.')
-            digest = hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + b'\0' + data).hexdigest()
-            if digest != item['sha']:
-                raise UpdateError('다운로드 검증 실패. 기존 버전을 유지합니다.')
-            ast.parse(data.decode('utf-8'), filename=name)  # Parse only; never execute while staging.
-            (package / name).write_bytes(data)
             names.add(name)
+        if sum(item['size'] for item in entries) > MAX_TOTAL:
+            raise UpdateError('배포 크기 제한 초과')
+        pool = ThreadPoolExecutor(max_workers=4)
+        futures = {pool.submit(read, RAW + '/' + commit + '/src/stockbot/' + item['name']): item for item in entries}
+        try:
+            for future in as_completed(futures):
+                item = futures[future]
+                data = future.result()
+                total += len(data)
+                if len(data) != item['size'] or len(data) > MAX_FILE or total > MAX_TOTAL:
+                    raise UpdateError('배포 크기가 일치하지 않습니다.')
+                digest = hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + b'\0' + data).hexdigest()
+                if digest != item['sha']:
+                    raise UpdateError('다운로드 검증 실패. 기존 버전을 유지합니다.')
+                ast.parse(data.decode('utf-8'), filename=item['name'])
+                (package / item['name']).write_bytes(data)
+        finally:
+            pool.shutdown(wait=True, cancel_futures=True)
         if not {'__init__.py', 'toss_gui.py', 'toss.py', 'updater.py', 'credentials.py'}.issubset(names):
             raise UpdateError('필수 프로그램 파일이 없습니다.')
         # Channel version must match the staged application, without importing downloaded code.
@@ -180,6 +192,8 @@ def install(candidate, *, root=None, fetch=download, monotonic=time.monotonic):
         running = os.environ.get('STOCKBOT_ACTIVE_VERSION', 'bundled')
         if running != 'bundled' and not re.fullmatch('[a-f0-9]{40}', running):
             raise UpdateError('실행 버전 식별 실패')
+        if cancelled and cancelled():
+            raise UpdateError('업데이트를 취소했습니다. 기존 버전은 유지됩니다.')
         atomic_json(root / 'current.json', {'active': commit, 'previous': running})
         return candidate['version']
     except UpdateError:

@@ -35,6 +35,7 @@ class TossDashboard:
         self.busy = False
         self.last_success = None
         self.closed = False
+        self.shutdown = threading.Event()
         root.title(f'토스증권 실계좌 · 조회 전용 · v{updater.VERSION}')
         root.geometry('980x580')
         root.minsize(700, 480)
@@ -78,7 +79,7 @@ class TossDashboard:
         table_frame.columnconfigure(0, weight=1)
         ttk.Label(outer, text='미체결 건수는 일반 주식 주문만 포함합니다. 조건주문·옵션·채권은 조회 범위 밖입니다.', wraplength=900).pack(anchor='w', pady=8)
         root.protocol('WM_DELETE_WINDOW', self.close)
-        root.after(100, self.poll)
+        self.poll_id = root.after(100, self.poll)
 
     def credentials_dialog(self):
         if self.busy or self.closed:
@@ -154,13 +155,14 @@ class TossDashboard:
         self.busy = True
         for button in [self.button, self.preview_button, self.credential_button, self.update_button, self.rollback_button]:
             button.state(['disabled'])
+        results = self.desktop_results
         def worker():
             try:
-                self.desktop_results.put((kind, True, operation()))
+                results.put((kind, True, operation()))
             except updater.UpdateError as error:
-                self.desktop_results.put((kind, False, str(error)))
+                results.put((kind, False, str(error)))
             except Exception:
-                self.desktop_results.put((kind, False, '작업에 실패했습니다. 기존 버전과 인증정보는 유지됩니다.'))
+                results.put((kind, False, '작업에 실패했습니다. 기존 버전과 인증정보는 유지됩니다.'))
         threading.Thread(target=worker, daemon=True).start()
 
     def check_updates(self):
@@ -190,7 +192,8 @@ class TossDashboard:
                 self.desktop_status.set(f'현재 v{updater.VERSION} · 새로 배포된 버전이 없습니다.')
             elif messagebox.askyesno('업데이트 설치', f"v{result['version']}을 내려받을까요? 인증정보·설정은 유지됩니다. 설치 후 창을 닫고 TossTrading.cmd로 다시 실행하세요.", parent=self.root):
                 self.desktop_status.set('검증된 배포 파일 설치 중… 완료 후 다시 실행하세요.')
-                self.desktop_work('install', lambda: updater.install(result))
+                cancelled = self.shutdown.is_set
+                self.desktop_work('install', lambda: updater.install(result, cancelled=cancelled))
             else:
                 self.desktop_status.set('업데이트를 취소했습니다. 현재 버전을 유지합니다.')
         else:
@@ -240,9 +243,10 @@ class TossDashboard:
             self.preview_button.state(['disabled'])
             calculate_button.state(['disabled'])
             show('계좌·일반 주문·조건주문·시세·환율·수수료 조회 중… 전송 없음')
+            factory = self.factory
             def worker():
                 try:
-                    text = describe(preview(self.factory(), symbol, str(price), str(quantity)))
+                    text = describe(preview(factory(), symbol, str(price), str(quantity)))
                 except PreviewBlocked as error:
                     text = '미리보기 차단: ' + str(error)
                 except Exception:
@@ -288,17 +292,18 @@ class TossDashboard:
         self.status.set('토스 계좌 조회 중… 실제 주문은 실행하지 않습니다.')
         # Hide old holdings immediately so failed refresh cannot look current.
         self.table.delete(*self.table.get_children())
+        factory, results = self.factory, self.results
         def worker():
             try:
-                snapshot = self.factory().account_snapshot()
+                snapshot = factory().account_snapshot()
                 rows = holding_rows(snapshot)
                 stamp = datetime.fromisoformat(snapshot['as_of'])
                 if stamp.tzinfo is None:
                     raise ValueError('Timezone missing')
-                self.results.put((True, (rows, len(snapshot['open_orders']), stamp)))
+                results.put((True, (rows, len(snapshot['open_orders']), stamp)))
             except Exception:
                 # Never expose arbitrary exception strings, account IDs or credentials.
-                self.results.put((False, None))
+                results.put((False, None))
         threading.Thread(target=worker, daemon=True).start()
 
     def poll(self):
@@ -328,10 +333,12 @@ class TossDashboard:
         else:
             seconds = int(time.monotonic() - self.last_success)
             self.age.set(f'마지막 조회 후 {seconds}초' + (' · 60초 경과: 새로고침 필요' if seconds >= 60 else ' · 수동 조회 화면'))
-        self.root.after(100, self.poll)
+        self.poll_id = self.root.after(100, self.poll)
 
     def close(self):
         self.closed = True
+        self.shutdown.set()
+        self.root.after_cancel(self.poll_id)
         self.root.destroy()
 
 
