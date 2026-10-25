@@ -82,6 +82,8 @@ class UpdateFixture:
 
 class UpdateTests(unittest.TestCase):
     def setUp(self):
+        import gc
+        gc.collect()
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
@@ -214,8 +216,16 @@ class DesktopGuiTests(unittest.TestCase):
         from stockbot.toss_gui import TossDashboard
         self.root = tk.Tk()
         self.app = TossDashboard(self.root)
-        self.addCleanup(self.app.close)
         self.root.update()
+
+    def tearDown(self):
+        # Tcl interpreters/variables must be reclaimed on their owning thread,
+        # before subsequent non-GUI tests start download pool threads.
+        import gc
+        self.app.close()
+        self.app = None
+        self.root = None
+        gc.collect()
 
     def widgets(self, widget):
         return [child for w in widget.winfo_children() for child in [w, *self.widgets(w)]]
