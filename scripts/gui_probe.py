@@ -53,6 +53,8 @@ class OfflineBroker(TrackingBroker):
     power_fail=False
     budget_timeout=False
     flat_strategy=False
+    session_mode="regular"
+    session_tick=0
     budget_run_injected=False
     def __init__(self):
         super().__init__()
@@ -73,6 +75,7 @@ class OfflineBroker(TrackingBroker):
         if path=='/v2/orders' and body is None and OfflineBroker.partial:
             return [{'symbol':'AAPL','side':'buy','qty':'10','filled_qty':'3','limit_price':'100','status':'partially_filled'}]
         result = super().request(path, params, body)
+        if path=='/v2/clock' and OfflineBroker.session_mode=='post':result=dict(result,is_open=False,timestamp='2026-10-05T21:00:00Z')
         if path == '/v2/account': result['cash'] = '8000'
         if path=='/v2/positions' and OfflineBroker.holding_extra:
             for position in result:
@@ -162,7 +165,7 @@ def snapshot():
         x,y=coords[len(coords)//2]
         tab_points.append({'text':notebook.tab(index,'text'),'x':notebook.winfo_rootx()+x,'y':notebook.winfo_rooty()+y})
     state = {'screen': [root.winfo_screenwidth(), root.winfo_screenheight()], 'windows': windows, 'status': app.status.get(), 'busy': app.busy,
-             'running': app.running, 'log_text':app.log.get('1.0','end-1c'), 'power_active':app.sleep_guard.active,'power_supported':app.sleep_guard.supported,'power_error':app.sleep_guard.error, 'schedule_status':app.schedule_status.get(),
+             'running': app.running,'session_status':app.session_status.get(),'operating_interval':app.cadence.interval if app.cadence else None, 'log_text':app.log.get('1.0','end-1c'), 'power_active':app.sleep_guard.active,'power_supported':app.sleep_guard.supported,'power_error':app.sleep_guard.error, 'schedule_status':app.schedule_status.get(),
              'schedule_skipped':app.cadence.skipped if app.cadence else 0,
              'schedule_delay_seconds':app.cadence.delay(time.monotonic()) if app.cadence else None, 'order_notice':app.order_notice.get(), 'context':app.context.get(), 'freshness':app.freshness.get(), 'account_error':app.account_error, 'stop_failed':app.stop_failed, 'cards': {k:v.get() for k,v in app.values.items()},
              'tables': {k:[list(t.item(i,'values')) for i in t.get_children()] for k,t in app.tables.items()},
@@ -192,6 +195,11 @@ def snapshot():
                 app.schedule_trade()
             OfflineBroker.budget_timeout=settings.get('budget_timeout',False)
             OfflineBroker.flat_strategy=settings.get('flat_strategy',False)
+            OfflineBroker.session_mode=settings.get('session_mode','regular')
+            tick=settings.get('session_tick',0)
+            if tick>OfflineBroker.session_tick and app.running and not app.busy:
+                OfflineBroker.session_tick=tick
+                app.cadence.next_due=time.monotonic()-1;app.schedule_trade()
             if settings.get('run_for_budget_test') and app.running and not app.busy and not OfflineBroker.budget_run_injected:
                 OfflineBroker.budget_run_injected=True
                 app.cadence.next_due=time.monotonic()-1

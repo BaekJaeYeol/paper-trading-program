@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode,quote
 from urllib.error import HTTPError
@@ -38,16 +39,24 @@ class AlpacaPaper:
             raise AlpacaHTTPError(exc.code) from None
 
     def bars(self, symbol, start, end, feed):
-        rows, token = [], None
-        while True:
+        rows, token, seen = [], None, set()
+        started=time.monotonic()
+        for _ in range(10):
+            if time.monotonic()-started>=60:raise RuntimeError('Daily bar lookup exceeded time budget')
             params = {"timeframe":"1Day","start":start,"end":end,"feed":feed,"adjustment":"split","limit":1000,"sort":"asc"}
             if token:
                 params["page_token"] = token
             response = self.request(f"/v2/stocks/{symbol}/bars", params, data=True)
+            if time.monotonic()-started>=60:raise RuntimeError('Daily bar lookup exceeded time budget')
+            if not isinstance(response,dict) or not isinstance(response.get('bars'),(list,type(None))):raise ValueError('Invalid daily bar page')
             rows.extend(response.get("bars") or [])
+            if len(rows)>5000:raise RuntimeError('Daily bar count limit exceeded')
             token = response.get("next_page_token")
             if not token:
                 return rows
+            if not isinstance(token,str) or len(token)>2048 or token in seen:raise RuntimeError('Invalid or repeated daily bar token')
+            seen.add(token)
+        raise RuntimeError('Daily bar page limit exceeded')
 
     def quote(self, symbol, feed):
         return self.request(f"/v2/stocks/{symbol}/quotes/latest", {"feed":feed}, data=True)["quote"]

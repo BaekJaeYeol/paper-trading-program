@@ -192,6 +192,15 @@ def run():
         record('next-run-time-and-countdown-visible')
         assert s['power_supported'] and s['power_active'] and '절전 방지 요청 적용' in s['schedule_status']
         record('windows-sleep-request-active-during-run')
+        (OUT/'control.json').write_text('{"session_mode":"post","session_tick":1}')
+        s=wait(lambda s:s.get('running') and not s.get('busy',True) and s.get('operating_interval')==60 and '애프터마켓' in s.get('session_status',''))
+        assert s['submitted']==1 and s['power_active']
+        record('after-hours-session-monitor-blocks-new-orders')
+        (OUT/'control.json').write_text('{"session_mode":"regular","session_tick":2}')
+        s=wait(lambda s:s.get('running') and not s.get('busy',True) and s.get('operating_interval')==300 and s.get('session_status','').startswith('정규장'))
+        assert s['submitted']==1 and s['power_active']
+        record('return-to-regular-rechecks-without-duplicate')
+        (OUT/'control.json').write_text('{}')
         (OUT/'control.json').write_text('{"late_schedule":true}')
         s=wait(lambda s:s.get('schedule_skipped',0)>=10 and not s.get('busy',True) and '다음 실행' in s.get('schedule_status',''))
         assert s['submitted']==1 and s['schedule_delay_seconds']>=30
@@ -343,6 +352,9 @@ def run():
         mouse.click(coords=(target['x'],target['y']))
         s=wait(lambda s:s.get('visible_tables',{}).get('health'))
         assert any('전체 대조 시간 초과' in row[1] for row in s['tables']['health'])
+        click('세션 상세');notice('세션 상세 · 읽기 전용')
+        s=state();assert s['stop'] and not s['running'] and s['submitted']==1
+        record('session-details-read-only')
         widget=next(r for w in s['windows'] for r in w['widgets'] if r['class']=='Treeview')
         mouse.click(coords=(widget['x'],widget['y']));keyboard.send_keys('{HOME}{ENTER}')
         notice('운영 상태 · 읽기 전용')
