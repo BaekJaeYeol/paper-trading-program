@@ -7,6 +7,7 @@ from tkinter import ttk
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from .toss import TossReadOnly
+from .toss_preview import preview, describe, inputs, PreviewBlocked
 
 
 def holding_rows(snapshot):
@@ -43,6 +44,8 @@ class TossDashboard:
         ttk.Label(outer, textvariable=self.age).pack(anchor='w', pady=4)
         self.button = ttk.Button(outer, text='토스 연결·새로고침', command=self.refresh)
         self.button.pack(anchor='w', pady=6)
+        self.preview_button = ttk.Button(outer, text='1만 원 주문 미리보기 · 전송 없음', command=self.open_preview)
+        self.preview_button.pack(anchor='w', pady=4)
         table_frame = ttk.Frame(outer)
         table_frame.pack(fill='both', expand=True)
         columns = ('종목', '이름', '시장', '보유 수량', '통화', '평균 매수가', '현재가', '관리 상태')
@@ -62,11 +65,95 @@ class TossDashboard:
         root.protocol('WM_DELETE_WINDOW', self.close)
         root.after(100, self.poll)
 
+    def open_preview(self):
+        if self.busy or self.closed:
+            return
+        dialog = tk.Toplevel(self.root)
+        dialog.title('1만 원 예산 검사 · 실제 주문 없음')
+        dialog.geometry('720x500')
+        dialog.transient(self.root)
+        dialog.grab_set()
+        frame = ttk.Frame(dialog, padding=12)
+        frame.pack(fill='both', expand=True)
+        ttk.Label(frame, text='수동 후보 한 개 · 미국 보통주 · 정수 수량 · 실제 주문 차단').pack(anchor='w')
+        values = []
+        entries = []
+        for label, default in [('미국 티커 (추천 종목 아님)', ''), ('지정가 USD (1달러 이상)', ''), ('수량 (정수)', '1')]:
+            ttk.Label(frame, text=label).pack(anchor='w', pady=(6, 0))
+            value = tk.StringVar(value=default)
+            entry = ttk.Entry(frame, textvariable=value)
+            entry.pack(fill='x')
+            entries.append(entry)
+            values.append(value)
+        output = tk.Text(frame, height=11, wrap='word', state='disabled')
+        def show(text):
+            output.configure(state='normal')
+            output.delete('1.0', 'end')
+            output.insert('1.0', text)
+            output.configure(state='disabled')
+        pending = queue.Queue()
+        active = [False]
+        def calculate():
+            if active[0]:
+                return
+            try:
+                symbol, price, quantity = inputs(*(v.get() for v in values))
+            except PreviewBlocked as error:
+                show(str(error))
+                return
+            for entry in entries:
+                entry.state(['disabled'])
+            active[0] = True
+            self.busy = True
+            self.button.state(['disabled'])
+            self.preview_button.state(['disabled'])
+            calculate_button.state(['disabled'])
+            show('계좌·일반 주문·조건주문·시세·환율·수수료 조회 중… 전송 없음')
+            def worker():
+                try:
+                    text = describe(preview(self.factory(), symbol, str(price), str(quantity)))
+                except PreviewBlocked as error:
+                    text = '미리보기 차단: ' + str(error)
+                except Exception:
+                    text = '미리보기 실패: 인증정보·통신·API 응답을 확인하세요. 이전 결과는 폐기했습니다.'
+                pending.put(text)
+            threading.Thread(target=worker, daemon=True).start()
+        def finish():
+            # Closing hides the estimate; background reads may finish but never submit.
+            dialog.grab_release()
+            dialog.destroy()
+        def collect():
+            if self.closed:
+                return
+            try:
+                text = pending.get_nowait()
+            except queue.Empty:
+                pass
+            else:
+                active[0] = False
+                self.busy = False
+                self.button.state(['!disabled'])
+                self.preview_button.state(['!disabled'])
+                if dialog.winfo_exists():
+                    calculate_button.state(['!disabled'])
+                    for entry in entries:
+                        entry.state(['!disabled'])
+                    show(text + '\n\n조회 시점의 단일 계산입니다. 입력을 변경하면 다시 계산하세요.')
+            if active[0] or dialog.winfo_exists():
+                self.root.after(100, collect)
+        calculate_button = ttk.Button(frame, text='예산 계산 · 실제 주문 없음', command=calculate)
+        calculate_button.pack(anchor='w', pady=8)
+        output.pack(fill='both', expand=True)
+        ttk.Button(frame, text='닫기', command=finish).pack(anchor='e', pady=6)
+        dialog.protocol('WM_DELETE_WINDOW', finish)
+        self.root.after(100, collect)
+
     def refresh(self):
         if self.busy or self.closed:
             return
         self.busy = True
         self.button.state(['disabled'])
+        self.preview_button.state(['disabled'])
         self.status.set('토스 계좌 조회 중… 실제 주문은 실행하지 않습니다.')
         # Hide old holdings immediately so failed refresh cannot look current.
         self.table.delete(*self.table.get_children())
@@ -93,6 +180,7 @@ class TossDashboard:
         else:
             self.busy = False
             self.button.state(['!disabled'])
+            self.preview_button.state(['!disabled'])
             if success:
                 rows, count, stamp = result
                 for row in rows:
