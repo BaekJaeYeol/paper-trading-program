@@ -49,6 +49,9 @@ def backtest(bars, config, cash=10000.0, fee=0.001, slippage=0.001, *, sell_tax=
     for key in ('max_position_fraction','stop_loss','take_profit','max_gap'):
         if not math.isfinite(config[key]) or not 0<config[key]<1:raise ValueError('Invalid strategy risk setting')
     if not math.isfinite(config['volume_ratio']) or config['volume_ratio']<=0 or not math.isfinite(config['max_return']) or not -1<config['max_return']<1:raise ValueError('Invalid signal setting')
+    if entry_filter is None:
+        from .strategies import configured_filter
+        entry_filter=configured_filter(config)
     initial=cash;qty=0;stop=target=position_cost=0.0
     trades=[];curve=[];profits=[];costs=0.0;held_days=0
     def exit_position(raw,bar,reason):

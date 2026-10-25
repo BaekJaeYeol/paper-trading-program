@@ -14,6 +14,7 @@ from .broker import AlpacaPaper
 from .cadence import Cadence
 from .power import SleepGuard
 from .core import Bar, signal, size, backtest
+from .strategies import LABELS,decision
 from .ui_safety import unresolved_attempts
 from .brackets import enforce_entry
 from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain,ReconciliationTimeout
@@ -29,6 +30,8 @@ def load_config(path):
         raise ValueError("Invalid symbols")
     if c["max_positions"] < 1 or c["volume_ratio"] <= 0 or c["max_quote_age_seconds"] <= 0:
         raise ValueError("Invalid limits")
+    c.setdefault('entry_strategy','baseline')
+    if c['entry_strategy'] not in LABELS:raise ValueError('Invalid entry strategy')
     return c
 
 def read_csv(path):
@@ -80,6 +83,9 @@ def _cycle(c, execute=False, broker=None):
         raise ValueError("Unpriced pending buy; cannot bound exposure")
     bp = max(0,bp-reserve)
     result = []
+    strategy=c.get('entry_strategy','baseline')
+    if strategy not in LABELS:raise ValueError('Invalid entry strategy')
+    excluded={}
     with closing(sqlite3.connect(root/"orders.sqlite", timeout=30)) as db:
         initialize(db)
         # Serialize all bot processes across decision and submission, including unknown results.
@@ -88,13 +94,18 @@ def _cycle(c, execute=False, broker=None):
         for symbol in c["symbols"]:
             if symbol in occupied or len(occupied) >= c["max_positions"]:
                 continue
-            rows = b.bars(symbol, (session-timedelta(days=100)).isoformat(), today.isoformat(), c["feed"])
+            rows = b.bars(symbol, (session-timedelta(days=180)).isoformat(), today.isoformat(), c["feed"])
             bars = [Bar(now_parse(r["t"]).astimezone(NY).date(),r["o"],r["h"],r["l"],r["c"],r["v"]) for r in rows if now_parse(r["t"]).astimezone(NY).date() <= session]
             if not bars or bars[-1].day != session:
                 continue
             s = signal(bars,c["volume_ratio"],c["max_return"])
             if not s:
                 continue
+            check=decision(bars,strategy)
+            if not check['allowed']:
+                excluded[check['reason']]=excluded.get(check['reason'],0)+1
+                continue
+            s['entry_filter']=check
             q = b.quote(symbol,c["feed"])
             age = (now-now_parse(q["t"])).total_seconds()
             bid, ask = float(q["bp"]),float(q["ap"])
@@ -133,7 +144,7 @@ def _cycle(c, execute=False, broker=None):
             occupied.add(symbol)
             bp -= qty*limit
         db.commit()
-    return {"status":"ok","orders":result}
+    return {"status":"ok","orders":result,"entry_filter":{"strategy":strategy,"excluded":excluded}}
 
 def cycle(c, execute=False, broker=None):
     root = Path(c["state_dir"])

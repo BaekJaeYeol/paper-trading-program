@@ -35,7 +35,7 @@ def record(name):
 def click(text,title=None):
     s=wait(lambda s: bool(s.get('windows')))
     windows=[w for w in s['windows'] if title is None or w['title']==title]
-    matches=[r for w in windows for r in w['widgets'] if r['class']=='TButton' and r.get('text')==text]
+    matches=[r for w in windows for r in w['widgets'] if r['class'] in ('TButton','TRadiobutton') and r.get('text')==text]
     assert len(matches)==1,(text,matches)
     p=matches[0]
     mouse.click(coords=(p['x'],p['y']))
@@ -86,11 +86,31 @@ def run():
         s=wait(lambda s:len(s.get('tables',{}).get('plans',[]))==1 and not s.get('busy',True))
         assert s['tables']['plans'][0][-1]=='조회만' and s['submitted']==0
         record('scan-without-submission')
+        assert '진입: 추세·급락 제한' in s['context']
+        (OUT/'control.json').write_text('{"flat_strategy":true}')
+        time.sleep(.3);click('후보 조회')
+        s=wait(lambda s:not s.get('busy',True) and not s.get('tables',{}).get('plans') and '기본 신호 통과 후 제외 1종목' in s.get('log_text',''))
+        assert s['submitted']==0
+        record('applied-trend-filter-rejects-flat-volume-spike')
+        click('설정');entries('전략 설정')
+        click('기존 거래량 신호','전략 설정')
+        wait(lambda s:any(r.get('text')=='기존 거래량 신호' and r.get('selected') for w in s.get('windows',[]) if w['title']=='전략 설정' for r in w['widgets']))
+        click('설정 저장','전략 설정');wait(lambda s:len(s.get('windows',[]))==1)
+        assert json.loads((OUT/'config.json').read_text())['entry_strategy']=='baseline'
+        click('후보 조회');s=wait(lambda s:not s.get('busy',True) and len(s.get('tables',{}).get('plans',[]))==1)
+        assert s['submitted']==0
+        click('설정');entries('전략 설정')
+        click('추세·급락 제한','전략 설정')
+        wait(lambda s:any(r.get('text')=='추세·급락 제한' and r.get('selected') for w in s.get('windows',[]) if w['title']=='전략 설정' for r in w['widgets']))
+        click('설정 저장','전략 설정');wait(lambda s:len(s.get('windows',[]))==1)
+        assert json.loads((OUT/'config.json').read_text())['entry_strategy']=='trend_guard'
+        (OUT/'control.json').write_text('{}');time.sleep(.3)
+        record('entry-strategy-selection-and-safe-return-to-trend')
         click('데모 / 백테스트')
         dialog=modal('백테스트 CSV 선택 (취소하면 기본 합성 데이터)')
         dialog.type_keys('{ESC}')
         s=wait(lambda s:'백테스트 완료' in s.get('status',''))
-        assert len(s['tables']['demo'])==1
+        assert len(s['tables']['demo'])==0 # 65-bar legacy synthetic signal lacks the applied trend warmup.
         record('cancel-file-default-demo')
         s=state();target=next(t for t in s['notebook_tabs'] if t['text']=='백테스트')
         mouse.click(coords=(target['x'],target['y']))
