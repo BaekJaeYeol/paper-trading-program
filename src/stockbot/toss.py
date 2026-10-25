@@ -1,6 +1,6 @@
 """Official Toss Open API read-only adapter. No live order submission."""
 import json
-import os
+from .credentials import resolve_credentials
 import time
 from datetime import datetime, timezone
 from urllib.parse import urlencode
@@ -10,11 +10,10 @@ from urllib.error import HTTPError
 class TossReadOnly:
     base = 'https://openapi.tossinvest.com'
     def __init__(self):
-        self.client_id=os.environ.get('TOSS_CLIENT_ID')
-        self.secret=os.environ.get('TOSS_CLIENT_SECRET')
-        self.account=os.environ.get('TOSS_ACCOUNT_SEQ')
-        if not self.client_id or not self.secret:
-            raise ValueError('Set TOSS_CLIENT_ID and TOSS_CLIENT_SECRET')
+        credentials = resolve_credentials()
+        self.client_id = credentials['client_id']
+        self.secret = credentials['client_secret']
+        self.account = credentials['account_seq'] or None
         self.token=None;self.expires=0
     def _send(self,path,params=None,body=None,headers=None):
         url=self.base+path
