@@ -24,7 +24,7 @@ from .power import SleepGuard
 BG = '#f3f5fa'
 INK = '#17233b'
 BLUE = '#315bea'
-STATUS = {'ok': '조회 완료', 'market_closed': '미국 정규장 마감',
+STATUS = {'ok': '조회 완료', 'market_closed': '정규장 외 · 세션 감시 대기',
           'reconciliation_required':'주문·보유 수량 대조 필요','halted': '비상 중단 중', 'daily_loss_limit': '일일 손실 한도 도달'}
 
 
@@ -152,6 +152,8 @@ class Dashboard:
                     research=ttk.Button(bar,text=text,command=command)
                     research.pack(side='left',padx=(0,6));self.actions.append(research)
             if key=='health':
+                self.session_status=tk.StringVar(value='세션 미조회 · 시간외 신규 주문 미활성')
+                ttk.Label(panel,textvariable=self.session_status,wraplength=850).pack(anchor='w')
                 self.health_notice=tk.StringVar(value='미국 Alpaca 모의 대조 이력 · 최대 최근 50개 상태 묶음 · 자동 재개 아님')
                 ttk.Label(panel,textvariable=self.health_notice,wraplength=850).pack(anchor='w')
                 ttk.Button(panel,text='운영 이력 새로고침',command=self.refresh_health).pack(anchor='w',pady=(0,4))
@@ -282,6 +284,12 @@ class Dashboard:
                                         r['order']['stop_loss']['stop_price'], r['order']['take_profit']['limit_price'],
                                         '제출됨' if r['submitted'] else '조회만'] for r in data.get('orders', [])])
                     label = STATUS.get(data['status'], data['status'])
+                    if 'market_session' in data:
+                        m=data['market_session']
+                        if hasattr(self,'session_status'):self.session_status.set(m['label']+' · 다음 정규장 '+(m['next_regular_open_kst'] or '확인 필요')+' · 시간외 주문 미활성')
+                        if not m['new_orders_allowed']:
+                            label=m['label']+' · 신규 주문 대기'
+                            self.write('24시간 세션 감시 중 · 시간외 브래킷 미지원/권한 미검증으로 신규 주문 없음. 다음 정규장: '+str(m['next_regular_open_kst']))
                     if (Path(self.config['state_dir']) / 'STOP').exists():
                         label = '비상 중단 · 신규 주문 차단'
                     if kind=='trade' and data['status'] in ('halted','daily_loss_limit','reconciliation_required'):self.pause()
@@ -295,6 +303,7 @@ class Dashboard:
                         if data['status'] in ('halted', 'daily_loss_limit','reconciliation_required'):
                             self.pause()
                         else:
+                            self.cadence.set_interval(data.get('next_poll_seconds',300))
                             self.cadence.complete(time.monotonic())
                             self.schedule_trade()
                 elif kind=='research':
@@ -425,7 +434,7 @@ class Dashboard:
                     due=datetime.now(ZoneInfo('Asia/Seoul'))+timedelta(seconds=remaining)
                     label=f'다음 실행 {due:%H:%M:%S} KST · 약 {remaining}초 후'
                 guard=getattr(self,'sleep_guard',None)
-                self.schedule_status.set(label+f' · 건너뛴 예약 {cadence.skipped}회'+(' · '+guard.label() if guard else ''))
+                self.schedule_status.set(label+f' · 주기 {int(cadence.interval)}초 · 건너뛴 예약 {cadence.skipped}회'+(' · '+guard.label() if guard else ''))
             else:
                 guard=getattr(self,'sleep_guard',None)
                 self.schedule_status.set('자동 실행 중지 · 밀린 예약 재실행 없음'+(' · '+guard.label() if guard else ''))
@@ -525,7 +534,7 @@ class Dashboard:
             return
         if self.running or self.busy:
             return
-        if not messagebox.askyesno('모의매매 시작', f"Alpaca 모의계좌에 주문을 제출하고 5분 기준으로 반복합니다. 지연된 예약은 건너뜁니다.\n진입 필터: {LABELS[self.config.get('entry_strategy','baseline')]} · 실제 수익 우위 미검증\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?"):
+        if not messagebox.askyesno('모의매매 시작', f"24시간 세션 감시 · 정규장 5분 기준 주문 · 정규장 외 1분 기준 대기. 시간외 신규 주문은 브래킷 미지원으로 차단합니다.\n진입 필터: {LABELS[self.config.get('entry_strategy','baseline')]} · 실제 수익 우위 미검증\n기존 PowerShell 반복 실행을 먼저 종료하세요.\n모의매매를 시작할까요?"):
             return
         self.resume_pending=True
         self.work('resume',lambda:resume_snapshot({**self.config,'_reconcile_cancel':self.read_cancel},AlpacaPaper(),account_view))

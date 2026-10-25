@@ -14,6 +14,12 @@ class Cadence:
         self.last_started=now;self.in_flight=True
         return True
 
+    def set_interval(self,interval):
+        if not math.isfinite(interval) or interval<30:raise ValueError('Invalid operating interval')
+        if interval!=self.interval:
+            self.interval=interval
+            if self.last_started is not None:self.next_due=self.last_started+interval
+
     def complete(self,now):
         if not self.in_flight:return
         self.last_duration=max(0,now-self.last_started);self.in_flight=False

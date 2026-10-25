@@ -15,6 +15,7 @@ from .cadence import Cadence
 from .power import SleepGuard
 from .core import Bar, signal, size, backtest
 from .strategies import LABELS,decision
+from .sessions import describe as describe_session
 from .ui_safety import unresolved_attempts
 from .brackets import enforce_entry
 from .paper_journal import initialize,bind_account,fingerprint,intent,submitted,submission_uncertain,ReconciliationTimeout
@@ -54,13 +55,15 @@ def _cycle(c, execute=False, broker=None):
     b = broker or AlpacaPaper()
     clock = b.request("/v2/clock")
     now = now_parse(clock["timestamp"])
-    if not clock["is_open"]:
-        return {"status":"market_closed"}
+    if now.tzinfo is None:raise ValueError('Market clock must have timezone')
     today = now.astimezone(NY).date()
-    calendar = b.request("/v2/calendar", {"start":(today-timedelta(days=14)).isoformat(),"end":(today-timedelta(days=1)).isoformat()})
-    if not calendar:
-        raise ValueError("Missing previous trading session")
-    session = date.fromisoformat(calendar[-1]["date"])
+    calendar = b.request('/v2/calendar',{'start':(today-timedelta(days=14)).isoformat(),'end':(today+timedelta(days=14)).isoformat()})
+    market_session=describe_session(clock,calendar)
+    if not market_session['new_orders_allowed']:
+        return {'status':'market_closed','market_session':market_session,'next_poll_seconds':60}
+    previous=[date.fromisoformat(r['date']) for r in calendar if date.fromisoformat(r['date'])<today]
+    if not previous:raise ValueError('Missing previous trading session')
+    session=max(previous)
     account = b.request("/v2/account")
     if account.get("trading_blocked") or account.get("account_blocked") or account.get("status") != "ACTIVE":
         raise ValueError("Account unavailable")
@@ -107,7 +110,11 @@ def _cycle(c, execute=False, broker=None):
                 continue
             s['entry_filter']=check
             q = b.quote(symbol,c["feed"])
-            age = (now-now_parse(q["t"])).total_seconds()
+            quote_clock=b.request('/v2/clock')
+            market_session=describe_session(quote_clock,calendar)
+            if not market_session['new_orders_allowed'] or now_parse(quote_clock['timestamp']).astimezone(NY).date()!=today:
+                market_session=dict(market_session,new_orders_allowed=False,reason='session_changed_mid_cycle');break
+            age = (now_parse(quote_clock['timestamp'])-now_parse(q['t'])).total_seconds()
             bid, ask = float(q["bp"]),float(q["ap"])
             if not all(math.isfinite(x) and x > 0 for x in (bid,ask)) or ask < bid or not 0 <= age <= c["max_quote_age_seconds"]:
                 continue
@@ -128,6 +135,13 @@ def _cycle(c, execute=False, broker=None):
             if execute:
                 if _halted(c,root):
                     break
+                final_clock=b.request('/v2/clock')
+                market_session=describe_session(final_clock,calendar)
+                if not market_session['new_orders_allowed'] or now_parse(final_clock['timestamp']).astimezone(NY).date()!=today:
+                    market_session=dict(market_session,new_orders_allowed=False,reason='session_changed_mid_cycle');break
+                quote_age=(now_parse(final_clock['timestamp'])-now_parse(q['t'])).total_seconds()
+                if not 0<=quote_age<=c['max_quote_age_seconds']:continue
+                if _halted(c,root):break
                 # Commit intent BEFORE network I/O: crashes/timeouts never trigger blind resubmission.
                 enforce_entry(db,positions)
                 intent(db,cid,body)
@@ -144,7 +158,7 @@ def _cycle(c, execute=False, broker=None):
             occupied.add(symbol)
             bp -= qty*limit
         db.commit()
-    return {"status":"ok","orders":result,"entry_filter":{"strategy":strategy,"excluded":excluded}}
+    return {"status":"ok" if market_session["new_orders_allowed"] else "market_closed","orders":result,"entry_filter":{"strategy":strategy,"excluded":excluded},"market_session":market_session,"next_poll_seconds":300 if market_session["new_orders_allowed"] else 60}
 
 def cycle(c, execute=False, broker=None):
     root = Path(c["state_dir"])
@@ -223,6 +237,7 @@ def main():
             if args.command=='run' and stop_requested(c):raise SystemExit('STOP active; automatic run stopped')
             if not cadence.claim(time.monotonic()):
                 wait_for_run(c,cadence.delay(time.monotonic()));continue
+            result={}
             try:
                 if args.command in ('paper','run'):
                     from .paper_journal import reconcile_snapshot,account_snapshot
@@ -239,6 +254,7 @@ def main():
                     raise SystemExit(1) from None
             if args.command != "run":
                 return
+            cadence.set_interval(60 if result.get('status')=='market_closed' else args.interval)
             cadence.complete(time.monotonic())
             delay=cadence.delay(time.monotonic())
             logging.info('Next cycle in %.1f seconds; skipped slots: %d',delay,cadence.skipped)
