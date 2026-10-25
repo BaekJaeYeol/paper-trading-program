@@ -78,7 +78,7 @@ class TossDashboard:
         table_frame.columnconfigure(0, weight=1)
         ttk.Label(outer, text='미체결 건수는 일반 주식 주문만 포함합니다. 조건주문·옵션·채권은 조회 범위 밖입니다.', wraplength=900).pack(anchor='w', pady=8)
         root.protocol('WM_DELETE_WINDOW', self.close)
-        root.after(100, self.poll)
+        self.poll_id = root.after(100, self.poll)
 
     def credentials_dialog(self):
         if self.busy or self.closed:
@@ -190,7 +190,7 @@ class TossDashboard:
                 self.desktop_status.set(f'현재 v{updater.VERSION} · 새로 배포된 버전이 없습니다.')
             elif messagebox.askyesno('업데이트 설치', f"v{result['version']}을 내려받을까요? 인증정보·설정은 유지됩니다. 설치 후 창을 닫고 TossTrading.cmd로 다시 실행하세요.", parent=self.root):
                 self.desktop_status.set('검증된 배포 파일 설치 중… 완료 후 다시 실행하세요.')
-                self.desktop_work('install', lambda: updater.install(result))
+                self.desktop_work('install', lambda: updater.install(result, cancelled=lambda: self.closed))
             else:
                 self.desktop_status.set('업데이트를 취소했습니다. 현재 버전을 유지합니다.')
         else:
@@ -328,10 +328,11 @@ class TossDashboard:
         else:
             seconds = int(time.monotonic() - self.last_success)
             self.age.set(f'마지막 조회 후 {seconds}초' + (' · 60초 경과: 새로고침 필요' if seconds >= 60 else ' · 수동 조회 화면'))
-        self.root.after(100, self.poll)
+        self.poll_id = self.root.after(100, self.poll)
 
     def close(self):
         self.closed = True
+        self.root.after_cancel(self.poll_id)
         self.root.destroy()
 
 

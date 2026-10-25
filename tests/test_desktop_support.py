@@ -167,6 +167,23 @@ class UpdateTests(unittest.TestCase):
             lock.close()
         self.assertEqual(self.install(), '0.4.1')
 
+    def test_cancel_before_install(self):
+        with self.assertRaises(updater.UpdateError):
+            updater.install(self.fixture.channel, root=self.root, fetch=self.fixture.fetch, cancelled=lambda: True)
+        self.assertEqual(updater.state(self.root)['active'], 'bundled')
+        self.assertFalse(list(self.root.glob('staging-*')))
+
+    def test_cancel_before_activation(self):
+        original = updater.atomic_json
+        cancel = [False]
+        def mark_ready(path, value):
+            original(path, value)
+            if Path(path).name == 'ready.json':
+                cancel[0] = True
+        with patch.object(updater, 'atomic_json', side_effect=mark_ready), self.assertRaises(updater.UpdateError):
+            updater.install(self.fixture.channel, root=self.root, fetch=self.fixture.fetch, cancelled=lambda: cancel[0])
+        self.assertEqual(updater.state(self.root)['active'], 'bundled')
+
     def test_time_budget(self):
         ticks = iter([0, 0, 121])
         with self.assertRaises(updater.UpdateError):
@@ -196,8 +213,8 @@ class DesktopGuiTests(unittest.TestCase):
         import tkinter as tk
         from stockbot.toss_gui import TossDashboard
         self.root = tk.Tk()
-        self.addCleanup(self.root.destroy)
         self.app = TossDashboard(self.root)
+        self.addCleanup(self.app.close)
         self.root.update()
 
     def widgets(self, widget):
@@ -246,7 +263,8 @@ class DesktopGuiTests(unittest.TestCase):
         with patch('stockbot.toss_gui.updater.check_update', return_value=candidate), patch('stockbot.toss_gui.messagebox.askyesno', return_value=True), patch('stockbot.toss_gui.updater.install', return_value='0.4.1') as install:
             self.app.check_updates()
             self.settle()
-            install.assert_called_once_with(candidate)
+            from unittest.mock import ANY
+            install.assert_called_once_with(candidate, cancelled=ANY)
             self.assertIn('TossTrading.cmd', self.app.desktop_status.get())
 
     def test_update_failure_fixed_message(self):
