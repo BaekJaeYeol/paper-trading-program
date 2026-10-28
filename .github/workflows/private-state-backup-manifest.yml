@@ -1,0 +1,70 @@
+name: Paper state backup manifest preflight (read only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout frozen public state
+        uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate and verify ephemeral SHA-256 manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib, stat, tempfile
+          root = pathlib.Path('saved-state')
+          entries = []
+          for p in sorted(root.rglob('*')):
+              rel = p.relative_to(root)
+              if '.git' in rel.parts:
+                  continue
+              mode = p.lstat().st_mode
+              if stat.S_ISLNK(mode):
+                  raise SystemExit('Symlink found; abort')
+              if not p.is_file():
+                  continue
+              size = p.stat().st_size
+              h = hashlib.sha256()
+              with p.open('rb') as f:
+                  for block in iter(lambda: f.read(1024*1024), b''):
+                      h.update(block)
+              entries.append({'path': rel.as_posix(), 'bytes': size, 'sha256': h.hexdigest()})
+          if not entries:
+              raise SystemExit('No state files found')
+          commit = os.popen('git -C saved-state rev-parse HEAD').read().strip()
+          manifest = {'source_commit': commit, 'files': entries}
+          with tempfile.TemporaryDirectory() as d:
+              output = pathlib.Path(d)/'manifest.json'
+              output.write_text(json.dumps(manifest,sort_keys=True),encoding='utf-8')
+              loaded = json.loads(output.read_text(encoding='utf-8'))
+              if loaded != manifest:
+                  raise SystemExit('Manifest round-trip mismatch')
+              for entry in loaded['files']:
+                  p = root / entry['path']
+                  if p.stat().st_size != entry['bytes']:
+                      raise SystemExit('File size changed during manifest generation')
+                  h = hashlib.sha256()
+                  with p.open('rb') as f:
+                      for block in iter(lambda: f.read(1024*1024), b''):
+                          h.update(block)
+                  if h.hexdigest() != entry['sha256']:
+                      raise SystemExit('File changed during manifest generation')
+          print('Snapshot manifest validated: file_count=',len(entries),'total_bytes=',sum(x['bytes'] for x in entries))
+          print('Snapshot commit:',commit)
+          print('Manifest intentionally discarded; no state or manifest uploaded')
+          PY
+      - name: Scope statement
+        if: always()
+        run: echo "Read-only inventory rehearsal only. No durable backup, no private transfer, no public artifacts. Snapshot may change after this run." >> "$GITHUB_STEP_SUMMARY"
