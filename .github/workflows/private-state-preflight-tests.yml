@@ -1,0 +1,16 @@
+name: Private state preflight unit tests
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run synthetic preflight unit tests
+        run: python -m unittest discover -s investment-lab/tests -p 'test_private_state_preflight.py' -v
