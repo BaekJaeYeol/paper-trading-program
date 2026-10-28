@@ -67,7 +67,7 @@ def scan(root):
             # the exact content reviewed. Any README change triggers review.
             with path.open("rb") as stream:
                 body = stream.read()
-            blob = hashlib.sha1(b"blob " + str(len(body)).encode() + b"\\0" + body).hexdigest()
+            blob = hashlib.sha1(b"blob " + str(len(body)).encode() + bytes([0]) + body).hexdigest()
             if blob == REVIEWED_README_BLOB:
                 result["reviewed_documentation"] += 1
                 continue
