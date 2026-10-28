@@ -1,0 +1,66 @@
+name: Paper state restore dry run (ephemeral)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  restore-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout audit code
+        uses: actions/checkout@v4
+      - name: Checkout public state snapshot (read only)
+        uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Create temporary backup and restore, verify byte-for-byte
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil, tempfile
+          src = Path('saved-state')
+          def digest_tree(root):
+              result = {}
+              for file in sorted(root.rglob('*')):
+                  rel = file.relative_to(root)
+                  if '.git' in rel.parts:
+                      continue
+                  if file.is_symlink():
+                      raise RuntimeError('Symlink rejected')
+                  if file.is_file():
+                      h = hashlib.sha256()
+                      with file.open('rb') as stream:
+                          for block in iter(lambda: stream.read(1024*1024), b''):
+                              h.update(block)
+                      result[str(rel)] = h.digest()
+              return result
+          original = digest_tree(src)
+          if not original:
+              raise RuntimeError('Empty source')
+          with tempfile.TemporaryDirectory(prefix='paper-state-recovery-') as work:
+              backup = Path(work) / 'backup'
+              restored = Path(work) / 'restored'
+              shutil.copytree(src, backup, ignore=shutil.ignore_patterns('.git'))
+              if digest_tree(backup) != original:
+                  raise RuntimeError('Backup differs from source')
+              shutil.copytree(backup, restored)
+              if digest_tree(restored) != original:
+                  raise RuntimeError('Restored copy differs from source')
+              print('Restored files verified:', len(original))
+              import subprocess
+              for folder in ('hourly-state', 'intraday-state'):
+                  subprocess.run(['python','investment-lab/private_state_preflight.py','--state',str(restored/folder)],check=True)
+          PY
+      - name: Summary
+        if: success()
+        run: |
+          echo "Ephemeral restore rehearsal passed; source commit $(git -C saved-state rev-parse HEAD)." >> "$GITHUB_STEP_SUMMARY"
+          echo "No permanent backup was created and no data was uploaded to the private repository." >> "$GITHUB_STEP_SUMMARY"
