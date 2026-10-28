@@ -15,6 +15,8 @@ TEXT_EXT = {".json", ".txt", ".yaml", ".yml", ".toml", ".ini", ".env", ".csv", "
 CHUNK_SIZE = 1024 * 1024
 OVERLAP = 256
 MAX_FILE_BYTES = 1024 * 1024 * 1024
+# Exact Git blob of the manually reviewed state-branch README. Changes fail closed.
+REVIEWED_README_BLOB = "81626893c0573d93cec3b0b5da974615e092e2e3"
 
 
 def inspect(path):
@@ -40,7 +42,7 @@ def scan(root):
     root = root.resolve(strict=True)
     if not root.is_dir():
         raise ValueError("not a directory")
-    result = {"checked": 0, "flagged": 0, "skipped": 0, "findings": []}
+    result = {"checked": 0, "flagged": 0, "skipped": 0, "reviewed_documentation": 0, "findings": []}
     for path in sorted(root.rglob("*")):
         if path.is_symlink():
             raise ValueError("symlink rejected")
@@ -60,6 +62,15 @@ def scan(root):
             result["findings"].append({"id": fingerprint, "status": "skipped", "reason": reason})
             continue
         result["checked"] += 1
+        if kinds == ["credential_field"] and path.relative_to(root).as_posix() == "README.md":
+            # Only suppress the known documentation-only false positive for
+            # the exact content reviewed. Any README change triggers review.
+            with path.open("rb") as stream:
+                body = stream.read()
+            blob = hashlib.sha1(b"blob " + str(len(body)).encode() + b"\\0" + body).hexdigest()
+            if blob == REVIEWED_README_BLOB:
+                result["reviewed_documentation"] += 1
+                continue
         if kinds:
             result["flagged"] += 1
             result["findings"].append({"id": fingerprint, "status": "flagged", "categories": kinds})
