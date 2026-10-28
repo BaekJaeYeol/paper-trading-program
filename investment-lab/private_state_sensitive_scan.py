@@ -71,6 +71,9 @@ def scan(root):
             if blob == REVIEWED_README_BLOB:
                 result["reviewed_documentation"] += 1
                 continue
+            # A blob mismatch may be a line-ending conversion or changed text.
+            # Log only the Git object digest, never README contents or paths.
+            result["reviewed_documentation_blob_mismatch"] = blob
         if kinds:
             result["flagged"] += 1
             result["findings"].append({"id": fingerprint, "status": "flagged", "categories": kinds})
