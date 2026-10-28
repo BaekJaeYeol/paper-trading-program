@@ -1,0 +1,42 @@
+name: Paper state account consistency audit (read only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  account-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout existing snapshot without write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate intraday account and SQLite consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python investment-lab/state_recovery.py --state saved-state/intraday-state > /tmp/account-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path('/tmp/account-audit.json').read_text())
+          checked = [name for name, value in data.items() if name not in ('status.json','operations-history.json')]
+          if not checked:
+              raise SystemExit('No account snapshots found; cannot pass empty audit')
+          if any(value.get('status') != 'ok' for value in data.values()):
+              raise SystemExit('Account consistency failed; inspect logs locally without exposing account data')
+          print('Validated account snapshot directories:', len(checked))
+          print('Read-only account consistency audit passed')
+          PY
+      - name: Summarize audit scope
+        if: success()
+        run: |
+          echo "Snapshot commit: $(git -C saved-state rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Intraday account JSON, balances and SQLite checkpoints passed the existing state_recovery validator. No data was changed." >> "$GITHUB_STEP_SUMMARY"
