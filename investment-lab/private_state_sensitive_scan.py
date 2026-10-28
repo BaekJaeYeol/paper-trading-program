@@ -1,14 +1,16 @@
-"""Conservative local-only scan of a frozen snapshot; no content is printed.
-
-Heuristics are not a substitute for manual review or secret scanning.
-"""
+"""Read-only sensitive-data preflight. Logs contain no filenames or values."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
 import sys
 
-KEY = re.compile(r"(?i)(?:api[_-]?key|private[_-]?key|client[_-]?secret|access[_-]?token|refresh[_-]?token|password|passwd|authorization|account[_-]?number|broker[_-]?account)")
+PATTERNS = {
+    "credential_field": re.compile(r"(?i)(?:api[_-]?key|private[_-]?key|client[_-]?secret|access[_-]?token|refresh[_-]?token|password|passwd|authorization)"),
+    "account_identifier_field": re.compile(r"(?i)(?:account[_-]?number|broker[_-]?account)"),
+    "pem_private_key_marker": re.compile(r"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----"),
+}
 TEXT_EXT = {".json", ".txt", ".yaml", ".yml", ".toml", ".ini", ".env", ".csv", ".md"}
 MAX_BYTES = 8 * 1024 * 1024
 
@@ -17,34 +19,38 @@ def scan(root):
     root = root.resolve(strict=True)
     if not root.is_dir():
         raise ValueError("not a directory")
-    checked = 0
-    flagged = 0
-    skipped = 0
-    for path in root.rglob("*"):
+    result = {"checked": 0, "flagged": 0, "skipped": 0, "findings": []}
+    for path in sorted(root.rglob("*")):
         if path.is_symlink():
             raise ValueError("symlink rejected")
         if not path.is_file() or ".git" in path.relative_to(root).parts:
             continue
         if path.suffix.lower() not in TEXT_EXT:
             continue
+        # Hash the relative path to avoid leaking account names or file locations.
+        fingerprint = hashlib.sha256(path.relative_to(root).as_posix().encode()).hexdigest()[:16]
         if path.stat().st_size > MAX_BYTES:
-            skipped += 1
+            result["skipped"] += 1
+            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": "oversize"})
             continue
-        checked += 1
         try:
             data = path.read_text(encoding="utf-8")
         except UnicodeError:
-            skipped += 1
+            result["skipped"] += 1
+            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": "non_utf8"})
             continue
-        if KEY.search(data) or "-----BEGIN PRIVATE KEY-----" in data:
-            flagged += 1
-    return {"checked": checked, "flagged": flagged, "skipped": skipped}
+        result["checked"] += 1
+        kinds = sorted(name for name, pattern in PATTERNS.items() if pattern.search(data))
+        if kinds:
+            result["flagged"] += 1
+            result["findings"].append({"id": fingerprint, "status": "flagged", "categories": kinds})
+    return result
 
 
 def main():
-    p = argparse.ArgumentParser()
-    p.add_argument("--state", type=Path, required=True)
-    args = p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--state", type=Path, required=True)
+    args = parser.parse_args()
     try:
         result = scan(args.state)
     except (OSError, ValueError) as exc:
