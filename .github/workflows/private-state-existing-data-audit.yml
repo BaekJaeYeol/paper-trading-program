@@ -1,0 +1,32 @@
+name: Existing paper state read-only audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout audit code
+        uses: actions/checkout@v4
+      - name: Checkout frozen public state snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          persist-credentials: false
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Record snapshot commit without exposing account data
+        run: |
+          echo "Snapshot commit: $(git -C saved-state rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Read-only JSON and SQLite file integrity audit
+        run: |
+          python investment-lab/private_state_preflight.py --state saved-state/hourly-state
+          python investment-lab/private_state_preflight.py --state saved-state/intraday-state
+      - name: Report successful read-only audit
+        if: success()
+        run: echo "Both snapshot directories passed basic JSON and SQLite file integrity checks. Account-level reconciliation and backup verification remain outstanding." >> "$GITHUB_STEP_SUMMARY"
