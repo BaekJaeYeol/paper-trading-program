@@ -1,0 +1,68 @@
+name: Paper state backup dry run (ephemeral)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout audit scripts
+        uses: actions/checkout@v4
+      - name: Checkout state snapshot without write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: paper-hourly-state
+          path: saved-state
+          persist-credentials: false
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Copy snapshot and compare all file hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil
+          source = Path('saved-state')
+          destination = Path('/tmp/paper-state-backup-dry-run')
+          if destination.exists():
+              raise SystemExit('Backup destination already exists')
+          def manifest(root):
+              result = {}
+              for path in sorted(root.rglob('*')):
+                  rel = path.relative_to(root)
+                  if '.git' in rel.parts:
+                      continue
+                  if path.is_symlink():
+                      raise SystemExit('Symlink encountered; aborting')
+                  if not path.is_file():
+                      continue
+                  digest = hashlib.sha256()
+                  with path.open('rb') as stream:
+                      for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+                          digest.update(chunk)
+                  result[str(rel)] = digest.digest()
+              return result
+          before = manifest(source)
+          if not before:
+              raise SystemExit('Source snapshot is empty')
+          shutil.copytree(source, destination, ignore=shutil.ignore_patterns('.git'))
+          after = manifest(destination)
+          if before != after:
+              raise SystemExit('Backup copy differs from source')
+          print('Verified matching file count:', len(before))
+          print('SHA-256 checks: passed')
+          PY
+      - name: Validate copied JSON and SQLite files
+        run: |
+          python investment-lab/private_state_preflight.py --state /tmp/paper-state-backup-dry-run/hourly-state
+          python investment-lab/private_state_preflight.py --state /tmp/paper-state-backup-dry-run/intraday-state
+      - name: Summarize limitations
+        if: success()
+        run: |
+          echo "Ephemeral backup dry run passed. Source commit: $(git -C saved-state rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+          echo "No backup artifact was uploaded or retained; no data was transferred to the private repository." >> "$GITHUB_STEP_SUMMARY"
