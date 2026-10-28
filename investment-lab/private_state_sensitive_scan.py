@@ -1,4 +1,4 @@
-"""Read-only sensitive-data preflight. Logs contain no filenames or values."""
+"""Read-only bounded-memory scan. No file paths, values, or content are logged."""
 import argparse
 import hashlib
 import json
@@ -7,12 +7,33 @@ import re
 import sys
 
 PATTERNS = {
-    "credential_field": re.compile(r"(?i)(?:api[_-]?key|private[_-]?key|client[_-]?secret|access[_-]?token|refresh[_-]?token|password|passwd|authorization)"),
-    "account_identifier_field": re.compile(r"(?i)(?:account[_-]?number|broker[_-]?account)"),
-    "pem_private_key_marker": re.compile(r"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----"),
+    "credential_field": re.compile(rb"(?i)(?:api[_-]?key|private[_-]?key|client[_-]?secret|access[_-]?token|refresh[_-]?token|password|passwd|authorization)"),
+    "account_identifier_field": re.compile(rb"(?i)(?:account[_-]?number|broker[_-]?account)"),
+    "pem_private_key_marker": re.compile(rb"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----"),
 }
 TEXT_EXT = {".json", ".txt", ".yaml", ".yml", ".toml", ".ini", ".env", ".csv", ".md"}
-MAX_BYTES = 8 * 1024 * 1024
+CHUNK_SIZE = 1024 * 1024
+OVERLAP = 256
+MAX_FILE_BYTES = 1024 * 1024 * 1024
+
+
+def inspect(path):
+    kinds = set()
+    size = path.stat().st_size
+    if size > MAX_FILE_BYTES:
+        return None, "over_1gib"
+    with path.open("rb") as stream:
+        tail = b""
+        while True:
+            chunk = stream.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            data = tail + chunk
+            for name, pattern in PATTERNS.items():
+                if pattern.search(data):
+                    kinds.add(name)
+            tail = data[-OVERLAP:]
+    return sorted(kinds), None
 
 
 def scan(root):
@@ -27,20 +48,18 @@ def scan(root):
             continue
         if path.suffix.lower() not in TEXT_EXT:
             continue
-        # Hash the relative path to avoid leaking account names or file locations.
         fingerprint = hashlib.sha256(path.relative_to(root).as_posix().encode()).hexdigest()[:16]
-        if path.stat().st_size > MAX_BYTES:
-            result["skipped"] += 1
-            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": "oversize"})
-            continue
         try:
-            data = path.read_text(encoding="utf-8")
-        except UnicodeError:
+            kinds, reason = inspect(path)
+        except OSError:
             result["skipped"] += 1
-            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": "non_utf8"})
+            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": "read_error"})
+            continue
+        if reason:
+            result["skipped"] += 1
+            result["findings"].append({"id": fingerprint, "status": "skipped", "reason": reason})
             continue
         result["checked"] += 1
-        kinds = sorted(name for name, pattern in PATTERNS.items() if pattern.search(data))
         if kinds:
             result["flagged"] += 1
             result["findings"].append({"id": fingerprint, "status": "flagged", "categories": kinds})
