@@ -4,3 +4,14 @@ __pycache__/
 .env
 state/
 *.sqlite*
+
+# Prevent public state and credential leaks
+*.db
+*.db-*
+*.db3
+.env.*
+!.env.example
+*.pem
+*.key
+hourly-state/
+intraday-state/
